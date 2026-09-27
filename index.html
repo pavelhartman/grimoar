@@ -168,6 +168,8 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 
 
 .lightbox{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.94);padding:22px;align-items:center;justify-content:center}.lightbox.show{display:flex}.lightbox img{max-width:96vw;max-height:90vh;object-fit:contain}.lightbox-close{position:absolute;right:18px;top:12px;background:#140c08;color:#f0d69b;border:1px solid #86602b;width:46px;height:46px;font-size:2rem}.image-zoom{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
+
+html[data-test-mode="1"] body::before{content:"TEST MODE";position:fixed;right:8px;top:8px;z-index:9999;background:#5b170f;color:#f0c65a;border:1px solid #b88a2b;padding:5px 8px;font:700 11px Georgia,serif;letter-spacing:.08em;opacity:.9;pointer-events:none}
 </style>
 </head>
 <body><main class="app">
@@ -364,6 +366,27 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
  </div>
  <div id="resultBox" class="resultbox"></div>
 </section>
+<script id="kg-preflight">
+(function(){
+  try{
+    const p=new URLSearchParams(window.location.search);
+    const test=p.get('test')==='1';
+    const reset=p.get('reset')==='1'||p.get('devreset')==='1';
+    window.__KG_TEST_MODE__=test;
+    if(reset){
+      localStorage.removeItem('kgState');
+      p.delete('reset');
+      p.delete('devreset');
+      const q=p.toString();
+      const clean=window.location.pathname+(q?'?'+q:'')+window.location.hash;
+      window.history.replaceState(null,'',clean);
+      window.__KG_WAS_RESET__=true;
+    }
+  }catch(e){
+    window.__KG_TEST_MODE__=false;
+  }
+})();
+</script>
 <script>
 const A='assets/';
 const F={
@@ -463,8 +486,7 @@ function returnFromParchment(){const s=state(),o=s.parchOrigin||'hub';if(o==='le
 function showParchHint(){let s=state();if(!s.parchHintUsed){addPenalty('hint1',3,'Ztracený pergamen – nápověda');s=state();s.parchHintUsed=true;save(s)}const w=document.getElementById('parchWrong');w.innerHTML='Věta má právě tolik písmen, kolik je polí v čtverci <b>5 × 5</b>.<br><b>Dejte znamením správný řád.</b><br>Teprve pak odhalí propálený pergamen to, co mělo zůstat skryto.<br><b>Až ho přiložíte, nezapomeňte, že slunce vždy stojí nahoře.</b>';w.classList.add('show')}
 function checkParchment(){const i=document.getElementById('parchAnswer'),v=norm(i.value);if(v==='OPET'){let s=state();s.parchment=true;save(s);document.getElementById('parchWrong').classList.remove('show');document.getElementById('parchGood').classList.add('show');if(allFragmentsReady(s))setTimeout(()=>enterUltima(),700)}else{if(i){i.value='';i.focus()}}}
 function checkMeta(){const v=norm(document.getElementById('metaAnswer').value);if(v==='UTUPOUNA'||v==='TUPOUNA'){document.getElementById('metaWrong').classList.remove('show');show('finalgps')}else document.getElementById('metaWrong').classList.add('show')}
-const TEST_PARAMS=new URLSearchParams(location.search);
-const TEST_MODE=TEST_PARAMS.get('test')==='1';
+const TEST_MODE=(window.__KG_TEST_MODE__===true)||new URLSearchParams(location.search).get('test')==='1';
 function finishFinalGPS(){let s=state();if(!s.end)s.end=Date.now();save(s);renderFinalResult();show('finale')}
 function simulateFinalGPS(){if(!TEST_MODE)return;const m=document.getElementById('finalGpsMsg');if(m)m.innerHTML='<b>TEST:</b> Správná poloha nasimulována.';setTimeout(finishFinalGPS,250)}
 function verifyFinalGPS(){const target=[49.9487667,15.2728083],m=document.getElementById('finalGpsMsg');if(!navigator.geolocation){m.textContent='Tento prohlížeč GPS nepodporuje.';return}m.textContent='Ověřuji…';navigator.geolocation.getCurrentPosition(p=>{const d=dist(p.coords.latitude,p.coords.longitude,target[0],target[1]);if(d<=25){finishFinalGPS()}else m.innerHTML=`<b>JEŠTĚ NEJSTE TAM.</b><br>U <b>T------A</b> se místní chátra scházela od nepaměti.<br>Jestli jste to ještě nepochopili, přestaňte mudrovat a <b>běžte rovnou TAM</b>.<br><span class="smallnote">Od cíle jste přibližně ${Math.round(d)} m.</span>`},e=>m.textContent='GPS se nepodařilo načíst. Otevřete hru v Chrome nebo Safari a povolte polohu.',{enableHighAccuracy:true,timeout:12000,maximumAge:5000})}
@@ -472,7 +494,7 @@ const RESULT_ENDPOINT='';
 function resultPayload(){const s=state(),raw=(s.end||Date.now())-s.start,pen=(s.penaltyMin||0)*60000;return {date:new Date(s.end||Date.now()).toISOString().slice(0,10),team:s.team,faction:F[s.faction]?.name||s.faction,start:new Date(s.start).toISOString(),finish:new Date(s.end||Date.now()).toISOString(),raw_ms:raw,penalty_min:s.penaltyMin||0,result_ms:raw+pen,hint1:s.hint1||0,hint2:s.hint2||0,gps_bypass:s.gpsSkips||0,penalties:s.penalties||[]}}
 async function submitResult(){const s=state();if(s.resultSubmitted||!RESULT_ENDPOINT)return;try{await fetch(RESULT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(resultPayload())});s.resultSubmitted=true;save(s)}catch(e){}}
 function renderFinalResult(){const s=state(),f=F[s.faction],raw=(s.end||Date.now())-s.start,pen=(s.penaltyMin||0)*60000,total=raw+pen;document.getElementById('resultBox').innerHTML=`<b>Výsledek týmu</b><br>Tým: <b>${esc(s.team)}</b><br>Frakce: <b>${f.name}</b><div class="result-main"><span>Čas</span><b>${elapsed(raw)}</b><span>Penalizace celkem</span><b>+${s.penaltyMin||0} min</b><span>Výsledný čas</span><b class="big-result">${elapsed(total)}</b></div>`;submitResult()}
-function restoreApp(){const params=new URLSearchParams(location.search);const tb=document.getElementById('testFinalGpsBtn');if(tb)tb.style.display=TEST_MODE?'block':'none';if(params.get('devreset')==='1'||params.get('reset')==='1'){localStorage.removeItem('kgState');params.delete('devreset');params.delete('reset');const q=params.toString();location.replace(location.pathname+(q?'?'+q:''));return}const s=state();if(!(s.team&&s.faction&&s.start)){show('title',false);return}renderProfile();renderHub();currentStation=s.currentStation||null;let target=s.current||((s.homeVisited||Object.keys(s.done||{}).length)?'hub':'profile');if(target==='nav'&&currentStation){openStation(currentStation,false);return}if(target==='gpsok'&&currentStation){gpsSuccess(currentStation,false);return}if(target==='task'&&currentStation){renderTask(currentStation);return}if(target==='seal'&&(s.pendingSeal||currentStation)){renderSeal(s.pendingSeal||currentStation);show('seal');return}if(target==='parchment'){openParchment(s.parchOrigin||'hub');return}if(target==='ultima'){renderUltimaFragments();show('ultima');return}if(target==='finalgps'){show('finalgps');return}if(target==='hub'){renderHub();show('hub');return}if(target==='finale'){renderFinalResult();show('finale');return}show(document.getElementById(target)?target:'profile')}
+function restoreApp(){const tb=document.getElementById('testFinalGpsBtn');if(tb)tb.style.display=TEST_MODE?'block':'none';if(TEST_MODE){document.documentElement.dataset.testMode='1'}const s=state();if(!(s.team&&s.faction&&s.start)){show('title',false);return}renderProfile();renderHub();currentStation=s.currentStation||null;let target=s.current||((s.homeVisited||Object.keys(s.done||{}).length)?'hub':'profile');if(target==='nav'&&currentStation){openStation(currentStation,false);return}if(target==='gpsok'&&currentStation){gpsSuccess(currentStation,false);return}if(target==='task'&&currentStation){renderTask(currentStation);return}if(target==='seal'&&(s.pendingSeal||currentStation)){renderSeal(s.pendingSeal||currentStation);show('seal');return}if(target==='parchment'){openParchment(s.parchOrigin||'hub');return}if(target==='ultima'){renderUltimaFragments();show('ultima');return}if(target==='finalgps'){show('finalgps');return}if(target==='hub'){renderHub();show('hub');return}if(target==='finale'){renderFinalResult();show('finale');return}show(document.getElementById(target)?target:'profile')}
 restoreApp();
 </script>
 </body></html>
