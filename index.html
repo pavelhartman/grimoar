@@ -49,6 +49,19 @@ button{touch-action:manipulation}
 .faction img{width:100%;aspect-ratio:1;object-fit:contain;background:#090604;display:block}
 .faction b{display:block;padding:8px 3px 5px;font-size:.95rem;text-transform:uppercase;letter-spacing:.04em}
 .faction.selected{border-color:#d9a63d;box-shadow:0 0 0 2px rgba(201,149,54,.25),var(--shadow)}
+
+.faction-select-wrap{position:relative;width:100%;max-width:760px;margin:0 auto;border:1px solid #5f3b1d;box-shadow:var(--shadow);background:#070504}
+.faction-select-wrap img{display:block;width:100%;height:auto}
+.faction-hit{position:absolute;border:0;background:transparent;cursor:pointer;border-radius:8px;touch-action:manipulation}
+.faction-hit:hover,.faction-hit:focus-visible{outline:2px solid rgba(240,207,120,.8);outline-offset:-3px;box-shadow:0 0 32px rgba(178,42,34,.45),inset 0 0 24px rgba(240,207,120,.11)}
+.confirm-shell{max-width:640px;margin:0 auto;text-align:center}
+.confirm-emblem{width:min(58vw,290px);aspect-ratio:1;object-fit:contain;display:block;margin:12px auto 18px;background:radial-gradient(circle,rgba(127,23,23,.28),transparent 68%);filter:drop-shadow(0 12px 24px rgba(0,0,0,.65))}
+.confirm-name{font-family:Palatino Linotype,Georgia,serif;text-transform:uppercase;letter-spacing:.04em;color:#f0cf78;font-size:clamp(2rem,8vw,3.6rem);margin:.25rem 0 .5rem}
+.confirm-lead{font-size:1.08rem;color:#d8c39a;margin:0 auto 18px;max-width:520px}
+.confirm-field{max-width:520px;margin:22px auto 14px;text-align:left}
+.confirm-field label{display:block;text-align:center;color:#e6cc91;font-size:1.12rem;margin-bottom:8px}
+.confirm-field input{width:100%;padding:15px 14px;background:#0a0705;border:1px solid #a1712c;color:#f2e1bb;border-radius:3px;font-size:1.08rem;box-shadow:inset 0 0 20px rgba(0,0,0,.45)}
+.confirm-actions{max-width:520px;margin:0 auto}
 .field{margin:16px 0}
 .field label{display:block;color:#cbb784;margin-bottom:5px}
 .field input{width:100%;padding:13px 12px;background:#120c08;border:1px solid #76532b;color:#f0dfb6;border-radius:3px}
@@ -106,15 +119,34 @@ button{touch-action:manipulation}
 
 <section id="faction" class="screen">
  <a class="back" onclick="show('title')">← zpět</a>
- <div class="topmark">Začátek hry</div>
- <h1 class="title" style="font-size:2.5rem">Vyberte svou frakci</h1>
- <p class="subtitle">Každý někam patří. Vyberte si, na čí stranu se v Kutné Hoře postavíte.</p>
- <div id="factions" class="factions"></div>
- <div id="teamBox" class="panel" style="display:none;margin-top:16px">
-  <div class="field"><label for="teamName"><b>Název týmu</b></label><input id="teamName" maxlength="40" placeholder="např. Špinavé krumpáče"></div>
-  <div id="selectedFaction" class="subtitle" style="margin:6px 0"></div>
-  <button class="button gold" onclick="confirmStart()">Potvrdit a začít hru</button>
-  <button class="button ghost" onclick="clearFactionPick()">Vybrat jinou frakci</button>
+ <div class="faction-select-wrap" aria-label="Výběr frakce">
+  <img src="assets/faction_select.webp" alt="Vyberte svou frakci">
+  <button class="faction-hit" style="left:4.4%;top:25.4%;width:44.8%;height:17.1%" aria-label="Řádoví bratři" onclick="pickFaction('radovi')"></button>
+  <button class="faction-hit" style="left:51.4%;top:25.4%;width:44.8%;height:17.1%" aria-label="Zvoníci" onclick="pickFaction('zvonici')"></button>
+  <button class="faction-hit" style="left:4.4%;top:43.8%;width:44.8%;height:17.1%" aria-label="Havíři" onclick="pickFaction('haviri')"></button>
+  <button class="faction-hit" style="left:51.4%;top:43.8%;width:44.8%;height:17.1%" aria-label="Alchymisté" onclick="pickFaction('alchymiste')"></button>
+  <button class="faction-hit" style="left:4.4%;top:62.3%;width:44.8%;height:17.1%" aria-label="Konšelé" onclick="pickFaction('konesele')"></button>
+  <button class="faction-hit" style="left:51.4%;top:62.3%;width:44.8%;height:17.1%" aria-label="Mincmistři" onclick="pickFaction('mincmistri')"></button>
+  <button class="faction-hit" style="left:17.1%;top:80.5%;width:66.0%;height:15.7%" aria-label="Lapkové" onclick="pickFaction('lapkove')"></button>
+ </div>
+</section>
+
+<section id="confirm" class="screen">
+ <a class="back" onclick="backToFactions()">← zpět</a>
+ <div class="confirm-shell">
+  <div class="topmark">Volba frakce</div>
+  <h1 class="title" style="font-size:2rem">Zvolili jste frakci</h1>
+  <div id="confirmFactionName" class="confirm-name"></div>
+  <p class="confirm-lead">Nyní pojmenujte svůj tým a potvrďte svou volbu.</p>
+  <img id="confirmFactionIcon" class="confirm-emblem" alt="Emblém vybrané frakce">
+  <div class="confirm-field">
+   <label for="teamName"><b>Název týmu</b></label>
+   <input id="teamName" maxlength="40" autocomplete="off" placeholder="např. Špinavé krumpáče">
+  </div>
+  <div class="confirm-actions">
+   <button class="button gold" onclick="confirmStart()">Potvrdit a začít hru</button>
+   <button class="button ghost" onclick="backToFactions()">Vybrat jinou frakci</button>
+  </div>
  </div>
 </section>
 
@@ -275,10 +307,11 @@ function initState(team,faction){return {team,faction,start:Date.now(),done:{},p
 function norm(s){return (s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]/g,'')}
 function elapsed(ms){let t=Math.max(0,Math.floor(ms/1000)),h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60;return (h?h+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
 function dist(a,b,c,d){const R=6371000,p=Math.PI/180,x=(d-b)*p*Math.cos((a+c)*p/2),y=(c-a)*p;return Math.sqrt(x*x+y*y)*R}
-function renderFactions(){const box=document.getElementById('factions');box.innerHTML='';Object.entries(F).forEach(([id,f])=>{let b=document.createElement('button');b.className='faction';b.innerHTML=`<img src="${A+f.icon}" alt=""><b>${f.name}</b>`;b.onclick=()=>pickFaction(id,b);box.appendChild(b)})}
-function pickFaction(id,el){selected=id;document.querySelectorAll('.faction').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');document.getElementById('selectedFaction').innerHTML=`Vybrali jste: <b>${F[id].name}</b>`;document.getElementById('teamBox').style.display='block';document.getElementById('teamName').focus()}
-function clearFactionPick(){selected=null;document.getElementById('teamBox').style.display='none';document.querySelectorAll('.faction').forEach(x=>x.classList.remove('selected'))}
-function confirmStart(){const team=document.getElementById('teamName').value.trim();if(!selected||!team)return alert('Nejdřív vyberte frakci a napište název týmu.');save(initState(team,selected));renderProfile();show('profile')}
+function renderFactions(){}
+function pickFaction(id){selected=id;const f=F[id];document.getElementById('confirmFactionName').textContent=f.name;document.getElementById('confirmFactionIcon').src=A+f.icon;document.getElementById('confirmFactionIcon').alt='Emblém frakce '+f.name;document.getElementById('teamName').value='';show('confirm');setTimeout(()=>document.getElementById('teamName').focus(),120)}
+function backToFactions(){selected=null;document.getElementById('teamName').value='';show('faction')}
+function clearFactionPick(){backToFactions()}
+function confirmStart(){const team=document.getElementById('teamName').value.trim();if(!selected||!team)return alert('Napište název týmu.');save(initState(team,selected));renderProfile();show('profile')}
 function renderProfile(){const s=state(),f=F[s.faction];document.getElementById('profileCard').innerHTML=`<div class="faction-card"><img src="${A+f.icon}"><div><h2>${f.name}</h2><div class="quote">„${f.quote}“</div><div class="attrib">— ${f.person}</div></div></div><div class="eyebrow">Vaše výhoda</div><p>${f.adv}</p>`}
 function renderHub(){const s=state(),f=F[s.faction],done=s.done||{},n=Object.keys(done).length;document.getElementById('hubStatus').innerHTML=`<span>Tým: <b>${s.team||'—'}</b><br>Frakce: <b>${f?.name||'—'}</b></span><span class="progress">${n}/7 pečetí<br><span class="timer" id="timer">${elapsed(Date.now()-(s.start||Date.now()))}</span></span>`;document.getElementById('hubProfile').innerHTML=`<div class="quote">„${f.quote}“</div><div class="attrib">— ${f.person}</div><div class="eyebrow">Výhoda</div><div>${f.adv}</div>`;const g=document.getElementById('hubGrid');g.innerHTML='';let p=document.createElement('button');p.className='parch-card';p.innerHTML=`<strong>ZTRACENÝ PERGAMEN</strong><br>${s.parchment?'VYŘEŠENO — OPĚT':'NEVYŘEŠENO — můžete se k němu kdykoli vrátit'}`;p.onclick=()=>show('parchment');g.appendChild(p);Object.entries(S).forEach(([id,st])=>{let b=document.createElement('button');b.className='place'+(done[id]?' done':'');b.innerHTML=`<img src="${A+st.emblem}" alt=""><b>Stopa: ${st.faction}</b><span class="codebadge">${done[id]||''}</span>`;b.onclick=()=>openStation(id,false);g.appendChild(b)});if(n===7&&s.parchment){let u=document.createElement('button');u.className='parch-card';u.innerHTML='<strong>ULTIMA SIGILLA</strong><br>Všechny fragmenty jsou vaše. Poslední cesta je otevřena.';u.onclick=()=>show('ultima');g.prepend(u)}}
 setInterval(()=>{const e=document.getElementById('timer'),s=state();if(e&&s.start&&!s.end)e.textContent=elapsed(Date.now()-s.start)},1000);
