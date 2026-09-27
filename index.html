@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#100b08">
+<title>Krvavý grimoár a sedm pečetí</title>
+<style>
+:root{
+ --black:#0d0907;--black2:#17100c;--ink:#e8d4a1;--paper:#d7b77c;--paper2:#b98b4a;
+ --gold:#c99536;--gold2:#f0cf78;--red:#7f1717;--red2:#b22a22;--muted:#b9a786;
+ --green:#385237;--line:#6e4a26;--shadow:0 18px 50px rgba(0,0,0,.55)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:#090604}
+body{margin:0;color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.55;background:
+ radial-gradient(circle at 50% 0,#2a170f 0,transparent 38rem),
+ linear-gradient(180deg,#100b08,#070504 65%);min-height:100vh}
+button,input{font:inherit}
+button{touch-action:manipulation}
+.app{max-width:820px;margin:auto;min-height:100vh;position:relative}
+.screen{display:none;padding:24px 16px 56px;min-height:100vh}
+.screen.active{display:block}
+.hero{padding:0;position:relative;background:#060403;min-height:100vh}
+.hero img{display:block;width:100%;min-height:100vh;object-fit:cover;object-position:center}
+.hero-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:0 8% 7%;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.5))}
+.age{font-size:.78rem;text-align:center;color:#ddc897;margin:8px 0 0}
+.title{font-family:Palatino Linotype,Georgia,serif;text-transform:uppercase;text-align:center;letter-spacing:.045em;line-height:1.02;font-size:clamp(2rem,9vw,4.4rem);margin:8px 0}
+.subtitle{text-align:center;color:var(--muted);font-style:italic;margin:8px auto 20px;max-width:650px}
+.topmark{text-align:center;color:var(--gold2);letter-spacing:.18em;font-size:.74rem;text-transform:uppercase;margin:8px 0 12px}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px 0}
+.panel,.parchment{position:relative;border:1px solid #6f4b26;background:
+ linear-gradient(rgba(17,11,8,.92),rgba(10,7,5,.94));
+ box-shadow:var(--shadow);padding:18px;border-radius:4px}
+.parchment{color:#2b1b0f;background:
+ radial-gradient(circle at 20% 10%,rgba(255,255,255,.16),transparent 20%),
+ linear-gradient(135deg,#dfc08a,#b98750);border-color:#6f4b26;text-shadow:none}
+.button{display:block;width:100%;border:1px solid #9e6d25;background:linear-gradient(#7d211c,#4e100f);color:#f2d995;
+ text-transform:uppercase;letter-spacing:.08em;font-weight:bold;padding:14px 16px;margin-top:16px;cursor:pointer;border-radius:3px;
+ box-shadow:inset 0 0 0 1px rgba(239,197,105,.2),0 8px 20px rgba(0,0,0,.35)}
+.button:hover{filter:brightness(1.12)} .button.gold{background:linear-gradient(#a67625,#6f4615);color:#fff1c5}
+.button.ghost{background:#15100c;color:#d9c596;border-color:#6a4b2d}
+.button.small{width:auto;display:inline-block;margin:4px;padding:9px 12px}
+.back{display:inline-flex;gap:6px;align-items:center;color:#d3ad62;text-decoration:none;cursor:pointer;margin-bottom:14px}
+.factions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.faction{border:1px solid #795221;background:#0b0806;color:#f0d79e;padding:8px;cursor:pointer;box-shadow:var(--shadow);border-radius:4px}
+.faction img{width:100%;aspect-ratio:1;object-fit:contain;background:#090604;display:block}
+.faction b{display:block;padding:8px 3px 5px;font-size:.95rem;text-transform:uppercase;letter-spacing:.04em}
+.faction.selected{border-color:#d9a63d;box-shadow:0 0 0 2px rgba(201,149,54,.25),var(--shadow)}
+.field{margin:16px 0}
+.field label{display:block;color:#cbb784;margin-bottom:5px}
+.field input{width:100%;padding:13px 12px;background:#120c08;border:1px solid #76532b;color:#f0dfb6;border-radius:3px}
+.faction-card{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center}
+.faction-card img{width:110px;height:110px;object-fit:contain;background:#080605;border:1px solid #65461f}
+.quote{font-size:1.12rem;font-style:italic;color:#f0dfb6}
+.attrib{color:#d1b56f;font-size:.9rem;margin-top:8px}
+.eyebrow{text-transform:uppercase;letter-spacing:.14em;color:#d9a945;font-size:.74rem;font-weight:bold;margin-top:14px}
+.invektiva{border-top:1px solid #5e4024;padding-top:10px;margin-top:10px;color:#cfbea0}
+.legend p:first-of-type::first-letter{float:left;font-size:3.5rem;line-height:.8;padding:9px 7px 0 0;color:#b52b23}
+.latin,.chapter{text-align:center;color:#d4a345;font-variant:small-caps;letter-spacing:.13em;margin:12px 0}
+.status{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid #654822;background:#110c09;padding:10px 12px;margin-bottom:14px}
+.progress{color:#e3bd5d;font-weight:bold}
+.hub-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.place{position:relative;border:1px solid #674820;background:#0e0a07;color:#efdba7;padding:7px;cursor:pointer;border-radius:4px}
+.place img{width:100%;aspect-ratio:1;object-fit:cover;display:block;filter:saturate(.85)}
+.place b{display:block;margin-top:7px;text-transform:uppercase;font-size:.9rem}
+.place.done{border-color:#b58a37}
+.place .codebadge{display:none;position:absolute;top:9px;right:9px;background:#1a120c;border:1px solid #e0b34c;color:#f2d171;
+ padding:5px 8px;font-size:1rem;font-weight:bold}
+.place.done .codebadge{display:block}
+.parch-card{grid-column:span 2;border:1px solid #81522c;background:linear-gradient(135deg,#2a140e,#120a07);padding:14px;cursor:pointer;text-align:left;color:#efdba7}
+.parch-card strong{color:#efcb6b}
+.nav-hero{text-align:center}.nav-hero img{width:min(420px,100%);display:block;margin:0 auto 10px}
+.five{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin:12px 0}
+.five span{border:1px solid #76532c;background:#160e0a;padding:5px 9px;font-size:.9rem}
+.gps{border:1px dashed #aa7a2d;background:#100b08;padding:14px;margin-top:14px;text-align:center}
+.gps-ok{color:#d9be6d;font-weight:bold}
+.task-img{display:block;width:100%;max-width:700px;margin:14px auto;border:1px solid #60401f;box-shadow:var(--shadow)}
+.answer{width:100%;padding:12px;background:#120c08;color:#f0dfb6;border:1px solid #76532b;margin-top:10px;border-radius:3px;text-transform:uppercase}
+.hint{display:none;margin-top:12px}.hint.show{display:block}
+.advantage{border:1px solid #8b6a2e;background:linear-gradient(135deg,#1d2319,#10140e);padding:14px;margin:14px 0}
+.advantage.spent{opacity:.55}.advantage strong{color:#e0bd5a}
+.seal{text-align:center}.seal img{width:min(520px,100%);display:block;margin:12px auto}.code{font-size:3.2rem;color:#f0c65a;font-weight:bold;letter-spacing:.18em;text-align:center}
+.order{list-style:none;padding:0}.order li{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:11px;border:1px solid #684720;background:#130d09;margin:7px 0;touch-action:none;user-select:none}
+.order li.dragging{opacity:.45}.arrows button{background:#2a1a0e;color:#e3c57d;border:1px solid #775128;padding:7px 10px}
+.final-block{font-size:1.05rem}.final-block strong{color:#f0cd68}
+.resultbox{border:1px solid #82622b;background:#100b08;padding:14px;margin:14px 0}
+.timer{font-variant-numeric:tabular-nums;color:#f0c65a}
+.smallnote{font-size:.8rem;color:#a9987b;text-align:center}
+@media(min-width:650px){
+ .screen{padding:38px 28px 70px}.factions{grid-template-columns:repeat(4,1fr)}.hub-grid{grid-template-columns:repeat(3,1fr)}
+ .parch-card{grid-column:span 3}.faction-card{grid-template-columns:150px 1fr}.faction-card img{width:150px;height:150px}
+}
+</style>
+</head>
+<body><main class="app">
+<section id="title" class="screen hero active">
+ <img src="assets/title.png" alt="Krvavý grimoár a sedm pečetí">
+ <div class="hero-overlay">
+  <button class="button" onclick="show('faction')">Vstoupit do hry</button>
+  <div class="age"><b>15+</b> · černý humor · hrubší jazyk · <b>historicky nekorektní osoby</b></div>
+ </div>
+</section>
+
+<section id="faction" class="screen">
+ <a class="back" onclick="show('title')">← zpět</a>
+ <div class="topmark">Začátek hry</div>
+ <h1 class="title" style="font-size:2.5rem">Vyberte svou frakci</h1>
+ <p class="subtitle">Každý někam patří. Vyberte si, na čí stranu se v Kutné Hoře postavíte.</p>
+ <div id="factions" class="factions"></div>
+ <div id="teamBox" class="panel" style="display:none;margin-top:16px">
+  <div class="field"><label for="teamName"><b>Název týmu</b></label><input id="teamName" maxlength="40" placeholder="např. Špinavé krumpáče"></div>
+  <div id="selectedFaction" class="subtitle" style="margin:6px 0"></div>
+  <button class="button gold" onclick="confirmStart()">Potvrdit a začít hru</button>
+  <button class="button ghost" onclick="clearFactionPick()">Vybrat jinou frakci</button>
+ </div>
+</section>
+
+<section id="profile" class="screen">
+ <div class="topmark">Vaše cháska</div>
+ <div id="profileCard" class="panel"></div>
+ <button class="button" onclick="show('legend')">Vstoupit do příběhu</button>
+</section>
+
+<section id="legend" class="screen legend">
+ <a class="back" onclick="show('profile')">← frakční karta</a>
+ <div class="topmark">Legenda</div><h1 class="title" style="font-size:2.5rem">Krvavý grimoár<br>a sedm pečetí</h1><div class="rule"></div>
+ <p><b>Zpropadení pacholci! Kutná Hora se otřásá v základech!</b></p>
+ <p>Včera v noci někdo hodil purkmistrovi otevřeným oknem přímo do pelechu zkrvavenou prasečí hlavu a z kované truhlice v mázhausu radnice zmizela nejcennější a nejobávanější věc ve městě: <b>Liber Peccatorum Montanorum</b>, přezdívaný <b>Krvavý grimoár</b>.</p>
+ <p>Není to obyčejná kniha. Purkmistr si do ní tajně zapisoval úplatky, nevěry, podvody a sviňárny celého města: řádových bratří, havířů, zvoníků, alchymistů, mincmistrů, konšelů i lapků. A nakonec se ukáže, že bratru není žádná žena cizí, ani ta cizí.</p>
+ <p>Jenže kniha teď zmizela. Stráže uzavřely brány a ve městě zavládla panika.</p>
+ <div class="parchment"><b>A přece po zloději něco zůstalo.</b><br>Pod oknem radnice našla stráž pomačkaný kus pergamenu, který zřejmě někomu při útěku vypadl. Není z grimoáru. Není na něm podpis ani pečeť. Jen podivný zápis, který na první pohled nedává žádný smysl. Purkmistr tvrdí, že je to bezcenný cár papíru. Což je samozřejmě nejlepší důvod nevěřit mu ani slovo.</div>
+ <div class="panel"><b>NĚCO PO ZLODĚJI ZŮSTALO</b><br>Získali jste ztracený pergamen.<br>Rozluštit ho můžete kdykoli během hry.<br>Možná vám vydá něco, co budete na konci potřebovat.</div>
+ <p><b>Sedm pečetí a jeden ztracený vzkaz</b> vám vydají písmena a čísla.</p>
+ <p class="latin">Ite, inflammate omnia.</p>
+ <button class="button gold" onclick="openHome()">Vyrazit na první stopu</button>
+</section>
+
+<section id="hub" class="screen">
+ <div class="topmark">Rozcestník</div>
+ <h1 class="title" style="font-size:2.4rem">Kam dál?</h1>
+ <div id="hubStatus" class="status"></div>
+ <div id="hubProfile" class="panel" style="margin-bottom:14px"></div>
+ <div id="hubGrid" class="hub-grid"></div>
+</section>
+
+<section id="nav" class="screen">
+ <a class="back" onclick="show('hub');renderHub()">← zpět na přehled lokací</a>
+ <div id="navContent"></div>
+</section>
+
+<section id="gpsok" class="screen">
+ <a class="back" onclick="show('nav')">← zpět</a>
+ <div id="gpsOkContent" class="nav-hero"></div>
+</section>
+
+<section id="task" class="screen">
+ <a class="back" onclick="show('hub');renderHub()">← zpět na přehled lokací</a>
+ <div id="taskContent"></div>
+</section>
+
+<section id="seal" class="screen seal">
+ <div id="sealContent"></div>
+</section>
+
+<section id="parchment" class="screen">
+ <a class="back" onclick="show('hub');renderHub()">← zpět na přehled</a>
+ <div class="topmark">Osmý fragment</div>
+ <h1 class="title" style="font-size:2.4rem">Ztracený pergamen</h1>
+ <div class="parchment" style="text-align:center;font-size:1.3rem;font-weight:bold;letter-spacing:.05em">KDO PO SETMĚNÍ VĚŘÍ STRÁŽI, LŽE.</div>
+ <img src="assets/pergamen_overlay.png" class="task-img" alt="Propálený pergamen s alchymistickými symboly">
+ <p>Máte-li fyzickou obálku, použijte především oba skutečné kusy. Tohle je jejich digitální záloha.</p>
+ <input id="parchAnswer" class="answer" placeholder="Zadejte rozluštěné slovo">
+ <button class="button" onclick="checkParchment()">Ověřit</button>
+ <div id="parchWrong" class="hint parchment"></div>
+ <div id="parchGood" class="hint panel"><b>Správně.</b><br>Slovo máte. Co znamená, zatím neřešte. Schovejte si ho. Budete ho ještě potřebovat.</div>
+</section>
+
+<section id="ultima" class="screen">
+ <div class="chapter">ULTIMA SIGILLA</div>
+ <h1 class="title" style="font-size:2.35rem">Poslední pečeť. Poslední cesta.<br>Poslední šance nezabloudit.</h1>
+ <div class="final-block">
+ <p>Sedm pečetí je vašich.<br>Sedm míst.<br>Sedm stop.<br>Sedm příběhů.</p>
+ <p><b>A jeden ztracený vzkaz.</b></p>
+ <p>Teď už nejde o to hledat dalšího světce, počítat groše, sledovat stíny ani lézt do štol.</p>
+ <p>Podívejte se na své pečetě.<br>A nezapomeňte na to, co po zloději zůstalo.</p>
+ <p><strong>Čísla určují pořadí.<br>Písmena ukazují cestu.</strong></p>
+ <p>Jestli jste během cesty nelhali, nepočítali jako opilý písař a neztratili polovinu výpravy v některé z kutnohorských uliček, měli byste dostat jméno místa, kde vaše cesta končí.</p>
+ <p>Až ho poznáte — <strong>Jděte TAM.</strong></p>
+ </div>
+ <input id="metaAnswer" class="answer" placeholder="Kam vede poslední stopa?">
+ <button class="button gold" onclick="checkMeta()">Ověřit</button>
+ <div id="metaWrong" class="hint parchment">Ještě ne. Podívejte se znovu na čísla a písmena.</div>
+</section>
+
+<section id="finalgps" class="screen">
+ <div class="topmark">Poslední cesta</div>
+ <h1 class="title" style="font-size:2.4rem">Jděte TAM.</h1>
+ <p class="subtitle">Až budete stát na místě, potvrďte svou polohu.</p>
+ <div class="gps">
+  <button class="button gold" onclick="verifyFinalGPS()">Ověřit, že jsme na místě</button>
+  <div id="finalGpsMsg" style="margin-top:10px"></div>
+ </div>
+</section>
+
+<section id="finale" class="screen">
+ <div class="chapter">IN FOVEA VERITAS</div>
+ <h1 class="title" style="font-size:2.8rem">V díře je pravda.</h1>
+ <div class="final-block">
+ <p>Tak jste dorazili.</p>
+ <p>Do místa, kterému se kdysi říkalo prostě:</p>
+ <h2 style="text-align:center;color:#f0c65a">Díra.</h2>
+ <p>Dnes tu stojí hospoda <b>U Tupouna</b>.</p>
+ <p>A vlastně je to příhodné.</p>
+ <p>Protože poctivý příběh o Kutné Hoře nemůže skončit někde v naleštěném paláci.</p>
+ <p>Musí skončit tam, kde se scházejí lidé, pijí, lžou, chlubí se a občas řeknou pravdu jen proto, že už vypili tolik, že ji nedokážou udržet v sobě.</p>
+ <p>Právě sem vedla poslední stopa.</p>
+ <p>Na stole leží balík.</p>
+ <p>Starý pergamen.<br>Popraskaná kůže.<br>Černý vosk.</p>
+ <p>Na deskách jediné jméno:</p>
+ <h2 style="text-align:center">LIBER PECCATORUM MONTANORUM<br><span style="color:#c99b45">Krvavý grimoár.</span></h2>
+ <p>Našli jste ho.</p><p>Otevřete ho.</p>
+ <p>První stránky jsou plné jmen.</p>
+ <p>Kněží.<br>Havíři.<br>Zvoníci.<br>Alchymisté.<br>Konšelé.<br>Mincíři.<br>Lapkové.</p>
+ <p>Každý někoho podvedl.<br>Každý něco ukradl.<br>Každý něco zatajil.</p>
+ <p>Někteří peníze.<br>Někteří pravdu.<br>Někteří jen poslední korbel někomu, kdo se zrovna nedíval.</p>
+ <p>A pak přichází poslední zápis.</p>
+ <p>Je čerstvý.<br>Inkoust ještě skoro nezaschl.</p>
+ <div class="panel"><b>„Všichni jste prošli městem.<br>Vrtali se v cizích tajemstvích.<br>Četli věci, které jste neměli.<br>Ptali se lidí, kteří nechtěli odpovídat.<br>A nakonec našli tuto knihu.“</b></div>
+ <p>Pod tím je ještě jedna věta:</p>
+ <div class="panel"><b>„Teď už sem patří i vaše jména.“</b></div>
+ <p>No dobře.<br>Možná to byla jen výhrůžka.<br>Možná.</p>
+ <h2 style="text-align:center;color:#e7c459">GRIMOÁR JE VÁŠ</h2>
+ <p>Dokázali jste projít Kutnou Horou, rozlomit sedm pečetí a najít místo, kam vedly všechny stopy.</p>
+ <p>A jestli jste během cesty zjistili alespoň jedno:</p>
+ <h2 style="text-align:center">Město se nečte jen z mapy.</h2>
+ <p>Čte se z domů.<br>Z kamenů.<br>Z příběhů.<br>Z pověstí.<br>Z knih.<br>A někdy také z hospodských zdí.</p>
+ <p>Protože dobrý příběh může začít v knihovně.</p>
+ <p>Ale ten opravdu dobrý často skončí <b>v Díře</b>.</p>
+ <h2 style="text-align:center;color:#e7c459">Tož jděte, darebáci. Dobrodružství skončilo.</h2>
+ <p>Ale abych nezapomněl —</p>
+ <h2 style="text-align:center">rundu platí ten, kdo přišel poslední.</h2>
+ <p style="text-align:center">A přineste mu struhadlo.</p>
+ </div>
+ <div id="resultBox" class="resultbox"></div>
+</section>
+<script>
+const A='assets/';
+const F={
+ radovi:{name:'Řádoví bratři',icon:'fr_radovi.png',quote:'Tvařte se zbožně. Nikdo nemusí vědět, co děláte po setmění.',person:'páter Severinus Nocturnus, správce zpovědí a dozorce nad večerním pořádkem',adv:'Vy znáte své svaté lépe než ostatní. Řadu hledaných znamení otevírá VĚŽ a uzavírá LEBKA.',home:'radovi'},
+ zvonici:{name:'Zvoníci',icon:'fr_zvonici.png',quote:'Poslouchejte víc než mluvte. Nemusíte přece hned všechno vyzvonit.',person:'mistr Jakub Hlahol, tlučhuba a horní zvoník',adv:'První dva zvony volají na milence a havíře.',home:'zvonici'},
+ haviri:{name:'Havíři',icon:'fr_haviri.png',quote:'Nahoře se posmívají, že jste špinaví a hloupí. Dole v dole ale všichni vědí, kdo to město ve skutečnosti živí.',person:'štajgr Prokop Křemen, vrchní krumpáč a správce sklepních chodeb',adv:'Tajné hornické značky: jednou za hru můžete odhalit přesnou polohu jedné běžné lokace.',home:'haviri'},
+ alchymiste:{name:'Alchymisté',icon:'fr_alchymiste.png',quote:'Nevysvětlujte všechno ostatním. Využijte toho, že lidé se nejvíc bojí toho, čemu nerozumějí.',person:'mgr. Ignatius Acidum Fiasco, mistr transmutací a výparů',adv:'Umíte latinsky lépe než většina téhle chátry. Slovo, které hledáte, znamená tajemství.',home:'alchymiste'},
+ konesele:{name:'Konšelé',icon:'fr_konsele.png',quote:'Máte peníze a moc. Nečekejte ale, že vám kdokoli pomůže. Nikdo ve městě vás nemá rád.',person:'šepmistr Korruptus di Kassa, správce městské kasy a dluhů',adv:'Měšec na úplatky: jednou za hru můžete získat nápovědu u úkolu ihned.',home:'konesele'},
+ mincmistri:{name:'Mincmistři',icon:'fr_minciri.png',quote:'Počítejte všechno dvakrát. Každý podezírá, že když se přepočítáte, je to vždycky do vaší kapsy. Tak ať zbytečně neproděláte.',person:'Laurencius Dolar, vážný vážný',adv:'Mincmistrovské oko se málokdy mýlí. Už při prvním pohledu víte, že problém je ve čtvrté várce.',home:'mincmistri'},
+ lapkove:{name:'Lapkové',icon:'fr_lapkove.png',quote:'Držte se stínu a hlídejte si záda. Ve městě jsou jen dva druhy lidí: ti, co vás chtějí okrást, a ti, co vás chtějí pověsit.',person:'Suchý Čert, strážce cizích měšců a plných korbelů',adv:'Jen vy víte, že hledaná ulička leží nedaleko sv. Jakuba a místní jí říkají Ruthardská.',home:'lapkove'}
+};
+const S={
+ radovi:{faction:'Řádoví bratři',emblem:'loc_radovi.png',name:'Jezuitská kolej',gps:[49.9471250,15.2646294],clues:['Řád','Kázeň','Kříže','Kámen','Sochy'],homeText:'Začínáte na místě, kde se řada kamenných světců dívá směrem k chrámu svaté Barbory. Jděte na roh Jezuitské koleje. Hledejte sochy. Ony vám vydají první úkol a možná i pečeť.',code:'T2',seal:'seal_radovi.png',heading:'ORDO, LAPIS ET PECCATUM',task:'order'},
+ zvonici:{faction:'Zvoníci',emblem:'loc_zvonici.png',name:'Chrám sv. Jakuba',gps:[49.9480756,15.2674039],clues:['Věž','Kostel','Zvony','Výška','Mapa'],homeText:'Začínáte u kostela, jehož vysoká věž vládne městu. Hledejte svatého Jakuba.',code:'P4',seal:'seal_zvonici.png',heading:'VOX CAMPANAE, VOX MORTIS',task:'bells'},
+ haviri:{faction:'Havíři',emblem:'loc_haviri.png',name:'Hrádek / České muzeum stříbra',gps:[49.9477361,15.2654717],clues:['Tma','Štola','Mlátek','Stříbro','Muzeum'],homeText:'Začínáte tam, kde se kutnohorské stříbro připomíná nejhlasitěji. Jděte k Hrádku, před České muzeum stříbra.',code:'N7',seal:'seal_haviri.png',heading:'ARGENTUM, TENEBRAE ET LABYRINTHUS',task:'labyrinth'},
+ alchymiste:{faction:'Alchymisté',emblem:'loc_alchymiste.png',name:'Sankturinovský dům',gps:[49.9497917,15.2685242],clues:['Síra','Baňky','Pentagram','Tajemství','Infocentrum'],homeText:'Hledejte dům na hlavním náměstí, kde se podle pověstí mísilo učené poznání, alchymie a pach tiskařské černě. Dnes tam sídlí informační centrum.',code:'U1',seal:'seal_alchymiste.png',heading:'IGNIS FALSA ET VANA SCIENTIA',task:'alchemy'},
+ konesele:{faction:'Konšelé',emblem:'loc_konsele.png',name:'Kamenný dům',gps:[49.9498797,15.2653806],clues:['Kámen','Bohatství','Moc','Zákon','Plán města'],homeText:'Hledejte jeden z nejkrásnějších gotických domů ve městě – palác s bohatě zdobenou kamennou fasádou. Místní mu říkají prostě – Kamenný.',code:'U3',seal:'seal_konsele.png',heading:'PECUNIA, LEX ET MENDACIUM',task:'council'},
+ mincmistri:{faction:'Mincmistři',emblem:'loc_mincmistri.png',name:'Vlašský dvůr',gps:[49.9484506,15.2690364],clues:['Stříbro','Razidlo','Groš','Váha','Prezident'],homeText:'Jděte na místo, kde se z kutnohorského stříbra rodily mince pro celé království – groše. Zastavte se u sochy prezidenta před vchodem.',code:'A8',seal:'seal_mincmistri.png',heading:'ARGENTUM, MONETA ET FRAUS',task:'mint'},
+ lapkove:{faction:'Lapkové',emblem:'loc_lapkove.png',name:'Ruthardtka',gps:[49.9478689,15.2661933],clues:['Stín','Zeď','Úkryt','Špína','Zadní vchod'],homeText:'V noci, kdy zmizel Krvavý grimoár, se ulicemi Kutné Hory neplížili jen purkmistrovi špiclové a městská stráž. Ve stínech se pohybovali i jiní. Ti, kteří znají každou díru v hradbách, každou zadní branku, každý průchod mezi domy a každou uličku, kde člověk zmizí dřív, než stráž stihne zakřičet. Jeden z vašich lidí tvrdí, že v noci zahlédl muže s balíkem pod pláštěm. Běžel. Za ním dva strážní. Před ním úzká ulice mezi vysokými zdmi. Jenom vy víte, kde tuhle uličku hledat. Pak zmizel. Jestli nesl Krvavý grimoár, nikdo neví. Váš člověk neuměl číst. Psát také ne. Ale hlavně nebyl takový trouba, aby u sebe nosil pergamen s názvem místa, kudy právě prchal někdo, koho hledá celé město. Zanechal jen obraz. Nedaleko sv. Jakuba. Místní jí neřeknou jinak než Ruthardská.',code:'U6',seal:'seal_lapkove.png',heading:'UMBRA, FURTUM ET FUGA',task:'ruth'}
+};
+let selected=null,currentStation=null,order=['LEBKA','LEV','VĚDRO S VODOU','VĚŽ','RÝČ'],dragFrom=null;
+const screens=[...document.querySelectorAll('.screen')];
+function show(id){screens.forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0)}
+function state(){try{return JSON.parse(localStorage.getItem('kgState')||'{}')}catch{return {}}}
+function save(s){localStorage.setItem('kgState',JSON.stringify(s))}
+function initState(team,faction){return {team,faction,start:Date.now(),done:{},parchment:false,hints:0,gpsSkips:0,miningUsed:false,bribeUsed:false,homeVisited:false}}
+function norm(s){return (s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]/g,'')}
+function elapsed(ms){let t=Math.max(0,Math.floor(ms/1000)),h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60;return (h?h+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function dist(a,b,c,d){const R=6371000,p=Math.PI/180,x=(d-b)*p*Math.cos((a+c)*p/2),y=(c-a)*p;return Math.sqrt(x*x+y*y)*R}
+function renderFactions(){const box=document.getElementById('factions');box.innerHTML='';Object.entries(F).forEach(([id,f])=>{let b=document.createElement('button');b.className='faction';b.innerHTML=`<img src="${A+f.icon}" alt=""><b>${f.name}</b>`;b.onclick=()=>pickFaction(id,b);box.appendChild(b)})}
+function pickFaction(id,el){selected=id;document.querySelectorAll('.faction').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');document.getElementById('selectedFaction').innerHTML=`Vybrali jste: <b>${F[id].name}</b>`;document.getElementById('teamBox').style.display='block';document.getElementById('teamName').focus()}
+function clearFactionPick(){selected=null;document.getElementById('teamBox').style.display='none';document.querySelectorAll('.faction').forEach(x=>x.classList.remove('selected'))}
+function confirmStart(){const team=document.getElementById('teamName').value.trim();if(!selected||!team)return alert('Nejdřív vyberte frakci a napište název týmu.');save(initState(team,selected));renderProfile();show('profile')}
+function renderProfile(){const s=state(),f=F[s.faction];document.getElementById('profileCard').innerHTML=`<div class="faction-card"><img src="${A+f.icon}"><div><h2>${f.name}</h2><div class="quote">„${f.quote}“</div><div class="attrib">— ${f.person}</div></div></div><div class="eyebrow">Vaše výhoda</div><p>${f.adv}</p>`}
+function renderHub(){const s=state(),f=F[s.faction],done=s.done||{},n=Object.keys(done).length;document.getElementById('hubStatus').innerHTML=`<span>Tým: <b>${s.team||'—'}</b><br>Frakce: <b>${f?.name||'—'}</b></span><span class="progress">${n}/7 pečetí<br><span class="timer" id="timer">${elapsed(Date.now()-(s.start||Date.now()))}</span></span>`;document.getElementById('hubProfile').innerHTML=`<div class="quote">„${f.quote}“</div><div class="attrib">— ${f.person}</div><div class="eyebrow">Výhoda</div><div>${f.adv}</div>`;const g=document.getElementById('hubGrid');g.innerHTML='';let p=document.createElement('button');p.className='parch-card';p.innerHTML=`<strong>ZTRACENÝ PERGAMEN</strong><br>${s.parchment?'VYŘEŠENO — OPĚT':'NEVYŘEŠENO — můžete se k němu kdykoli vrátit'}`;p.onclick=()=>show('parchment');g.appendChild(p);Object.entries(S).forEach(([id,st])=>{let b=document.createElement('button');b.className='place'+(done[id]?' done':'');b.innerHTML=`<img src="${A+st.emblem}" alt=""><b>Stopa: ${st.faction}</b><span class="codebadge">${done[id]||''}</span>`;b.onclick=()=>openStation(id,false);g.appendChild(b)});if(n===7&&s.parchment){let u=document.createElement('button');u.className='parch-card';u.innerHTML='<strong>ULTIMA SIGILLA</strong><br>Všechny fragmenty jsou vaše. Poslední cesta je otevřena.';u.onclick=()=>show('ultima');g.prepend(u)}}
+setInterval(()=>{const e=document.getElementById('timer'),s=state();if(e&&s.start&&!s.end)e.textContent=elapsed(Date.now()-s.start)},1000);
+function openHome(){const s=state();currentStation=s.faction;s.homeVisited=true;save(s);openStation(currentStation,true)}
+function openStation(id,isHome){currentStation=id;const s=state(),st=S[id];let html=`<div class="topmark">Stopa ${st.faction}</div><div class="nav-hero"><img src="${A+st.emblem}" alt=""></div>`;if(id==='lapkove'){html+=`<div class="panel"><p>${s.faction==='lapkove'?st.homeText:`V noci, kdy zmizel <b>Krvavý grimoár</b>, se ulicemi Kutné Hory neplížili jen purkmistrovi špiclové a městská stráž. Ve stínech se pohybovali i jiní. Ti, kteří znají každou díru v hradbách, každou zadní branku, každý průchod mezi domy a každou uličku, kde člověk zmizí dřív, než stráž stihne zakřičet.</p><div class="five">${st.clues.map(x=>`<span>${x}</span>`).join('')}</div><p>Jeden z vašich lidí tvrdí, že v noci zahlédl muže s balíkem pod pláštěm. Běžel. Za ním dva strážní. Před ním úzká ulice mezi vysokými zdmi. Pak zmizel. Jestli nesl <b>Krvavý grimoár</b>, nikdo neví. Váš člověk neuměl číst. Psát také ne. Ale hlavně nebyl takový trouba, aby u sebe nosil pergamen s názvem místa, kudy právě prchal někdo, koho hledá celé město. Zanechal jen <b>obraz</b>.`}</p></div><img class="task-img" src="${A}ruthardtka_photo.png" alt="Obraz hledaného místa"><p><b>Najděte místo z fotografie.</b> Nic víc nedostanete. Žádnou mapu. Žádnou šipku.</p>`}else if(s.faction===id&&!s.done?.[id]){html+=`<div class="panel"><p>${st.homeText}</p></div>`}else{html+=`<p class="subtitle">Poznejte místo podle obrazu a pěti stop. Název lokace vám hra předem neprozradí.</p><div class="five">${st.clues.map(x=>`<span>${x}</span>`).join('')}</div>`;if(s.faction==='haviri'&&!s.miningUsed){html+=miningBlock(id)}}
+html+=`<div class="gps"><b>Jste na místě?</b><button class="button gold" onclick="verifyGPS('${id}')">Ověřit GPS</button><div id="gpsMsg"></div>${id!=='lapkove'?`<button class="button ghost" onclick="skipGPS('${id}')">GPS stávkuje? Pokračovat k úkolu.</button>`:''}<div class="smallnote">Pokud máte hru otevřenou uvnitř Messengeru, otevřete ji raději v Chrome nebo Safari.</div></div>`;document.getElementById('navContent').innerHTML=html;show('nav')}
+function miningBlock(id){return `<div class="advantage"><strong>TAJNÉ HORNICKÉ ZNAČKY</strong><br>Jednou za hru můžete odhalit přesnou polohu této lokace.<button class="button small gold" onclick="useMining('${id}')">Použít výhodu</button></div>`}
+function useMining(id){let s=state();if(s.miningUsed)return;s.miningUsed=true;save(s);const st=S[id];document.getElementById('gpsMsg').innerHTML=`<div class="parchment"><b>Hornické značky promluvily.</b><br>Přesná poloha: ${st.gps[0].toFixed(6)}, ${st.gps[1].toFixed(6)}</div>`}
+function verifyGPS(id){const st=S[id],m=document.getElementById('gpsMsg');if(!navigator.geolocation){m.textContent='Tento prohlížeč GPS nepodporuje.';return}m.textContent='Ověřuji polohu…';navigator.geolocation.getCurrentPosition(p=>{const d=dist(p.coords.latitude,p.coords.longitude,st.gps[0],st.gps[1]);if(d<=20){gpsSuccess(id)}else m.innerHTML=`Ještě nejste správně. Od cíle jste přibližně <b>${Math.round(d)} m</b>.`},e=>m.textContent='Polohu se nepodařilo načíst. Zkontrolujte oprávnění pro GPS.',{enableHighAccuracy:true,timeout:12000,maximumAge:5000})}
+function skipGPS(id){let s=state();s.gpsSkips=(s.gpsSkips||0)+1;save(s);gpsSuccess(id,true)}
+function gpsSuccess(id,skipped=false){const st=S[id];document.getElementById('gpsOkContent').innerHTML=`<div class="topmark">${st.faction}</div><img src="${A+st.emblem}" alt=""><h1 class="title" style="font-size:2.3rem">${st.name}</h1><div class="panel"><b>Jste správně.</b>${skipped?'<br><span class="smallnote">GPS kontrola byla přeskočena.</span>':''}</div><button class="button gold" onclick="renderTask('${id}')">K úkolu</button>`;show('gpsok')}
+function renderTask(id){currentStation=id;const st=S[id],s=state();let h=`<div class="chapter">${st.heading}</div>`;if(s.faction==='konesele'&&!s.bribeUsed)h+=bribeBlock(id);if(st.task==='order')h+=taskOrder();if(st.task==='bells')h+=taskBells();if(st.task==='labyrinth')h+=taskLabyrinth();if(st.task==='alchemy')h+=taskAlchemy();if(st.task==='council')h+=taskCouncil();if(st.task==='mint')h+=taskMint();if(st.task==='ruth')h+=taskRuth();document.getElementById('taskContent').innerHTML=h;if(st.task==='order')renderOrder();show('task')}
+function bribeBlock(id){return `<div class="advantage"><strong>MĚŠEC NA ÚPLATKY</strong><br>Městská pokladna je hlubší než svědomí konšela. Jednou za hru můžete získat nápovědu ihned.<button class="button small gold" onclick="useBribe('${id}')">Použít měšec</button></div>`}
+function useBribe(id){let s=state();if(s.bribeUsed)return;s.bribeUsed=true;s.hints=(s.hints||0)+1;save(s);renderTask(id);setTimeout(()=>{const h=document.getElementById('stationHint');if(h){h.classList.add('show');h.scrollIntoView({behavior:'smooth'})}},10)}
+function taskOrder(){return `<h2>Kamenní světci</h2><p>Najděte pět znamení: <b>LEBKA, LEV, VĚDRO S VODOU, VĚŽ, RÝČ.</b> Seřaďte je v pořadí, v jakém je míjíte směrem ke svaté Barboře.</p><ul id="order" class="order"></ul><button class="button" onclick="checkOrder()">Ověřit pořadí</button><div id="stationHint" class="hint parchment">Najděte sochu Ignáce z Loyoly. Číslo je počet dospělých žen po jeho boku. Písmeno je první písmeno pětipísmenného slova končícího na „-ORIS“ v posledním řádku nápisu.</div>`}
+function renderOrder(){const ul=document.getElementById('order');if(!ul)return;ul.innerHTML='';order.forEach((x,i)=>{const li=document.createElement('li');li.draggable=true;li.dataset.i=i;li.innerHTML=`<b>☰ &nbsp; ${x}</b><span class="arrows"><button onclick="moveOrder(${i},-1);event.stopPropagation()">▲</button><button onclick="moveOrder(${i},1);event.stopPropagation()">▼</button></span>`;li.ondragstart=()=>{dragFrom=i;li.classList.add('dragging')};li.ondragend=()=>li.classList.remove('dragging');li.ondragover=e=>e.preventDefault();li.ondrop=e=>{e.preventDefault();reorder(dragFrom,i)};li.onpointerdown=e=>pointerOrder(e,li);ul.appendChild(li)})}
+function moveOrder(i,d){const j=i+d;if(j<0||j>=order.length)return;[order[i],order[j]]=[order[j],order[i]];renderOrder()}
+function reorder(a,b){if(a==null||a===b)return;const [v]=order.splice(a,1);order.splice(b,0,v);dragFrom=null;renderOrder()}
+function pointerOrder(e,li){if(e.target.tagName==='BUTTON')return;let from=+li.dataset.i;li.setPointerCapture(e.pointerId);li.classList.add('dragging');li.onpointermove=ev=>{const els=[...document.querySelectorAll('#order li')];const t=els.findIndex(el=>{let r=el.getBoundingClientRect();return ev.clientY>=r.top&&ev.clientY<=r.bottom});if(t>=0&&t!==from){reorder(from,t);from=t}};li.onpointerup=()=>document.querySelectorAll('#order li').forEach(x=>x.classList.remove('dragging'))}
+function checkOrder(){const c=['VĚŽ','RÝČ','LEV','VĚDRO S VODOU','LEBKA'];if(order.every((v,i)=>v===c[i]))successStation('radovi',`<p>Kamenní svatí promluvili. Ne slovy. Znameními.</p><p><b>Věž. Rýč. Lev. Vědro s vodou. Lebka.</b></p><p>Umberto Eco v <i>Jménu růže</i> nechává Viléma z Baskervillu číst svět jako soustavu znamení. Tady jste právě udělali totéž.</p><p class="quote">Znamení jsou všude. Jen hlupák čeká, že pravda bude napsána velkými písmeny.</p>`);else wrongHint()}
+function taskBells(){return `<h2>Zvon. Hlas. Smrt.</h2><p>Jiří Orten, rodák z Kutné Hory, v básni <i>Svatý Jakub</i> nechává zvony volat:</p><div class="parchment">„Na milence a na havíře, na zbloudilé a na mrtvé…“</div><p>Přiřaďte znamením čísla:<br>ZBLOUDILÍ = 1 · MILENCI = 2 · MRTVÍ = 3 · HAVÍŘI = 4</p><input id="ans" class="answer" inputmode="numeric" placeholder="Čtyřmístný kód"><button class="button" onclick="checkSimple('zvonici','2413')">Ověřit</button><div id="stationHint" class="hint parchment">Soustřeďte se na pořadí slov ve verši: milence → havíře → zbloudilé → mrtvé.</div>`}
+function taskLabyrinth(){return `<h2>Důlní bludiště</h2><p>Najděte cestu od štoly sv. Jiří k havíři. Po cestě sbírejte písmena v pořadí, v jakém je míjíte. Písmena ve slepých chodbách nepatří k řešení.</p><img src="${A}labyrinth.png" class="task-img" alt="Důlní bludiště"><input id="ans" class="answer" placeholder="Slovo z cesty"><button class="button" onclick="checkSimple('haviri','KUTNA')">Ověřit</button><div id="stationHint" class="hint parchment">Hledejte jedinou cestu, která skutečně vede od štoly sv. Jiří k havíři. Písmena ze slepých chodeb ignorujte.</div>`}
+function taskAlchemy(){return `<h2>Tajemství, které nechce být vidět</h2><p>Podívejte se na obraz. Když se vám podaří zaostřit jinak než obvykle, vydá vám latinské slovo.</p><img src="${A}stereogram.jpg" class="task-img" alt="Stereogram"><p>Pak použijte alchymistická čísla <b>3 – 4 – 7</b>.</p><input id="ans" class="answer" placeholder="Výsledek"><button class="button" onclick="checkSimple('alchymiste','CAM')">Ověřit</button><div id="stationHint" class="hint parchment">Pokud stereogram odmítá spolupracovat, najděte encykliku papeže Lva XIII. z roku 1880 o manželství. Její název začíná slovem <b>Arcanum</b>. Pak použijte 3 – 4 – 7.</div>`}
+function taskCouncil(){return `<h2>Městská kasa</h2><p>Pět mužů, pět funkcí, pět částek. Kdo si odnesl nejvíc?</p><div class="parchment">Osoby: Vaněk, Matěj, Smil, Mikuláš, Beneš.<br>Funkce: purkmistr, rychtář, městský písař, výběrčí cla, správce městské pokladny.<br>Částky: 100, 200, 300, 400, 500 grošů.<hr>1. Správce pokladny vzal o 100 víc než purkmistr.<br>2. Purkmistr o 100 víc než rychtář.<br>3. Výběrčí cla přesně dvojnásobek písaře.<br>4. Matěj méně než Smil, ale více než Vaněk.<br>5. Beneš více než Mikuláš.<br>6. Mikuláš není rychtář.<br>7. Smil není purkmistr ani správce pokladny.</div><input id="ans" class="answer" placeholder="Jméno"><button class="button" onclick="checkSimple('konesele','BENES')">Ověřit</button><div id="stationHint" class="hint parchment">Začněte částkami. Řetězec správce pokladny → purkmistr → rychtář musí klesat vždy o 100. Výběrčí cla má přesně dvojnásobek písaře.</div>`}
+function taskMint(){return `<h2>Ošizená várka</h2><p>Kde jsou peníze, tam se dříve či později objeví někdo, kdo dostane geniální nápad: „Co kdybychom tam dali méně stříbra a nikomu to neřekli?“</p><p><b>Pravidlo hry:</b> příměs smí tvořit přesně jednu desetinu celé směsi.</p><div class="parchment">Pondělí: 45 stříbra + 5 příměsi<br>Úterý: 72 + 8<br>Středa: 63 + 7<br>Čtvrtek: 49 + 6<br>Pátek: 81 + 9</div><input id="ans" class="answer" placeholder="Který den?"><button class="button" onclick="checkSimple('mincmistri','CTVRTEK')">Ověřit</button><div id="stationHint" class="hint parchment">Sečtěte stříbro a příměs. Příměs musí být přesně jedna desetina výsledné směsi.</div>`}
+function taskRuth(){return `<h2>Stín, krádež a útěk</h2><p>Samotné nalezení místa bylo úkolem. Ruthardtka vás pustila dál.</p><p>Ve světě lapků a básníků se potkává Kutná Hora s Françoisem Villonem: ne každý básník sedí u psacího stolu. Někteří předtím, než vymyslí rým, musí utéct strážím.</p><p class="quote">Kdo se umí ztratit v stínu, často přežije déle než ten, kdo v světle stojí.</p><button class="button gold" onclick="successStation('lapkove','')">Zlomit pečeť</button>`}
+function wrongHint(){let s=state();s.hints=(s.hints||0)+1;save(s);const h=document.getElementById('stationHint');if(h)h.classList.add('show')}
+function checkSimple(id,answer){const v=norm(document.getElementById('ans').value);if(v===answer){let extra='';if(id==='zvonici')extra=`<p><b>2413.</b> Ortenův svatý Jakub promluvil pořadím zvonů.</p><p>Odehrává se <i>Záhada hlavolamu</i> v Kutné Hoře? A co na to Jan Tleskač?</p><p>Ne — neodehrává. Ale svatý Jakub má zjevně zvláštní talent přitahovat zvoníky, tajemství a pády z výšky.</p>`;if(id==='haviri')extra=`<p><b>KUTNÁ.</b> To, co jste si odnesli z hlubin, vás dovedlo ven.</p><p>Jules Verne poslal profesora Lidenbrocka do středu Země. Vy jste se z podzemí vrátili o něco dřív.</p><p class="quote">Stříbro se rodí ve tmě. A někdy v ní zůstane i člověk.</p>`;if(id==='alchymiste')extra=`<p><b>ARCANUM → 3, 4, 7 → CAM.</b></p><p>Slovo <i>arcanum</i> znamená tajemství. Robert Langdon by se v pražském <i>Tajemství všech tajemství</i> cítil jako doma.</p>`;if(id==='konesele')extra=`<p><b>Beneš</b> — správce pokladny — odnesl 500 grošů.</p><p>Kafka by k tomu možná nepotřeboval ani proces. Stačila by městská rada.</p>`;if(id==='mincmistri')extra=`<p><b>Čtvrtek.</b> 49 + 6 = 55 a šest není jedna desetina z 55.</p><p>Harpagon z Molièrova <i>Lakomce</i> by se ve Vlašském dvoře cítil jako doma.</p><p>Tady měl každý groš svou hodnotu. <b>A každý člověk svou cenu.</b></p>`;successStation(id,extra)}else wrongHint()}
+function successStation(id,extra){document.getElementById('taskContent').innerHTML=`<div class="chapter">${S[id].heading}</div><h2>Správně.</h2>${extra}<button class="button gold" onclick="breakSeal('${id}')">Zlomit pečeť</button>`}
+function breakSeal(id){let s=state();s.done=s.done||{};s.done[id]=S[id].code;save(s);document.getElementById('sealContent').innerHTML=`<div class="topmark">Pečeť získána</div><h1 class="title" style="font-size:2.2rem">Pečeť ${S[id].faction.toLowerCase()} byla rozlomena.</h1><img src="${A+S[id].seal}" alt=""><div class="code">${S[id].code}</div><button class="button gold" onclick="show('hub');renderHub()">Na rozcestník</button>`;show('seal')}
+function checkParchment(){const v=norm(document.getElementById('parchAnswer').value);if(v==='OPET'){let s=state();s.parchment=true;save(s);document.getElementById('parchWrong').classList.remove('show');document.getElementById('parchGood').classList.add('show')}else{let s=state();s.hints=(s.hints||0)+1;save(s);const w=document.getElementById('parchWrong');w.innerHTML='Věta má právě tolik písmen, kolik je polí v čtverci <b>5 × 5</b>.<br><b>Dejte znamením správný řád.</b><br>Teprve pak odhalí propálený pergamen to, co mělo zůstat skryto.<br><b>Až ho přiložíte, nezapomeňte, že slunce vždy stojí nahoře.</b>';w.classList.add('show')}}
+function checkMeta(){const v=norm(document.getElementById('metaAnswer').value);if(v==='UTUPOUNA'||v==='TUPOUNA'){document.getElementById('metaWrong').classList.remove('show');show('finalgps')}else document.getElementById('metaWrong').classList.add('show')}
+function verifyFinalGPS(){const target=[49.9487667,15.2728083],m=document.getElementById('finalGpsMsg');if(!navigator.geolocation){m.textContent='Tento prohlížeč GPS nepodporuje.';return}m.textContent='Ověřuji…';navigator.geolocation.getCurrentPosition(p=>{const d=dist(p.coords.latitude,p.coords.longitude,target[0],target[1]);if(d<=25){let s=state();s.end=Date.now();save(s);renderFinalResult();show('finale')}else m.innerHTML=`Ještě ne. Od posledního místa jste přibližně <b>${Math.round(d)} m</b>.`},e=>m.textContent='GPS se nepodařilo načíst. Otevřete hru v Chrome nebo Safari a povolte polohu.',{enableHighAccuracy:true,timeout:12000,maximumAge:5000})}
+function renderFinalResult(){const s=state(),f=F[s.faction],time=elapsed((s.end||Date.now())-s.start);document.getElementById('resultBox').innerHTML=`<b>Výsledek týmu</b><br>Tým: <b>${s.team}</b><br>Frakce: <b>${f.name}</b><br>Čas: <b>${time}</b><br>Nápovědy: <b>${s.hints||0}</b><br>Přeskočené GPS kontroly: <b>${s.gpsSkips||0}</b>`}
+renderFactions();
+const existing=state();if(existing.faction&&existing.team){renderProfile();renderHub()}
+</script>
+</body></html>
