@@ -22,8 +22,9 @@ button{touch-action:manipulation}
 .screen{display:none;padding:24px 16px 56px;min-height:100vh}
 .screen.active{display:block}
 .hero{padding:0;background:#060403;min-height:100vh}
-.hero-art{position:relative;width:100%}
+.hero-art{position:relative;width:100%;margin:0 auto}
 .hero-art img{display:block;width:100%;height:auto}
+@media(min-width:700px){.hero-art{width:min(100%,calc((100vh - 56px) * .5628))}}
 .hero-hotspot{position:absolute;left:20.5%;top:84.1%;width:59%;height:7.7%;border:0;background:transparent;cursor:pointer;border-radius:6px;touch-action:manipulation}
 .hero-hotspot:hover,.hero-hotspot:focus-visible{outline:2px solid rgba(240,207,120,.72);outline-offset:-3px;box-shadow:0 0 28px rgba(178,42,34,.48),inset 0 0 22px rgba(240,207,120,.12)}
 .age{font-size:.78rem;text-align:center;color:#ddc897;margin:0;padding:10px 12px 18px;background:#060403}
@@ -169,7 +170,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 
 .lightbox{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.94);padding:22px;align-items:center;justify-content:center}.lightbox.show{display:flex}.lightbox img{max-width:96vw;max-height:90vh;object-fit:contain}.lightbox-close{position:absolute;right:18px;top:12px;background:#140c08;color:#f0d69b;border:1px solid #86602b;width:46px;height:46px;font-size:2rem}.image-zoom{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
 
-html[data-test-mode="1"] body::before{content:"TEST MODE";position:fixed;right:8px;top:8px;z-index:9999;background:#5b170f;color:#f0c65a;border:1px solid #b88a2b;padding:5px 8px;font:700 11px Georgia,serif;letter-spacing:.08em;opacity:.9;pointer-events:none}
+html[data-test-mode="1"] body::after{content:"TEST MODE";position:fixed;right:8px;top:8px;z-index:9999;background:#5b170f;color:#f0c65a;border:1px solid #b88a2b;padding:5px 8px;font:700 11px Georgia,serif;letter-spacing:.08em;opacity:.9;pointer-events:none;mix-blend-mode:normal}
 </style>
 </head>
 <body><main class="app">
