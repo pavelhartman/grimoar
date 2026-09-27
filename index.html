@@ -171,9 +171,11 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 .lightbox{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.94);padding:22px;align-items:center;justify-content:center}.lightbox.show{display:flex}.lightbox img{max-width:96vw;max-height:90vh;object-fit:contain}.lightbox-close{position:absolute;right:18px;top:12px;background:#140c08;color:#f0d69b;border:1px solid #86602b;width:46px;height:46px;font-size:2rem}.image-zoom{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
 
 html[data-test-mode="1"] body::after{content:"TEST MODE";position:fixed;right:8px;top:8px;z-index:9999;background:#5b170f;color:#f0c65a;border:1px solid #b88a2b;padding:5px 8px;font:700 11px Georgia,serif;letter-spacing:.08em;opacity:.9;pointer-events:none;mix-blend-mode:normal}
+.test-finale-shortcut{display:none;position:fixed;right:8px;top:38px;z-index:9999;background:#120b08;color:#f0c65a;border:1px solid #b88a2b;padding:7px 9px;font:700 11px Georgia,serif;letter-spacing:.04em;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+html[data-test-mode="1"] .test-finale-shortcut{display:block}
 </style>
 </head>
-<body><main class="app">
+<body><button id="testFinaleShortcut" class="test-finale-shortcut" type="button" onclick="testUnlockFinale()">TEST: ODEMKNOUT FINÁLE</button><main class="app">
 <section id="title" class="screen hero active">
  <div class="hero-art">
   <img src="assets/title.webp" alt="Krvavý grimoár a sedm pečetí">
@@ -479,7 +481,7 @@ function successStation(id,extra){document.getElementById('taskContent').innerHT
 function breakSeal(id){let s=state();s.done=s.done||{};s.done[id]=S[id].code;s.pendingSeal=id;save(s);renderSeal(id);show('seal')}
 function renderSeal(id){document.getElementById('sealContent').innerHTML=`<div class="topmark">Pečeť získána</div><h1 class="title" style="font-size:2.2rem">Pečeť byla rozlomena.</h1><img src="${A+S[id].seal}" alt="Rozlomená pečeť"><div class="code">${S[id].code}</div><button class="button gold" onclick="goHub()">Na rozcestník</button>`}
 function allFragmentsReady(s=state()){return Object.keys(s.done||{}).length===7&&!!s.parchment}
-function renderUltimaFragments(){const el=document.getElementById('ultimaFragments');if(!el)return;const s=state(),ordered=[['alchymiste','U1'],['radovi','T2'],['konesele','U3'],['zvonici','P4'],['parchment','OPĚT'],['lapkove','U6'],['haviri','N7'],['mincmistri','A8']];el.innerHTML=ordered.map(([id,code])=>`<div class="fragment ${id==='parchment'?'parch':''}">${code}</div>`).join('')}
+function renderUltimaFragments(){const el=document.getElementById('ultimaFragments');if(!el)return;const ordered=[['radovi','T2'],['zvonici','P4'],['haviri','N7'],['alchymiste','U1'],['mincmistri','A8'],['konesele','U3'],['lapkove','U6'],['parchment','OPĚT']];el.innerHTML=ordered.map(([id,code])=>`<div class="fragment ${id==='parchment'?'parch':''}">${code}</div>`).join('')}
 function enterUltima(){const s=state();if(!allFragmentsReady(s))return;renderUltimaFragments();show('ultima')}
 function goHub(){let s=state();s.pendingSeal=null;save(s);if(allFragmentsReady(s)){enterUltima();return}renderHub();show('hub')}
 function openParchment(origin='hub'){let s=state();s.parchOrigin=origin;save(s);show('parchment');if(s.parchment)document.getElementById('parchGood').classList.add('show')}
@@ -488,6 +490,7 @@ function showParchHint(){let s=state();if(!s.parchHintUsed){addPenalty('hint1',3
 function checkParchment(){const i=document.getElementById('parchAnswer'),v=norm(i.value);if(v==='OPET'){let s=state();s.parchment=true;save(s);document.getElementById('parchWrong').classList.remove('show');document.getElementById('parchGood').classList.add('show');if(allFragmentsReady(s))setTimeout(()=>enterUltima(),700)}else{if(i){i.value='';i.focus()}}}
 function checkMeta(){const v=norm(document.getElementById('metaAnswer').value);if(v==='UTUPOUNA'||v==='TUPOUNA'){document.getElementById('metaWrong').classList.remove('show');show('finalgps')}else document.getElementById('metaWrong').classList.add('show')}
 const TEST_MODE=(window.__KG_TEST_MODE__===true)||new URLSearchParams(location.search).get('test')==='1';
+function testUnlockFinale(){if(!TEST_MODE)return;let s=state();if(!(s.team&&s.faction&&s.start)){alert('Nejdřív vyberte frakci, pojmenujte tým a spusťte hru.');return}s.done={...(s.done||{}),radovi:'T2',zvonici:'P4',haviri:'N7',alchymiste:'U1',mincmistri:'A8',konesele:'U3',lapkove:'U6'};s.parchment=true;s.pendingSeal=null;s.currentStation=null;s.current='ultima';save(s);renderHub();renderUltimaFragments();show('ultima')}
 function finishFinalGPS(){let s=state();if(!s.end)s.end=Date.now();save(s);renderFinalResult();show('finale')}
 function simulateFinalGPS(){if(!TEST_MODE)return;const m=document.getElementById('finalGpsMsg');if(m)m.innerHTML='<b>TEST:</b> Správná poloha nasimulována.';setTimeout(finishFinalGPS,250)}
 function verifyFinalGPS(){const target=[49.9487667,15.2728083],m=document.getElementById('finalGpsMsg');if(!navigator.geolocation){m.textContent='Tento prohlížeč GPS nepodporuje.';return}m.textContent='Ověřuji…';navigator.geolocation.getCurrentPosition(p=>{const d=dist(p.coords.latitude,p.coords.longitude,target[0],target[1]);if(d<=25){finishFinalGPS()}else m.innerHTML=`<b>JEŠTĚ NEJSTE TAM.</b><br>U <b>T------A</b> se místní chátra scházela od nepaměti.<br>Jestli jste to ještě nepochopili, přestaňte mudrovat a <b>běžte rovnou TAM</b>.<br><span class="smallnote">Od cíle jste přibližně ${Math.round(d)} m.</span>`},e=>m.textContent='GPS se nepodařilo načíst. Otevřete hru v Chrome nebo Safari a povolte polohu.',{enableHighAccuracy:true,timeout:12000,maximumAge:5000})}
