@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0c0806">
-<title>Krvavý grimoár a sedm pečetí — v8 graphic</title>
+<title>Krvavý grimoár a sedm pečetí — v9 visual</title>
 <style>
 :root{
   --bg:#090604;--bg2:#140d09;--panel:#120c09;--panel2:#1e120d;
@@ -264,6 +264,99 @@ body{
   .clue-strip{font-size:.82rem}
 }
 
+
+/* === v9 VISUAL: approved mockups are now real assets, not only CSS inspiration === */
+.screen-art-header{display:block;width:100%;max-width:760px;height:auto;margin:0 auto 18px;border:1px solid #7a5126;box-shadow:0 18px 40px #000b}
+#legend{padding-top:0}
+#hub{padding-top:0}
+#ultima{padding-top:0}
+
+/* Confirmation screen uses the approved faction artwork as the actual visual layer.
+   Only the editable team name and click targets remain live HTML. */
+#confirm{padding:0;background:#050302}
+.confirm-shell.confirm-art-shell{max-width:760px;margin:0 auto;padding:0}
+.confirm-art-wrap{position:relative;width:100%;margin:0 auto;background:#050302;box-shadow:0 24px 60px #000c}
+.confirm-art-wrap>img{display:block;width:100%;height:auto}
+.confirm-live-input{position:absolute;left:14.8%;top:57.65%;width:70.4%;height:5.25%;margin:0;padding:0 2.8%;border:1px solid #bc8735;background:#090604;color:#f4e3b7;font-family:Georgia,"Times New Roman",serif;font-size:clamp(.9rem,3.2vw,1.35rem);box-shadow:inset 0 0 18px #000;border-radius:2px;z-index:3}
+.confirm-live-input::placeholder{color:#b9a98c;opacity:.9}
+.confirm-art-hotspot{position:absolute;left:13%;width:74%;border:0;background:transparent;cursor:pointer;z-index:4;border-radius:5px}
+.confirm-art-hotspot.confirm-go{top:71.55%;height:7.35%}
+.confirm-art-hotspot.confirm-back{top:80.65%;height:6.1%;left:22%;width:56%}
+.confirm-art-hotspot:hover,.confirm-art-hotspot:focus-visible{outline:2px solid rgba(245,207,104,.82);outline-offset:-3px;box-shadow:0 0 28px rgba(190,32,24,.46),inset 0 0 25px rgba(255,218,122,.12)}
+.confirm-mobile-back{display:none}
+
+/* Make live content feel like the approved illuminated manuscript screens. */
+.profile-shell,.task-panel,.gps,.seal-stage,.resultbox,.ultima-sheet{border-width:1px;box-shadow:0 18px 42px #000a,inset 0 0 0 4px #080403,inset 0 0 0 5px rgba(209,156,61,.16)}
+.profile-shell{background:radial-gradient(circle at 50% 22%,rgba(136,19,15,.4),transparent 22rem),linear-gradient(180deg,#160b08,#050302 78%)}
+.profile-shell:before{inset:10px;border-color:rgba(228,179,73,.28)}
+.profile-name{font-size:clamp(2.4rem,9vw,4rem);text-shadow:0 3px 0 #4b210d,0 10px 28px #000}
+.profile-crest{width:min(84vw,430px)}
+.profile-section{border:1px solid #98662d;background:linear-gradient(135deg,#e6cd98,#b9824c);box-shadow:0 14px 28px #0009}
+.profile-section .eyebrow{font-size:1.05rem}
+.profile-quote{font-size:clamp(1.14rem,4.1vw,1.45rem)}
+
+/* Hub = approved 2-column mobile board with strong card frames. */
+#hub .status{margin-top:4px}
+.hub-grid{max-width:760px;margin:0 auto}
+.location-card{background:#070403;border-color:#c18a31}
+.location-card img{padding:3px;background:radial-gradient(circle,#28110d 0,#080403 68%)}
+.parch-card{background:linear-gradient(100deg,#24100b,#5b130f 55%,#160806);border-color:#c48a31}
+
+/* GPS and task screens: larger art, quieter chrome. */
+.nav-hero{max-width:650px}.nav-hero img{width:min(620px,100%)}
+#nav .five span{font-size:clamp(.78rem,3vw,.98rem)}
+#taskContent>.chapter{font-size:clamp(1.75rem,7vw,2.7rem)}
+
+@media(max-width:560px){
+  #confirm{padding:0}
+  .confirm-live-input{left:14.4%;width:71.2%;top:57.7%;height:5.35%;font-size:4.1vw}
+  .screen-art-header{border-left:0;border-right:0}
+}
+
+
+/* === V10 FACTION BLOCK: approved visual language === */
+#confirm{background:#050302;padding:0}
+.confirm-shell.confirm-art-shell{max-width:760px;margin:0 auto;padding:0}
+.confirm-art-wrap{position:relative;width:100%;background:#050302;box-shadow:0 24px 70px #000d}
+.confirm-art-wrap>img{display:block;width:100%;height:auto}
+.confirm-live-input{position:absolute;left:14.3%;top:57.1%;width:71.4%;height:5.7%;box-sizing:border-box;padding:0 2.7%;border:1.5px solid #c99942;background:#090604;color:#f4e3b7;font-family:Georgia,"Times New Roman",serif;font-size:clamp(.9rem,3.15vw,1.38rem);box-shadow:inset 0 0 22px #000,0 0 0 2px rgba(0,0,0,.4);border-radius:2px;z-index:5}
+.confirm-live-input::placeholder{color:#bfb095;opacity:.9}
+.confirm-art-hotspot{position:absolute;border:0;background:transparent;cursor:pointer;z-index:6;border-radius:5px}
+.confirm-art-hotspot.confirm-go{left:11.5%;top:70.3%;width:77%;height:7.5%}
+.confirm-art-hotspot.confirm-back{left:21%;top:78.8%;width:58%;height:6.3%}
+.confirm-art-hotspot:hover,.confirm-art-hotspot:focus-visible{outline:2px solid rgba(247,211,113,.86);outline-offset:-3px;box-shadow:0 0 30px rgba(194,30,24,.5),inset 0 0 24px rgba(255,220,120,.13)}
+
+.faction-profile-screen{padding-top:0;background:#050302}
+.profile-gothic{position:relative;max-width:760px;margin:0 auto;overflow:hidden;min-height:100vh;padding:34px 8.5% 58px;background:#070403 url('assets/profile_frame.webp') center top/100% 100% no-repeat;box-shadow:0 24px 70px #000e;color:#ecd9ad;text-align:center}
+.profile-gothic:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 27%,rgba(133,17,14,.34),transparent 26%),linear-gradient(180deg,transparent 0 70%,rgba(0,0,0,.25));pointer-events:none}
+.profile-gothic>*{position:relative;z-index:1}
+.profile-brand{font-family:Georgia,"Times New Roman",serif;color:#d9b566;letter-spacing:.12em;font-size:clamp(.82rem,2.7vw,1.02rem);font-variant:small-caps;margin:0 0 20px;text-shadow:0 2px 7px #000}
+.profile-brand span{display:block;letter-spacing:.28em;font-size:.72em;margin-top:3px;color:#c49c55}
+.profile-kicker{display:inline-block;padding:4px 18px 6px;border-top:1px solid #9f742f;border-bottom:1px solid #7f1b16;color:#e1c57f;letter-spacing:.14em;font-size:.76rem;font-weight:700;text-transform:uppercase}
+.profile-name{font-family:Georgia,"Times New Roman",serif;text-transform:uppercase;color:#f2d28b;font-size:clamp(2.45rem,9.5vw,4.35rem);line-height:.98;margin:14px 0 16px;text-shadow:0 3px 0 #4d1c0d,0 9px 28px #000}
+.profile-name:after{content:"";display:block;width:46%;height:3px;margin:14px auto 0;background:linear-gradient(90deg,transparent,#9f1c17,#d7a346,#9f1c17,transparent)}
+.profile-emblem-wrap{width:min(76vw,430px);aspect-ratio:1;margin:0 auto 14px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle,#54100d 0 30%,#170706 64%,transparent 66%);box-shadow:0 0 0 1px rgba(218,165,63,.35),0 0 42px rgba(137,18,14,.24),inset 0 0 30px #000}
+.profile-crest{width:91%;height:91%;object-fit:contain;margin:0;filter:drop-shadow(0 18px 30px #000)}
+.profile-quote{max-width:620px;margin:18px auto 6px;padding:18px 7%;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.08rem,4.2vw,1.42rem);font-style:italic;line-height:1.45;color:#f1deba;border-top:1px solid #8d1a15;border-bottom:1px solid #8d1a15;background:linear-gradient(90deg,transparent,rgba(20,8,5,.74) 12% 88%,transparent);quotes:none}
+.profile-quote:before{content:"“";color:#d19b3d;font-size:2.2rem;vertical-align:-.35em;margin-right:.1em}
+.profile-attrib{max-width:580px;margin:0 auto 22px;color:#d8b66e;font-family:Georgia,"Times New Roman",serif;font-style:italic;line-height:1.35;font-size:clamp(.82rem,3vw,1rem)}
+.profile-parchment{position:relative;text-align:left;margin:18px auto;padding:22px 22px 21px;color:#28170c;text-shadow:none;background:linear-gradient(135deg,#efd9a8,#c79458 58%,#a96e38);border:1px solid #6f421e;box-shadow:0 12px 28px #000b,inset 0 0 24px rgba(91,49,18,.16);clip-path:polygon(1.2% 2.8%,4.4% 1.2%,8.5% 2.2%,13% 1.1%,18% 2.6%,23% 1.5%,28% 2.2%,34% 1%,40% 2.2%,46% 1.2%,53% 2.3%,59% 1.1%,66% 2.1%,72% 1.2%,78% 2.3%,84% 1.1%,91% 2.1%,97.8% 1.1%,99% 5%,98.3% 14%,99.1% 22%,98.2% 31%,99% 40%,98.2% 50%,99% 61%,98.1% 70%,99% 80%,98.1% 90%,99% 97%,95% 98.5%,89% 97.8%,82% 99%,75% 98%,68% 99%,60% 97.8%,53% 99%,46% 98%,39% 99%,31% 97.8%,24% 99%,17% 98%,10% 99%,3% 97.8%,1% 94%,1.8% 84%,.9% 73%,1.8% 62%,.9% 51%,1.7% 40%,.9% 30%,1.8% 19%,.8% 9%)}
+.profile-parchment:before{content:"";position:absolute;inset:8px;border:1px solid rgba(103,54,24,.35);pointer-events:none}
+.profile-parchment h2{position:relative;margin:0 0 13px;color:#7f1814;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.08rem,4vw,1.42rem);letter-spacing:.025em;text-align:center}
+.profile-parchment p{position:relative;margin:.72em 0;line-height:1.46;font-size:clamp(.96rem,3.4vw,1.08rem)}
+.profile-parchment p+p{padding-top:12px;border-top:1px solid rgba(116,61,26,.24)}
+.profile-adv-card{position:relative;margin:18px auto 24px;padding:18px 20px;border:1px solid #9b6a2d;background:radial-gradient(circle at 12% 30%,rgba(153,33,26,.35),transparent 14rem),linear-gradient(135deg,#3a0b08,#160605 64%,#070302);box-shadow:0 12px 28px #000b,inset 0 0 28px rgba(0,0,0,.35);text-align:left}
+.profile-adv-card:before,.profile-adv-card:after{content:"✦";position:absolute;top:15px;color:#d8ab4b;font-size:1rem}.profile-adv-card:before{left:14px}.profile-adv-card:after{right:14px}
+.profile-adv-label{text-align:center;color:#f0cf78;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.08rem,4vw,1.36rem);font-weight:700;letter-spacing:.07em;margin-bottom:10px}
+.profile-adv-text{color:#ead6ab;line-height:1.45;font-size:clamp(.96rem,3.4vw,1.08rem)}
+.profile-adv-text b{color:#f2cf70}
+.profile-continue{display:block;width:min(100%,620px);margin:26px auto 0;padding:18px 20px;border:2px solid #d2a34a;border-radius:3px;background:linear-gradient(#821c17,#4a0b09);color:#fff0c6;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.15rem,4.8vw,1.65rem);font-weight:700;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 0 0 4px #100503,0 0 0 5px #8b5d25,0 12px 28px #000b,inset 0 0 24px rgba(255,113,52,.15);cursor:pointer}
+.profile-continue:hover,.profile-continue:focus-visible{filter:brightness(1.14);outline:2px solid #f0ca74;outline-offset:4px}
+@media(max-width:560px){
+  .profile-gothic{padding-left:7.5%;padding-right:7.5%;padding-bottom:46px}
+  .profile-parchment{padding:19px 16px}
+  .profile-adv-card{padding:17px 16px}
+}
 </style>
 </head>
 <body>
@@ -287,21 +380,20 @@ body{
   </div>
 </section>
 <section id="confirm" class="screen">
-  <a class="back" onclick="backToFactions()">← zpět</a>
-  <div class="confirm-shell"><div class="confirm-frame">
-    <div class="topmark">Vybrali jste si frakci</div><div id="confirmFactionName" class="confirm-name"></div>
-    <img id="confirmFactionIcon" class="confirm-emblem" alt="Emblém vybrané frakce">
-    <div class="confirm-field"><label for="teamName"><b>Název družiny</b></label><input id="teamName" maxlength="40" autocomplete="off"></div>
-    <p class="confirm-lead">Potvrďte svou frakci, nebo se vraťte zpět a vyberte jinou.</p>
-    <div class="confirm-actions"><button class="button gold" onclick="confirmStart()">Potvrdit frakci a začít hru</button><button class="button ghost" onclick="backToFactions()">Zpět k výběru</button></div>
-  </div></div>
+  <div class="confirm-shell confirm-art-shell">
+    <div class="confirm-art-wrap">
+      <img id="confirmArt" src="assets/confirm_radovi.webp" alt="Potvrzení vybrané frakce">
+      <input id="teamName" class="confirm-live-input" maxlength="40" autocomplete="off" aria-label="Název družiny">
+      <button class="confirm-art-hotspot confirm-go" type="button" aria-label="Potvrdit frakci a začít hru" onclick="confirmStart()"></button>
+      <button class="confirm-art-hotspot confirm-back" type="button" aria-label="Zpět k výběru frakce" onclick="backToFactions()"></button>
+    </div>
+  </div>
 </section>
-<section id="profile" class="screen">
+<section id="profile" class="screen faction-profile-screen">
   <div id="profileCard"></div>
-  <button class="button gold" onclick="show('legend')">POKRAČOVAT K LEGENDĚ</button>
 </section>
 <section id="legend" class="screen legend">
-  <div class="story-banner">LEGENDA</div><h1 class="story-heading">KRVAVÝ GRIMOÁR<br>A SEDM PEČETÍ</h1>
+  <img class="screen-art-header" src="assets/legend_header.webp" alt="Krvavý grimoár — legenda">
   <div class="story-sheet">
     <p class="dropcap"><b>Zpropadení pacholci! Kutná Hora se otřásá v základech!</b></p>
     <p>Včera v noci někdo hodil purkmistrovi otevřeným oknem přímo do pelechu zkrvavenou prasečí hlavu a z kované truhlice v mázhausu radnice zmizela nejcennější a nejobávanější věc ve městě: <b>Liber Peccatorum Montanorum</b>, přezdívaný <b>Krvavý grimoár</b>.</p>
@@ -335,26 +427,27 @@ body{
   </div><p class="smallnote" style="margin-top:12px;text-align:center">Nápovědy a obejití GPS přidávají penalizační minuty. Frakční výhody jsou zdarma.</p></div>
   <button class="button gold" onclick="openHome()">Vyrazit na první stopu</button>
 </section>
-<section id="hub" class="screen"><h1 class="hub-title">Kam dál?</h1><div id="hubStatus" class="status"></div><div id="hubTest" class="test-tools"><button class="button small" onclick="testUnlockFinale()">TEST: ODEMKNOUT FINÁLE (7 PEČETÍ + OPĚT)</button></div><div id="hubGrid" class="hub-grid"></div></section>
+<section id="hub" class="screen"><img class="screen-art-header" src="assets/hub_header.webp" alt="Kam dál?"><div id="hubStatus" class="status"></div><div id="hubTest" class="test-tools"><button class="button small" onclick="testUnlockFinale()">TEST: ODEMKNOUT FINÁLE (7 PEČETÍ + OPĚT)</button></div><div id="hubGrid" class="hub-grid"></div></section>
 <section id="nav" class="screen"><a class="back" onclick="show('hub');renderHub()">← zpět na přehled lokací</a><div id="navContent"></div></section>
 <section id="gpsok" class="screen"><a class="back" onclick="show('hub');renderHub()">← zpět na přehled lokací</a><div id="gpsOkContent"></div></section>
 <section id="task" class="screen"><a class="back" onclick="show('hub');renderHub()">← zpět na přehled lokací</a><div id="taskContent"></div></section>
 <section id="seal" class="screen seal"><div id="sealContent"></div></section>
 <section id="parchment" class="screen"><a class="back" onclick="returnFromParchment()">← zpět</a><div class="topmark">Osmý fragment</div><h1 class="title" style="font-size:2.4rem">Ztracený pergamen</h1><div class="parchment" style="text-align:center;font-size:1.22rem;font-weight:bold;letter-spacing:.05em">KDO PO SETMĚNÍ VĚŘÍ STRÁŽI, LŽE.</div><button class="image-zoom" type="button" onclick="openLightbox('assets/pergamen_overlay.webp','Propálený pergamen')"><img src="assets/pergamen_overlay.webp" class="task-img" alt="Propálený pergamen s alchymistickými symboly"></button><p>Máte-li fyzickou obálku, použijte především oba skutečné kusy. Tohle je jejich digitální záloha.</p><input id="parchAnswer" class="answer" placeholder="Zadejte rozluštěné slovo"><button class="button" onclick="checkParchment()">Ověřit odpověď</button><div class="hint-actions"><button class="hint-buy" onclick="showParchHint()">NÁPOVĚDA (+3 MIN)</button></div><div id="parchWrong" class="hint parchment"></div><div id="parchGood" class="hint panel"><b>Správně.</b><br>Slovo máte. Co znamená, zatím neřešte. Schovejte si ho. Budete ho ještě potřebovat.<button class="button small gold" onclick="returnFromParchment()">Pokračovat</button></div></section>
-<section id="ultima" class="screen"><div class="chapter">ULTIMA SIGILLA</div><h1 class="title" style="font-size:2.35rem">Poslední pečeť. Poslední cesta.<br>Poslední šance nezabloudit.</h1><div class="final-block ultima-sheet"><p>Sedm pečetí je vašich.<br>Sedm míst.<br>Sedm stop.<br>Sedm příběhů.</p><p><b>A jeden ztracený vzkaz.</b></p><p>Teď už nejde o to hledat dalšího světce, počítat groše, sledovat stíny ani lézt do štol.</p><h2 class="ultima-sub">CO JSTE CESTOU ZÍSKALI</h2><div id="ultimaFragments" class="fragments"></div><p><strong>Čísla určují pořadí.<br>Písmena ukazují cestu.</strong></p><p>Nezapomeňte, že i ztracený pergamen vám něco vydal.</p><p>Seřaďte všech osm stop.</p><p>Jestli jste během cesty nelhali, nepočítali jako opilý písař a neztratili polovinu výpravy v některé z kutnohorských uliček, měli byste dostat jméno místa, kde vaše cesta končí.</p><p>Až ho poznáte —</p><h2 class="go-there">JDĚTE TAM.</h2></div><button class="button gold" onclick="show('finalgps')">JSME TAM – OVĚŘIT POLOHU</button></section>
+<section id="ultima" class="screen"><img class="screen-art-header" src="assets/ultima_header.webp" alt="Ultima Sigilla — poslední cesta"><div class="final-block ultima-sheet"><p>Sedm pečetí je vašich.<br>Sedm míst.<br>Sedm stop.<br>Sedm příběhů.</p><p><b>A jeden ztracený vzkaz.</b></p><p>Teď už nejde o to hledat dalšího světce, počítat groše, sledovat stíny ani lézt do štol.</p><h2 class="ultima-sub">CO JSTE CESTOU ZÍSKALI</h2><div id="ultimaFragments" class="fragments"></div><p><strong>Čísla určují pořadí.<br>Písmena ukazují cestu.</strong></p><p>Nezapomeňte, že i ztracený pergamen vám něco vydal.</p><p>Seřaďte všech osm stop.</p><p>Jestli jste během cesty nelhali, nepočítali jako opilý písař a neztratili polovinu výpravy v některé z kutnohorských uliček, měli byste dostat jméno místa, kde vaše cesta končí.</p><p>Až ho poznáte —</p><h2 class="go-there">JDĚTE TAM.</h2></div><button class="button gold" onclick="show('finalgps')">JSME TAM – OVĚŘIT POLOHU</button></section>
 <section id="finalgps" class="screen"><div class="topmark">Poslední cesta</div><h1 class="title" style="font-size:2.5rem">Jděte TAM.</h1><p class="subtitle">Až budete stát na místě, potvrďte svou polohu.</p><div class="gps"><button class="button gold" onclick="verifyFinalGPS()">JSME TAM – OVĚŘIT POLOHU</button><button id="testFinalGpsBtn" class="button" style="display:none;margin-top:10px" onclick="simulateFinalGPS()">TEST: SIMULOVAT SPRÁVNOU POLOHU</button><div id="finalGpsMsg" class="gps-help"></div></div></section>
 <section id="finale" class="screen"><div class="chapter">IN FOVEA VERITAS</div><h1 class="title" style="font-size:2.8rem">V díře je pravda.</h1><div class="final-block"><p>Tak jste dorazili.</p><p>Do místa, kterému se kdysi říkalo prostě:</p><h2 style="text-align:center;color:#f0c65a">Díra.</h2><p>Dnes tu stojí hospoda <b>U Tupouna</b>.</p><p>A vlastně je to příhodné.</p><p>Protože poctivý příběh o Kutné Hoře nemůže skončit někde v naleštěném paláci.</p><p>Musí skončit tam, kde se scházejí lidé, pijí, lžou, chlubí se a občas řeknou pravdu jen proto, že už vypili tolik, že ji nedokážou udržet v sobě.</p><p>Právě sem vedla poslední stopa.</p><p>Na stole leží balík.</p><p>Starý pergamen.<br>Popraskaná kůže.<br>Černý vosk.</p><p>Na deskách jediné jméno:</p><h2 style="text-align:center">LIBER PECCATORUM MONTANORUM<br><span style="color:#c99b45">Krvavý grimoár.</span></h2><p>Našli jste ho.</p><p>Otevřete ho.</p><p>První stránky jsou plné jmen.</p><p>Kněží.<br>Havíři.<br>Zvoníci.<br>Alchymisté.<br>Konšelé.<br>Mincíři.<br>Lapkové.</p><p>Každý někoho podvedl.<br>Každý něco ukradl.<br>Každý něco zatajil.</p><p>Někteří peníze.<br>Někteří pravdu.<br>Někteří jen poslední korbel někomu, kdo se zrovna nedíval.</p><p>A pak přichází poslední zápis.</p><p>Je čerstvý.<br>Inkoust ještě skoro nezaschl.</p><div class="panel"><b>„Všichni jste prošli městem.<br>Vrtali se v cizích tajemstvích.<br>Četli věci, které jste neměli.<br>Ptali se lidí, kteří nechtěli odpovídat.<br>A nakonec našli tuto knihu.“</b></div><p>Pod tím je ještě jedna věta:</p><div class="panel"><b>„Teď už sem patří i vaše jména.“</b></div><p>No dobře.<br>Možná to byla jen výhrůžka.<br>Možná...</p><h2 style="text-align:center;color:#e7c459">GRIMOÁR JE VÁŠ</h2><p>Dokázali jste projít Kutnou Horou, rozlomit sedm pečetí a najít místo, kam vedly všechny stopy.</p><p>A jestli jste během cesty zjistili alespoň jedno:</p><h2 style="text-align:center">Město se nečte jen z mapy.</h2><p>Čte se z domů.<br>Z kamenů.<br>Z příběhů.<br>Z pověstí.<br>Z knih.<br>A někdy také z hospodských zdí.</p><p>Protože dobrý příběh může začít v knihovně.</p><p>Ale ten opravdu dobrý často skončí... <b>v Díře</b>.</p><h2 style="text-align:center;color:#e7c459">Tož jděte, darebáci. Dobrodružství skončilo. No vážně, je KONEC.</h2><p>Ale abych nezapomněl —</p><h2 style="text-align:center">rundu platí ten, kdo přišel poslední.</h2><p style="text-align:center">A přineste mu struhadlo.</p></div><div id="resultBox" class="resultbox"></div></section>
 </main>
 <div id="lightbox" class="lightbox" aria-hidden="true" onclick="if(event.target===this)closeLightbox()"><button class="lightbox-close" onclick="closeLightbox()" aria-label="Zavřít">×</button><img id="lightboxImg" alt=""></div>
 <script>
 const A='assets/';
+const CONFIRM_ART={radovi:'confirm_radovi.webp',zvonici:'confirm_zvonici.webp',haviri:'confirm_haviri.webp',alchymiste:'confirm_alchymiste.webp',konesele:'confirm_konesele.webp',mincmistri:'confirm_mincmistri.webp',lapkove:'confirm_lapkove.webp'};
 const PLACEHOLDERS={radovi:'např. Bratři posledního kázání',zvonici:'např. Hlas svatého Jakuba',haviri:'např. Dědici svaté Barbory',alchymiste:'např. Kruh Arcanum',konesele:'např. Rada Kamenného domu',mincmistri:'např. Strážci stříbrného groše',lapkove:'např. Stíny Ruthardtky'};
 const F={
 radovi:{name:'Řádoví bratři',icon:'fr_radovi.webp',quote:'Tvařte se zbožně. Nikdo nemusí vědět, co děláte po setmění.',person:'páter Severinus Nocturnus, správce zpovědí a dozorce nad večerním pořádkem',adv:'Vy znáte své svaté lépe než ostatní. Řadu hledaných znamení otevírá VĚŽ a uzavírá LEBKA.',inv:[`Celé tohle město je jedno velké hnízdo neřesti. Konšelé hrabou pro sebe, mincmistři se klaní mamonu a lapkové žijí jako zvěř v lese. A o těch opilcích ve věži radši ani mluvit nebudeme – jejich zvonění neoslavuje Boha, ale ranní kocovinu. My jediní zde držíme ochrannou ruku nad spasením duší, i když nám pod okny neustále někdo nadává, křičí nebo se pere. Ať si hromadí zlato a tahají za provazy; v hodině sudu – škyt – tedy soudu – se ukáže, kdo byl opravdu čistý a kdo ne.`]},
 zvonici:{name:'Zvoníci',icon:'fr_zvonici.webp',quote:'Poslouchejte víc než mluvte. Nemusíte přece hned všechno vyzvonit.',person:'mistr Jakub Hlahol, tlučhuba a horní zvoník',adv:'První dva zvony volají na milence a havíře.',inv:[`Zvoníme, i když nemáme – protože ticho je pro střízlivé a se střízlivými je pěkná nuda. Bůh je hluchý, tak mu musíme pomoct pořádným rachotem a kapkou něčeho ostřejšího do krku.`,`Že pomáháme lapkům? Blbost. Jen dáváme znamení. A když velký zvon náhodou praskne přesně ve chvíli, kdy městská hlídka vybíhá z brány, je přece slušné vzít si spravedlivý podíl za dobře načasované ticho.`,`A konšelé? Ti se ohánějí zákony a nakonec jen počítají groše. Až jednou začneme tahat za provazy na radnici my, uslyší v tom vlastní refrén na šibenici. Jejich paragrafy jsou stejně k ničemu, když člověku po včerejším patoku zvoní v hlavě víc než celý svatý Jakub.`]},
-haviri:{name:'Havíři',icon:'fr_haviri.webp',quote:'Nahoře se posmívají, že jste špinaví a hloupí. Dole v dole ale všichni vědí, kdo to město ve skutečnosti živí.',person:'štajgr Prokop Křemen, vrchní krumpáč a správce sklepních chodeb',adv:'Tajné hornické značky: jednou za hru můžete odhalit přesnou polohu jedné lokace. Použijte tuto výhodu moudře — hornické značky neukazují cestu dvakrát.',inv:[`Ti darmošlapové nahoře ve věži by zasloužili natáhnout na skřipec. Z vejšky kašlou na všechny a na všechno. A ten jejich job? Tahat za provaz a v druhý ruce korbel? Nemůžeš se divit, že jim z toho zvonění jebe v hlavě. Ať slezou dolů do jámy k nám. My jim ukážeme, jak se mlátí do kamene místo do bronzu!`,`Největší pakáž ve městě jsou konšelé. Sedí nahoře v teple, počítají podíl z našeho stříbra a tváří se jako spasitelé. V životě nedrželi v ruce krumpáč, v dole by se strachy podělali, ale daně by vybírali i ze vzduchu, který dýcháme. Naše baby jim říkají ‚panáčci z papíru‘ – jeden zával na radnici a hned by poznali, co je to skutečná tíha. My makáme. Oni kradou razítkem.`,`A nejhorší jsou ti černoprdelníci. Celý den kážou o mravnosti, ale jakmile zapadne slunce, plíží se kolem našich chalup jako kocouři v říji. Člověk aby se víc bál bratra za dveřmi než závalu pod zemí. Bůh jim sice možná odpustí, ale havířská ruka – nikdy.`,`Lapkové jsou pakáž, ale aspoň poctivá pakáž. Nehrají si na svaté, nevymýšlejí daně a neříkají krádeži správní poplatek. Dá se s nimi pít i kšeftovat. Jen si potom přepočítejte groše.`]},
+haviri:{name:'Havíři',icon:'fr_haviri.webp',quote:'Nahoře se posmívají, že jste špinaví a hloupí. Dole v dole ale všichni vědí, kdo to město ve skutečnosti živí.',person:'štajgr Prokop Křemen, vrchní krumpáč a správce sklepních chodeb',adv:'<b>Tajné hornické značky</b><br>Havíři znají Kutnou Horu i zespodu. Vědí, kudy vedou staré štoly, kde ústí zapomenuté chodby a jaké značky nechávali jejich předkové na povrchu.<br><br><b>Jednou za hru můžete odhalit přesnou polohu jedné lokace.</b><br><br>Použijte tuto výhodu moudře — hornické značky neukazují cestu dvakrát.',inv:[`Ti darmošlapové nahoře ve věži by zasloužili natáhnout na skřipec. Z vejšky kašlou na všechny a na všechno. A ten jejich job? Tahat za provaz a v druhý ruce korbel? Nemůžeš se divit, že jim z toho zvonění jebe v hlavě. Ať slezou dolů do jámy k nám. My jim ukážeme, jak se mlátí do kamene místo do bronzu!`,`Největší pakáž ve městě jsou konšelé. Sedí nahoře v teple, počítají podíl z našeho stříbra a tváří se jako spasitelé. V životě nedrželi v ruce krumpáč, v dole by se strachy podělali, ale daně by vybírali i ze vzduchu, který dýcháme. Naše baby jim říkají ‚panáčci z papíru‘ – jeden zával na radnici a hned by poznali, co je to skutečná tíha. My makáme. Oni kradou razítkem.`,`A nejhorší jsou ti černoprdelníci. Celý den kážou o mravnosti, ale jakmile zapadne slunce, plíží se kolem našich chalup jako kocouři v říji. Člověk aby se víc bál bratra za dveřmi než závalu pod zemí. Bůh jim sice možná odpustí, ale havířská ruka – nikdy.`,`Lapkové jsou pakáž, ale aspoň poctivá pakáž. Nehrají si na svaté, nevymýšlejí daně a neříkají krádeži správní poplatek. Dá se s nimi pít i kšeftovat. Jen si potom přepočítejte groše.`]},
 alchymiste:{name:'Alchymisté',icon:'fr_alchymiste.webp',quote:'Nevysvětlujte všechno ostatním. Využijte toho, že lidé se nejvíc bojí toho, čemu nerozumějí.',person:'mgr. Ignatius Acidum Fiasco, mistr transmutací a výparů',adv:'Umíte latinsky lépe než většina téhle chátry. Slovo, které hledáte, znamená tajemství.',inv:[`Řádoví bratři se schovávají před světem v zatuchlých celách a žvástají o Bohu. Když ale spatří jeho zázrak v mé baňce, hned křičí cosi o ďáblovi. Jsou to ustrašení hlupáci, co neumějí číst v knize přírody a vědění. Bacha na ně! Budou vás chtít zastrašit, jakmile jim cokoli ukážete.`,`Mincmistři si hlídají své cinknuté groše jako psi kost. Bojí se, že až transmutací ovládneme olovo a proměníme ho ve zlato, nebudou mít jejich plíšky cenu ani té hlíny pod nohama. Raději se jim vyhněte — a hlavně jim nic neukazujte ani neprozrazujte.`,`Konšelé se tváří přátelsky, ale za jejich lísáním je jen závist a zášť. Jejich moudrost sahá tak akorát k okrajům pivních korbelů. Jsou posedlí mocí, penězi a strachem z každé novoty, která přesahuje jejich dvorek. Mají ale peníze a jsou nebezpeční. Existuje však způsob, jak z nich snadno udělat užitečné a dobře platící idioty.`]},
-konesele:{name:'Konšelé',icon:'fr_konsele.webp',quote:'Máte peníze a moc. Nečekejte ale, že vám kdokoli pomůže. Nikdo ve městě vás nemá rád.',person:'šepmistr Korruptus di Kassa, správce městské kasy a dluhů',adv:'Měšec na úplatky: jednou za hru můžete podplatit správného člověka a získat nápovědu dřív než ostatní.',inv:[`Pamatujte: lůza má ruce od špíny, mniši od vosku a my jen od inkoustu. Tou chátrou se nezabýváme. Havíři smrdí, alchymisté destilují nesmysly, zvoníci dělají rámus a lapkové? Ti alespoň kradou – poctivě, bez glejtu, bez pečetí a beze změn v rozpočtu. Všichni si myslí, jak jsou pro město důležití. Přitom nám platí i za to, že vůbec smějí dýchat jeho povětří.<br><br>To mincmistři, to je jiná cháska. Nejsou sice chytřejší než my, ale mají zlato a chápou jednu zásadní věc: správně položený měšec otevře víc bran než modlitba. S těmi se dá kšeftovat. Jejich mince totiž zvoní úplně stejně jako ty naše.`]},
+konesele:{name:'Konšelé',icon:'fr_konsele.webp',quote:'Máte peníze a moc. Nečekejte ale, že vám kdokoli pomůže. Nikdo ve městě vás nemá rád.',person:'šepmistr Korruptus di Kassa, správce městské kasy a dluhů',adv:'<b>Měšec na úplatky</b><br>Městská pokladna je hlubší než svědomí konšela. Jednou za hru můžete podplatit správného člověka a získat nápovědu dřív než ostatní.',inv:[`Pamatujte: lůza má ruce od špíny, mniši od vosku a my jen od inkoustu. Tou chátrou se nezabýváme. Havíři smrdí, alchymisté destilují nesmysly, zvoníci dělají rámus a lapkové? Ti alespoň kradou – poctivě, bez glejtu, bez pečetí a beze změn v rozpočtu. Všichni si myslí, jak jsou pro město důležití. Přitom nám platí i za to, že vůbec smějí dýchat jeho povětří.<br><br>To mincmistři, to je jiná cháska. Nejsou sice chytřejší než my, ale mají zlato a chápou jednu zásadní věc: správně položený měšec otevře víc bran než modlitba. S těmi se dá kšeftovat. Jejich mince totiž zvoní úplně stejně jako ty naše.`]},
 mincmistri:{name:'Mincmistři',icon:'fr_mincmistri.webp',quote:'Počítejte všechno dvakrát. Každý podezírá, že když se přepočítáte, je to vždycky do vaší kapsy. Tak ať zbytečně neproděláte.',person:'Laurencius Dolar, vážný vážný',adv:'Mincmistrovské oko se málokdy mýlí. Už při prvním pohledu víte, že problém je ve čtvrté várce.',inv:[`Havíři? Špinaví jsou až za ušima, ale potřebujeme je. Bez nich bychom razili leda tak bláto. Oni vytáhnou stříbro ze země, my mu dáme váhu, obraz a cenu. To je práce, které rozumíme.`,`Pověste všechny alchymisty. Jsou to obyčejní kejklíři a podvodníci, i když se vydávají za učence. My měříme každý gram stříbra na lékárenských vahách a ručíme za ryzost kovu vlastním jménem i krkem. Oni míchají moč, síru a staré hadry a slibují naivním hlupákům zlato z olova. Kdyby jejich břečky fungovaly, měla by celá říše peněz na rozdávání.`,`A lapkové? To je mor naší práce. My ve dne v noci dohlížíme na ražbu a s péčí hlídáme každý groš, aby král a město dostali, co jim patří. A pak přijde nějaká lesní sebranka s nožem u pasu a s představou, že královské groše jsou společným vlastnictvím, a všechny nás okrade. Lůza je to. Žádní odvážní rebelové — jen obyčejní zlodějíčci, kteří parazitují na cizí práci. <b>A nakradou toho skoro tolik jako konšelé.</b>`]},
 lapkove:{name:'Lapkové',icon:'fr_lapkove.webp',quote:'Držte se stínu a hlídejte si záda. Ve městě jsou jen dva druhy lidí: ti, co vás chtějí okrást, a ti, co vás chtějí pověsit.',person:'Suchý Čert, strážce cizích měšců a plných korbelů',adv:'Jen vy víte, kde hledat zvláštní zadní průchod nedaleko sv. Jakuba.',inv:[`Konšelé nás nazývají lotry. To je od nich roztomilé. My aspoň člověku vezmeme měšec osobně a netvrdíme mu přitom, že je to daň na opravu hradeb. A ty jejich práva a hrdelní artikule? Na to kašleme. Náš glejt má ostří a visí u pasu.`,`Nejvíc nás ale štvou černoprdelníci. Kážou o hříchu tak hlasitě, až člověk skoro přeslechne, jak jim pod kutnou cinkají cizí groše. Když potkáte jednoho po setmění, držte se stínu. Ne proto, že by vás okradl nebo udal. Spíš abyste neviděli něco, co pak nebudete moct zapomenout.`,`Zvoníci? Hlučná a věčně ožralá chamraď, ale mohou být užiteční. Když začnou zvonit ve správnou chvíli, měšťané i stráže čumí nahoru a my máme volné ulice pro naši práci. Jen se jich neptejte, kolik za to chtějí.`]}
 };
@@ -390,10 +483,30 @@ function elapsed(ms){let t=Math.max(0,Math.floor(ms/1000)),h=Math.floor(t/3600),
 function dist(a,b,c,d){const R=6371000,p=Math.PI/180,x=(d-b)*p*Math.cos((a+c)*p/2),y=(c-a)*p;return Math.sqrt(x*x+y*y)*R}
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function addPenalty(kind,min,label){let s=state();s.penaltyMin=(s.penaltyMin||0)+min;s.penalties=s.penalties||[];s.penalties.push({kind,min,label,at:Date.now(),station:s.currentStation||null});if(kind==='hint1')s.hint1=(s.hint1||0)+1;if(kind==='hint2')s.hint2=(s.hint2||0)+1;if(kind==='gps')s.gpsSkips=(s.gpsSkips||0)+1;save(s);return s}
-function pickFaction(id){selected=id;const f=F[id];document.getElementById('confirmFactionName').textContent=f.name;document.getElementById('confirmFactionIcon').src=A+f.icon;document.getElementById('confirmFactionIcon').alt='Emblém frakce '+f.name;const inp=document.getElementById('teamName');inp.value='';inp.placeholder=PLACEHOLDERS[id]||'Název družiny';show('confirm',false);setTimeout(()=>inp.focus(),80)}
+function pickFaction(id){selected=id;const f=F[id];const art=document.getElementById('confirmArt');art.src=A+(CONFIRM_ART[id]||'confirm_radovi.webp');art.alt='Potvrzení frakce '+f.name;const inp=document.getElementById('teamName');inp.value='';inp.placeholder=PLACEHOLDERS[id]||'Název družiny';show('confirm',false);setTimeout(()=>inp.focus(),120)}
 function backToFactions(){selected=null;document.getElementById('teamName').value='';show('faction',false)}
 function confirmStart(){const team=document.getElementById('teamName').value.trim();if(!selected||!team){alert('Napište název družiny.');return}save(initState(team,selected));renderProfile();show('profile')}
-function renderProfile(){const s=state(),f=F[s.faction];document.getElementById('profileCard').innerHTML=`<div class="profile-shell"><div class="topmark">Vaše frakce</div><h1 class="profile-name">${f.name}</h1><img class="profile-crest" src="${A+f.icon}" alt="Emblém frakce ${f.name}"><div class="profile-quote">${f.quote}</div><div class="profile-attrib">— ${f.person}</div><div class="profile-section"><div class="eyebrow">Co si myslíte o ostatních</div>${f.inv.map(x=>`<div class="invektiva">${x}</div>`).join('')}</div><div class="profile-section"><div class="eyebrow">Vaše výhoda</div><div class="advantage">${f.adv}</div></div></div>`}
+function renderProfile(){
+  const s=state(),f=F[s.faction];
+  document.getElementById('profileCard').innerHTML=`
+    <div class="profile-gothic faction-${s.faction}">
+      <div class="profile-brand">KRVAVÝ GRIMOÁR <span>SEDM PEČETÍ</span></div>
+      <div class="profile-kicker">VAŠE FRAKCE</div>
+      <h1 class="profile-name">${f.name}</h1>
+      <div class="profile-emblem-wrap"><img class="profile-crest" src="${A+f.icon}" alt="Emblém frakce ${f.name}"></div>
+      <blockquote class="profile-quote">${f.quote}</blockquote>
+      <div class="profile-attrib">— ${f.person}</div>
+      <section class="profile-parchment profile-opinions">
+        <h2>CO SI MYSLÍTE O OSTATNÍCH</h2>
+        ${f.inv.map(x=>`<p>${x}</p>`).join('')}
+      </section>
+      <section class="profile-adv-card">
+        <div class="profile-adv-label">VAŠE VÝHODA</div>
+        <div class="profile-adv-text">${f.adv}</div>
+      </section>
+      <button class="profile-continue" type="button" onclick="show('legend')">POKRAČOVAT K LEGENDĚ</button>
+    </div>`;
+}
 function renderHub(){const s=state(),f=F[s.faction],done=s.done||{},n=Object.keys(done).length;document.getElementById('hubStatus').innerHTML=`<span><b>${esc(s.team)}</b><br><span class="smallnote">Frakce: ${f.name}</span></span><span class="progress">${n}/7 pečetí<br><span class="timer" id="timer">${elapsed((s.end||Date.now())-s.start)}</span></span>`;const g=document.getElementById('hubGrid');g.innerHTML='';const p=document.createElement('button');p.className='parch-card'+(s.parchment?' solved':'');p.innerHTML=`<img src="${A}parchment_card.webp" alt=""><span><strong>${s.parchment?'✓ ':''}ZTRACENÝ PERGAMEN</strong>${s.parchment?'VYŘEŠENO · OPĚT':'NEVYŘEŠENO — můžete se k němu kdykoli vrátit'}</span>`;p.onclick=()=>openParchment('hub');g.appendChild(p);HUB_ORDER.forEach((id,idx)=>{const st=S[id],b=document.createElement('button');b.className='location-card'+(done[id]?' done':'')+(idx===HUB_ORDER.length-1?' last-card':'');b.innerHTML=`<span class="done-mark">✓</span><span class="codebadge">${done[id]||''}</span><img src="${A+st.emblem}" alt="Ilustrace lokace"><div class="clue-strip">${st.clues.map(x=>`<span>${x}</span>`).join('')}</div>`;b.onclick=()=>openStation(id,false);g.appendChild(b)});if(allFragmentsReady(s))setTimeout(()=>enterUltima(),180)}
 setInterval(()=>{const e=document.getElementById('timer'),s=state();if(e&&s.start&&!s.end)e.textContent=elapsed(Date.now()-s.start)},1000);
 function openHome(){const s=state();s.homeVisited=true;s.currentStation=s.faction;save(s);openStation(s.faction,true)}
