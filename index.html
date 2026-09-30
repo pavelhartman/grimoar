@@ -670,6 +670,7 @@ body{
 <section id="finale" class="screen"><div class="chapter">IN FOVEA VERITAS</div><h1 class="title" style="font-size:2.8rem">V díře je pravda.</h1><div class="final-block"><p>Tak jste dorazili.</p><p>Do místa, kterému se kdysi říkalo prostě:</p><h2 style="text-align:center;color:#f0c65a">Díra.</h2><p>Dnes tu stojí hospoda <b>U Tupouna</b>.</p><p>A vlastně je to příhodné.</p><p>Protože poctivý příběh o Kutné Hoře nemůže skončit někde v naleštěném paláci.</p><p>Musí skončit tam, kde se scházejí lidé, pijí, lžou, chlubí se a občas řeknou pravdu jen proto, že už vypili tolik, že ji nedokážou udržet v sobě.</p><p>Právě sem vedla poslední stopa.</p><p>Na stole leží balík.</p><p>Starý pergamen.<br>Popraskaná kůže.<br>Černý vosk.</p><p>Na deskách jediné jméno:</p><h2 style="text-align:center">LIBER PECCATORUM MONTANORUM<br><span style="color:#c99b45">Krvavý grimoár.</span></h2><p>Našli jste ho.</p><p>Otevřete ho.</p><p>První stránky jsou plné jmen.</p><p>Kněží.<br>Havíři.<br>Zvoníci.<br>Alchymisté.<br>Konšelé.<br>Mincíři.<br>Lapkové.</p><p>Každý někoho podvedl.<br>Každý něco ukradl.<br>Každý něco zatajil.</p><p>Někteří peníze.<br>Někteří pravdu.<br>Někteří jen poslední korbel někomu, kdo se zrovna nedíval.</p><p>A pak přichází poslední zápis.</p><p>Je čerstvý.<br>Inkoust ještě skoro nezaschl.</p><div class="panel"><b>„Všichni jste prošli městem.<br>Vrtali se v cizích tajemstvích.<br>Četli věci, které jste neměli.<br>Ptali se lidí, kteří nechtěli odpovídat.<br>A nakonec našli tuto knihu.“</b></div><p>Pod tím je ještě jedna věta:</p><div class="panel"><b>„Teď už sem patří i vaše jména.“</b></div><p>No dobře.<br>Možná to byla jen výhrůžka.<br>Možná...</p><h2 style="text-align:center;color:#e7c459">GRIMOÁR JE VÁŠ</h2><p>Dokázali jste projít Kutnou Horou, rozlomit sedm pečetí a najít místo, kam vedly všechny stopy.</p><p>A jestli jste během cesty zjistili alespoň jedno:</p><h2 style="text-align:center">Město se nečte jen z mapy.</h2><p>Čte se z domů.<br>Z kamenů.<br>Z příběhů.<br>Z pověstí.<br>Z knih.<br>A někdy také z hospodských zdí.</p><p>Protože dobrý příběh může začít v knihovně.</p><p>Ale ten opravdu dobrý často skončí... <b>v Díře</b>.</p><h2 style="text-align:center;color:#e7c459">Tož jděte, darebáci. Dobrodružství skončilo. No vážně, je KONEC.</h2><p>Ale abych nezapomněl —</p><h2 style="text-align:center">rundu platí ten, kdo přišel poslední.</h2><p style="text-align:center">A přineste mu struhadlo.</p></div><div id="resultBox" class="resultbox"></div></section>
 </main>
 <div id="lightbox" class="lightbox" aria-hidden="true" onclick="if(event.target===this)closeLightbox()"><button class="lightbox-close" onclick="closeLightbox()" aria-label="Zavřít">×</button><img id="lightboxImg" alt=""></div>
+<script src="supabase-results.js"></script>
 <script>
 const A='assets/';
 const CONFIRM_ART={radovi:'confirm_radovi.webp',zvonici:'confirm_zvonici.webp',haviri:'confirm_haviri.webp',alchymiste:'confirm_alchymiste.webp',konesele:'confirm_konesele.webp',mincmistri:'confirm_mincmistri.webp',lapkove:'confirm_lapkove.webp'};
@@ -782,7 +783,7 @@ function state(){try{return JSON.parse(localStorage.getItem('kgState')||'{}')}ca
 function save(s){try{localStorage.setItem('kgState',JSON.stringify(s))}catch(e){}}
 function started(){const s=state();return !!(s.team&&s.faction&&s.start)}
 function show(id,remember=true){screens.forEach(x=>x.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');if(remember&&started()){const s=state();s.current=id;save(s)}window.scrollTo(0,0);if(id==='finalgps'&&TEST_MODE){const b=document.getElementById('testFinalGpsBtn');if(b)b.style.display='block'}}
-function initState(team,faction){return {team,faction,start:Date.now(),end:null,done:{},parchment:false,penaltyMin:0,penalties:[],hint1:0,hint2:0,gpsSkips:0,miningUsed:false,bribeUsed:false,homeVisited:false,current:'profile',currentStation:null,hintLevel:{},order:['LEBKA','LEV','VĚDRO S VODOU','VĚŽ','RÝČ'],parchOrigin:'hub',pendingSeal:null,resultSavedLocal:false}}
+function initState(team,faction){return {gameId:crypto.randomUUID(),testGame:TEST_MODE,team,faction,start:Date.now(),end:null,done:{},parchment:false,penaltyMin:0,penalties:[],hint1:0,hint2:0,gpsSkips:0,miningUsed:false,bribeUsed:false,homeVisited:false,current:'profile',currentStation:null,hintLevel:{},order:['LEBKA','LEV','VĚDRO S VODOU','VĚŽ','RÝČ'],parchOrigin:'hub',pendingSeal:null,resultSavedLocal:false}}
 function norm(s){return (s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]/g,'')}
 function elapsed(ms){let t=Math.max(0,Math.floor(ms/1000)),h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60;return (h?h+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
 function dist(a,b,c,d){const R=6371000,p=Math.PI/180,x=(d-b)*p*Math.cos((a+c)*p/2),y=(c-a)*p;return Math.sqrt(x*x+y*y)*R}
@@ -926,7 +927,33 @@ function verifyFinalGPS(){const target=[49.9487069,15.2727342],m=document.getEle
 function localDateISO(ts){const d=new Date(ts),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
 function resultPayload(){const s=state(),raw=(s.end||Date.now())-s.start,pen=(s.penaltyMin||0)*60000;return {date:localDateISO(s.end||Date.now()),team:s.team,faction:F[s.faction]?.name||s.faction,start:new Date(s.start).toISOString(),finish:new Date(s.end||Date.now()).toISOString(),raw_ms:raw,penalty_min:s.penaltyMin||0,result_ms:raw+pen,hint1:s.hint1||0,hint2:s.hint2||0,gps_bypass:s.gpsSkips||0,penalties:s.penalties||[]}}
 function archiveResultLocal(){let s=state();if(s.resultSavedLocal)return;try{let a=JSON.parse(localStorage.getItem('kgResults')||'[]');a.push(resultPayload());if(a.length>100)a=a.slice(-100);localStorage.setItem('kgResults',JSON.stringify(a));s.resultSavedLocal=true;save(s)}catch(e){}}
-function renderFinalResult(){const s=state(),f=F[s.faction],raw=(s.end||Date.now())-s.start,pen=(s.penaltyMin||0)*60000,total=raw+pen,d=new Date(s.end||Date.now()),date=d.toLocaleDateString('cs-CZ');document.getElementById('resultBox').innerHTML=`<b>Váš výsledek</b><div class="result-main"><span>Družina</span><b>${esc(s.team)}</b><span>Frakce</span><b>${f.name}</b><span>Datum</span><b>${date}</b><span>Čas hry</span><b>${elapsed(raw)}</b><span>Penalizace celkem</span><b>+${s.penaltyMin||0} min</b><span>Výsledný čas</span><b class="big-result">${elapsed(total)}</b></div>`;archiveResultLocal()}
+function renderFinalResult(){const s=state(),f=F[s.faction],raw=(s.end||Date.now())-s.start,pen=(s.penaltyMin||0)*60000,total=raw+pen,d=new Date(s.end||Date.now()),date=d.toLocaleDateString('cs-CZ');document.getElementById('resultBox').innerHTML=`<b>Váš výsledek</b><div class="result-main"><span>Družina</span><b>${esc(s.team)}</b><span>Frakce</span><b>${f.name}</b><span>Datum</span><b>${date}</b><span>Čas hry</span><b>${elapsed(raw)}</b><span>Penalizace celkem</span><b>+${s.penaltyMin||0} min</b><span>Výsledný čas</span><b class="big-result">${elapsed(total)}</b></div>`;archiveResultLocal();submitFinalResult()}
+function cloudResultPayload(){
+  const s=state();
+  if(!s.end||!s.team||!s.faction||TEST_MODE||s.testGame)return null;
+  if(!s.gameId){s.gameId=crypto.randomUUID();save(s)}
+  return {game_id:s.gameId,tym:s.team,frakce:F[s.faction]?.name||s.faction,
+    zacatek:new Date(s.start).toISOString(),konec:new Date(s.end).toISOString(),
+    penalizace_min:s.penaltyMin||0,peceti:Object.keys(s.done||{}).length,
+    napovedy:(s.hint1||0)+(s.hint2||0),vzdani:0};
+}
+function updateResultSendStatus(){
+  const s=state(),el=document.getElementById('resultSendStatus');if(!el)return;
+  if(TEST_MODE||s.testGame){el.textContent='Testovací hra – výsledek se neodesílá.';return}
+  const status=window.KGResults?.status(s.gameId);
+  el.textContent=status==='saved'?'Výsledek byl odeslán pořadateli.':status==='sending'?'Odesílám výsledek…':'Výsledek čeká na odeslání. Zkontrolujte připojení a zkuste to znovu.';
+  const b=document.getElementById('resultSendRetry');if(b)b.hidden=status==='saved'||status==='sending';
+}
+function submitFinalResult(){
+  const box=document.getElementById('resultBox');if(!box)return;
+  const note=document.createElement('p');note.id='resultSendStatus';note.setAttribute('role','status');box.appendChild(note);
+  const s=state();
+  if(!TEST_MODE&&!s.testGame){const b=document.createElement('button');b.type='button';b.className='button';b.id='resultSendRetry';b.textContent='ZKUSIT ODESLAT ZNOVU';b.onclick=()=>{const p=cloudResultPayload();if(p)window.KGResults.submit(p)};box.appendChild(b)}
+  const payload=cloudResultPayload();
+  if(payload)window.KGResults.submit(payload);
+  updateResultSendStatus();
+}
+window.addEventListener('kg-result-status',e=>{if(e.detail.id===state().gameId)updateResultSendStatus()});
 function testUnlockFinale(){if(!TEST_MODE||!started())return;let s=state();s.done={radovi:'T2',zvonici:'P4',haviri:'N7',alchymiste:'U1',mincmistri:'A8',konesele:'U3',lapkove:'U6'};s.parchment=true;s.pendingSeal=null;s.current='ultima';save(s);renderUltimaFragments();show('ultima')}
 function restoreApp(){const s=state();if(!(s.team&&s.faction&&s.start)){show('title',false);return}renderProfile();renderHub();currentStation=s.currentStation||null;const target=s.current||(Object.keys(s.done||{}).length?'hub':(s.homeVisited?'nav':'profile'));if(target==='nav'&&currentStation){openStation(currentStation,false);return}if(target==='gpsok'&&currentStation){gpsSuccess(currentStation,false);return}if(target==='task'&&currentStation){renderTask(currentStation);return}if(target==='seal'&&(s.pendingSeal||currentStation)){renderSeal(s.pendingSeal||currentStation);show('seal');return}if(target==='parchment'){openParchment(s.parchOrigin||'hub');return}if(target==='ultima'){renderUltimaFragments();show('ultima');return}if(target==='finalgps'){show('finalgps');return}if(target==='hub'){if(Object.keys(s.done||{}).length===0){currentStation=s.faction;openStation(s.faction,true);return}renderHub();show('hub');return}if(target==='finale'){renderFinalResult();show('finale');return}show(document.getElementById(target)?target:'profile')}
 restoreApp();
