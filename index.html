@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes,viewport-fit=cover">
+<meta name="theme-color" content="#070403">
+<title>Krvavý grimoár a Sedm pečetí – čistý tok v4</title>
+<style>
+:root{
+  --bg:#070403;--bg2:#120806;--gold:#c99635;--gold2:#f2d17b;--blood:#731713;--blood2:#a32720;
+  --paper:#ead8aa;--paper2:#c99c61;--ink:#2a180d;--cream:#f2dfb6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#050302;color:#ead7aa;font-family:Georgia,"Times New Roman",serif}
+body{background:radial-gradient(circle at 50% -12%,rgba(123,25,17,.23),transparent 34rem),linear-gradient(#0b0504,#040202 75%)}
+button,input{font:inherit}
+button{touch-action:manipulation}
+.app{width:min(100%,941px);margin:0 auto;min-height:100vh;background:#050302}
+.screen{display:none;min-height:100vh;position:relative}.screen.active{display:block}
+.screen.padded{padding:18px 14px 42px}
+.art{position:relative;width:100%;margin:0 auto}.art>img{display:block;width:100%;height:auto}
+.hot{position:absolute;border:0;background:transparent;cursor:pointer;z-index:3}
+.hot:focus-visible{outline:2px solid rgba(242,209,123,.85);outline-offset:-3px}
+.backline{display:inline-flex;align-items:center;gap:7px;color:#e1b95f;text-decoration:none;margin:4px 0 14px;cursor:pointer;font-weight:700}
+
+/* title */
+#title .hot-enter{left:20.5%;top:84.1%;width:59%;height:7.7%}
+.age{text-align:center;padding:10px 12px 17px;font-size:.78rem;color:#ccb780;background:#050302}
+
+/* faction select */
+#faction .art{max-width:760px}
+.faction-hit{position:absolute;border:0;background:transparent;cursor:pointer;border-radius:8px}
+.faction-hit:focus-visible{outline:2px solid #efd174;outline-offset:-3px}
+
+/* confirm */
+#confirm{padding:0;background:#050302}
+.confirm-wrap{position:relative;width:100%;max-width:760px;margin:0 auto}.confirm-wrap>img{display:block;width:100%}
+#teamName{position:absolute;left:14.5%;top:57.35%;width:71%;height:4.35%;z-index:3;border:0;background:rgba(6,4,3,.985);color:#f4dfb3;padding:0 2.7%;text-align:left;font-size:clamp(.95rem,3vw,1.28rem);text-transform:none;box-shadow:inset 0 0 18px #000d;outline:none;border-radius:2px}#teamName::placeholder{color:#d8c3a0;opacity:.9}
+.confirm-go{left:13.4%;top:70.55%;width:73.2%;height:6.8%}.confirm-back{left:22.2%;top:79.2%;width:55.6%;height:5.7%}
+
+/* profile */
+#profile,#legend,#legend2,#legend3,#howto,#home{padding:0;background:#050302}
+.profile-next{left:11.5%;top:87.35%;width:77%;height:6.65%}
+
+/* legend + howto */
+#legend .next{left:21%;top:85%;width:58%;height:7.5%}
+#legend2 .next{left:24%;top:84.1%;width:52%;height:6.9%}
+#legend2 .backhot{left:36%;top:91.2%;width:28%;height:5.4%}
+#legend3 .howto{left:16%;top:91.1%;width:32%;height:5.7%}
+#legend3 .start{left:49%;top:91.1%;width:38%;height:5.7%}
+#legend3 .parch{left:29%;top:83.35%;width:58%;height:4.7%}
+#legend3 .legend-live-back{position:absolute;left:2.2%;top:2.1%;z-index:5;border:1px solid #b88634;background:linear-gradient(#21130b,#0c0705);color:#efd394;padding:8px 14px;font-weight:700;letter-spacing:.04em;cursor:pointer;box-shadow:0 5px 14px #0008}
+#howto .start{left:6%;top:89.1%;width:58%;height:7%}
+#howto .backhot{left:66%;top:89.1%;width:29%;height:7%}
+
+/* home location */
+#home .art{max-width:941px}
+.home-verify{left:16%;top:77.3%;width:68%;height:8.2%}
+.home-skip{left:20%;top:86.7%;width:60%;height:4.4%}
+.home-clues{position:absolute;left:4.8%;right:4.8%;top:69.05%;display:grid;grid-template-columns:repeat(5,1fr);gap:0;z-index:4;pointer-events:none;text-align:center;color:#f2e3c0;text-shadow:0 2px 3px #000,0 0 6px #000;font-size:clamp(.66rem,2.45vw,1.34rem);line-height:1.05}
+.home-clues span{display:block;white-space:nowrap;transform:none}
+.home-reread{position:absolute;left:2.4%;top:1.05%;z-index:6;width:21.5%;height:5.1%;border:0;background:url("assets/popup_button_secondary.png") center/100% 100% no-repeat;color:#f5dda3;padding:0 7px;font-family:Georgia,'Times New Roman',serif;font-size:clamp(.58rem,2.15vw,.95rem);font-weight:700;letter-spacing:.035em;cursor:pointer;text-shadow:0 2px 2px #000;text-transform:uppercase;-webkit-tap-highlight-color:transparent}.home-reread:hover,.home-reread:focus-visible{filter:brightness(1.12);outline:none}.home-reread:active{transform:translateY(1px)}
+
+
+.prototype-note{max-width:700px;margin:12px auto 26px;padding:10px 12px;border:1px solid #68461f;background:#0f0906;color:#cdb887;text-align:center;font-size:.85rem}
+.test-confirm{display:none;max-width:700px;margin:10px auto 30px;width:calc(100% - 28px);padding:12px;border:1px solid #9a6d2f;background:#211108;color:#f1d077;font-weight:700;cursor:pointer}
+.test-on .test-confirm{display:block}
+
+/* popup – asset based master, no extra frames or fills */
+.popup{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.popup.show{display:flex}
+.popup-card{position:relative;width:min(94vw,820px);max-height:92vh;overflow:auto;padding:124px 78px 58px;text-align:center;color:#27160d;font-family:Georgia,"Times New Roman",serif;background:url("assets/popup_parchment_bg.png") center/100% 100% no-repeat;filter:drop-shadow(0 26px 44px rgba(0,0,0,.66))}
+.popup-seal{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:118px;height:118px;display:grid;place-items:center;z-index:4;background:none;border:0;box-shadow:none}
+.popup-seal img{display:block;width:100%;height:100%;object-fit:contain}
+.popup-title{margin:0 0 12px;color:#74160f;font-size:clamp(2rem,5.6vw,3.35rem);line-height:1.02;text-transform:uppercase;letter-spacing:.018em;text-shadow:none}
+.popup-title:after{content:"◆";display:block;margin:10px auto 0;font-size:.72rem;color:#9b5a27}
+.popup-body{max-width:88%;margin:0 auto;font-size:clamp(1.08rem,2.8vw,1.65rem);line-height:1.42}
+.popup-body p{margin:.62em 0}.popup-body b{color:#72160f}.popup-body small{font-size:.82em;color:#5a4630}
+.popup-actions{display:grid;gap:14px;justify-items:center;margin-top:26px}.popup-actions.two{grid-template-columns:1fr 1fr;align-items:center}.popup-actions.two .popup-btn{width:100%}
+.popup-btn{position:relative;display:block;width:min(86%,590px);min-height:66px;padding:17px 58px;border:0;background:url("assets/popup_button_primary.png") center/100% 100% no-repeat;color:#f6df9d;font-weight:700;font-size:clamp(1.1rem,2.8vw,1.65rem);line-height:1.05;text-transform:uppercase;letter-spacing:.035em;cursor:pointer;text-shadow:0 2px 2px #430806;box-shadow:none}
+.popup-btn.secondary{background-image:url("assets/popup_button_secondary.png");color:#ecd8ad}
+.popup-btn:hover,.popup-btn:focus-visible{filter:brightness(1.07);outline:none}
+@media(max-width:520px){.popup{padding:6px}.popup-card{width:98vw;padding:104px 34px 40px}.popup-seal{top:8px;width:96px;height:96px}.popup-title{font-size:clamp(1.75rem,8vw,2.6rem)}.popup-body{max-width:94%;font-size:clamp(1rem,4.5vw,1.35rem)}.popup-actions.two{grid-template-columns:1fr}.popup-btn{width:94%;min-height:58px;padding:14px 38px}}
+
+
+/* HUB – approved art; first location completion overlay */
+#hub .hub-wrap{position:relative;width:100%;max-width:941px;margin:0 auto;background:#050302}
+#hub .hub-wrap>img{display:block;width:100%;height:auto}
+.hub-status{position:absolute;z-index:4;left:10.5%;right:10.5%;top:15.1%;height:6.7%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 2.8%;color:#f1d390;text-shadow:0 2px 4px #000;pointer-events:none}.hub-status b{font-size:clamp(.9rem,3.8vw,1.5rem)}.hub-status span{font-size:clamp(.78rem,3vw,1.15rem);font-weight:700}
+.hub-radovi-done{position:absolute;z-index:5;left:9.8%;top:32.6%;width:38.6%;height:16.9%;pointer-events:none}.hub-radovi-done .check{position:absolute;left:3%;top:3%;width:clamp(34px,8vw,54px);height:clamp(34px,8vw,54px);border-radius:50%;display:grid;place-items:center;border:2px solid #f1d25f;background:rgba(9,5,3,.92);color:#ffe77c;font-size:clamp(1.25rem,5vw,2rem);box-shadow:0 0 16px rgba(231,188,66,.5)}.hub-radovi-done .code{position:absolute;right:3%;top:3%;padding:4px 10px;border:2px solid #e8c24d;background:rgba(8,5,3,.94);color:#ffe27a;font-weight:700;font-size:clamp(.9rem,3.5vw,1.35rem);box-shadow:0 0 14px rgba(231,188,66,.35)}
+@media(max-width:520px){.task-order li{font-size:.72rem}.task-order .arrows button{min-width:28px;padding:1px 5px}.alt-grid{grid-template-columns:1fr}.task-live{padding-left:8px;padding-right:8px}}
+
+/* hidden test badge */
+.test-badge{display:none;position:fixed;right:8px;top:8px;z-index:1500;padding:5px 8px;background:#130906;border:1px solid #b9842f;color:#f0cf72;font-size:11px;font-weight:700}.test-on .test-badge{display:block}
+
+/* ===== RADOVI TASK FLOW v3: approved art + unobtrusive interactive controls ===== */
+#task{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.radovi-card{position:relative;width:min(941px,100%);margin:0 auto;background:#050302;filter:drop-shadow(0 18px 34px rgba(0,0,0,.68))}
+.radovi-card>img{display:block;width:100%;height:auto}
+.radovi-hot{position:absolute;z-index:30;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+
+/* Řádoví: the original illustrated rows stay visible. Only the illustrated icon+name strips move; no CSS row boxes are drawn over the artwork. */
+.radovi-strip{position:absolute;z-index:22;left:18.6%;width:64.3%;height:4.01%;object-fit:fill;pointer-events:none;filter:none;transition:top .14s ease}
+.radovi-strip.r0{top:67.46%}.radovi-strip.r1{top:71.47%}.radovi-strip.r2{top:75.48%}.radovi-strip.r3{top:79.49%}.radovi-strip.r4{top:83.50%}
+/* Klikaci plochy presne kopiruji dve sipky nad sebou v puvodni grafice. */
+.radovi-arrow{position:absolute;z-index:34;left:83.35%;width:5.15%;height:1.72%;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:0;margin:0;touch-action:manipulation}
+.radovi-arrow.up.r0{top:67.52%}.radovi-arrow.down.r0{top:69.34%}
+.radovi-arrow.up.r1{top:71.53%}.radovi-arrow.down.r1{top:73.35%}
+.radovi-arrow.up.r2{top:75.54%}.radovi-arrow.down.r2{top:77.36%}
+.radovi-arrow.up.r3{top:79.55%}.radovi-arrow.down.r3{top:81.37%}
+.radovi-arrow.up.r4{top:83.56%}.radovi-arrow.down.r4{top:85.38%}
+.radovi-arrow:focus-visible{outline:2px solid rgba(255,222,135,.72);outline-offset:-2px}
+/* Cela graficka polozka je zaroven dotykovy drag-handle. Bez viditelneho HTML ramecku. */
+.radovi-drag{position:absolute;z-index:32;left:18.6%;width:64.0%;height:4.01%;border:0;background:transparent;padding:0;margin:0;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent}
+.radovi-drag.r0{top:67.46%}.radovi-drag.r1{top:71.47%}.radovi-drag.r2{top:75.48%}.radovi-drag.r3{top:79.49%}.radovi-drag.r4{top:83.50%}
+.radovi-drag.dragging{cursor:grabbing}
+.radovi-main-hint{left:5.8%;top:90.5%;width:42.6%;height:7.5%}
+.radovi-main-check{left:50.2%;top:90.5%;width:44%;height:7.5%}
+.radovi-hint-ok{left:24%;top:71.8%;width:52%;height:8.2%}
+.radovi-correct-next{left:20%;top:74.5%;width:60%;height:8.8%}
+.radovi-wrong-back{left:8.7%;top:67.5%;width:39.5%;height:8.8%}
+.radovi-wrong-giveup{left:50.3%;top:67.5%;width:41%;height:8.8%}
+.radovi-preseal-break{left:7%;top:88.2%;width:86%;height:8.4%}
+.radovi-broken-hub{left:21%;top:79.3%;width:58%;height:8.3%}
+
+/* Alternative answer after the hint — same gothic black/red/gold language as the task card. */
+.radovi-answer-wrap{position:relative;width:min(760px,94%);margin:22px auto 56px;padding:22px 22px 20px;box-sizing:border-box;background:radial-gradient(circle at 50% 0,rgba(74,12,10,.62),transparent 44%),linear-gradient(180deg,#0b0706,#030303 72%);border:2px solid #c69435;outline:1px solid rgba(97,51,10,.85);outline-offset:-7px;box-shadow:0 16px 38px #000c,inset 0 0 34px rgba(111,54,14,.18);color:#f0d38a;font-family:Georgia,'Times New Roman',serif}
+.radovi-answer-wrap:before,.radovi-answer-wrap:after{content:'◆';position:absolute;top:8px;color:#d9a53a;font-size:.7rem}.radovi-answer-wrap:before{left:10px}.radovi-answer-wrap:after{right:10px}
+.radovi-answer-wrap h2{text-align:center;margin:0 0 18px;color:#f4df9f;font-size:clamp(1.35rem,5vw,2.05rem);letter-spacing:.035em;text-shadow:0 2px 2px #000}
+.radovi-answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:17px}
+.radovi-answer-grid label{display:block;text-align:center;color:#dcae52;font-weight:700;font-size:.82rem;letter-spacing:.05em}
+.radovi-answer-grid input{display:block;width:100%;box-sizing:border-box;margin-top:7px;padding:13px 12px;background:linear-gradient(180deg,#080707,#0b0908);border:1.5px solid #c18c2d;box-shadow:inset 0 0 13px #000;color:#f4e7bd;text-align:center;font-family:Georgia,serif;font-size:1.18rem;text-transform:uppercase;outline:none}
+.radovi-answer-grid input:focus{border-color:#e0bb60;box-shadow:inset 0 0 13px #000,0 0 0 1px rgba(232,193,99,.38)}
+.radovi-answer-actions{display:grid;grid-template-columns:1fr 1.42fr;gap:12px}
+.radovi-answer-actions button{min-height:58px;border:0;color:#f6e6bb;font-family:Georgia,serif;font-weight:700;font-size:clamp(.9rem,3.3vw,1.18rem);cursor:pointer;text-transform:uppercase;letter-spacing:.015em;text-shadow:0 2px 2px #000}
+.radovi-answer-actions .hint{background:url("assets/popup_button_secondary.png") center/100% 100% no-repeat}
+.radovi-answer-actions .check{background:url("assets/popup_button_primary.png") center/100% 100% no-repeat}
+.radovi-answer-actions button:active{transform:translateY(1px)}
+@media(max-width:520px){.radovi-answer-grid{gap:10px}.radovi-answer-actions{grid-template-columns:1fr 1.3fr}.radovi-answer-wrap{padding:18px 14px 16px}}
+
+</style>
+</head>
+<body>
+<div class="test-badge">TEST MODE</div>
+<main class="app">
+<section id="title" class="screen active">
+  <div class="art"><img src="assets/title.webp" alt="Krvavý grimoár a Sedm pečetí"><button class="hot hot-enter" aria-label="Vstoupit do hry"></button></div>
+  <div class="age"><b>15+</b> · černý humor · hrubší jazyk · <b>historicky nekorektní osoby</b></div>
+</section>
+
+<section id="faction" class="screen">
+  <div class="art" style="max-width:760px">
+    <img src="assets/faction_select.webp" alt="Vyberte svou frakci">
+    <button class="faction-hit" style="left:4.4%;top:25.4%;width:44.8%;height:17.1%" data-faction="radovi" aria-label="Řádoví bratři"></button>
+    <button class="faction-hit" style="left:51.4%;top:25.4%;width:44.8%;height:17.1%" data-faction="zvonici" aria-label="Zvoníci"></button>
+    <button class="faction-hit" style="left:4.4%;top:43.8%;width:44.8%;height:17.1%" data-faction="haviri" aria-label="Havíři"></button>
+    <button class="faction-hit" style="left:51.4%;top:43.8%;width:44.8%;height:17.1%" data-faction="alchymiste" aria-label="Alchymisté"></button>
+    <button class="faction-hit" style="left:4.4%;top:62.3%;width:44.8%;height:17.1%" data-faction="konesele" aria-label="Konšelé"></button>
+    <button class="faction-hit" style="left:51.4%;top:62.3%;width:44.8%;height:17.1%" data-faction="mincmistri" aria-label="Mincmistři"></button>
+    <button class="faction-hit" style="left:17.1%;top:80.5%;width:66%;height:15.7%" data-faction="lapkove" aria-label="Lapkové"></button>
+  </div>
+</section>
+
+<section id="confirm" class="screen">
+  <div class="confirm-wrap">
+    <img id="confirmArt" src="assets/confirm_radovi.webp" alt="Potvrzení frakce">
+    <input id="teamName" maxlength="40" autocomplete="off" aria-label="Název družiny" placeholder="Název družiny">
+    <button class="hot confirm-go" aria-label="Potvrdit frakci"></button>
+    <button class="hot confirm-back" aria-label="Zpět k výběru frakce"></button>
+  </div>
+</section>
+
+<section id="profile" class="screen">
+  <div class="art"><img id="profileArt" src="assets/profile_radovi_approved.png" alt="Frakční karta"><button class="hot profile-next" aria-label="Pokračovat k legendě"></button></div>
+</section>
+
+<section id="legend" class="screen"><div class="art"><img src="assets/legend_1_final.png" alt="Legenda – první část"><button class="hot next" aria-label="Pokračovat"></button></div></section>
+<section id="legend2" class="screen"><div class="art"><img src="assets/legend_2_final.png" alt="Legenda – druhá část"><button class="hot next" aria-label="Pokračovat"></button><button class="hot backhot" aria-label="Zpět"></button></div></section>
+<section id="legend3" class="screen"><div class="art"><img src="assets/legend_3_final.png" alt="Legenda – třetí část"><button class="legend-live-back" type="button" aria-label="Zpět na předchozí část legendy">← ZPĚT</button><button class="hot parch" aria-label="Ztracený pergamen"></button><button class="hot howto" aria-label="Jak hrát"></button><button class="hot start" aria-label="Vyrazit na první stopu"></button></div></section>
+<section id="howto" class="screen"><div class="art"><img src="assets/how_to_play_final.png" alt="Jak hrát"><button class="hot start" aria-label="Vyrazit na první stopu"></button><button class="hot backhot" aria-label="Zpět k legendě"></button></div></section>
+
+<section id="home" class="screen">
+  <div class="art"><img id="homeArt" src="assets/loccard_radovi_home.png" alt="Domovská lokace"><button class="home-reread" type="button" aria-label="Znovu zobrazit první stopu">PRVNÍ STOPA</button><div id="homeClues" class="home-clues" aria-hidden="true"></div><button class="hot home-verify" aria-label="Ověřit polohu"></button><button class="hot home-skip" aria-label="Pokračovat bez GPS za 10 minut"></button></div>
+  <button class="test-confirm" id="testConfirm">TEST: SIMULOVAT SPRÁVNOU POLOHU</button>
+</section>
+
+<section id="task" class="screen">
+  <div id="taskContent"></div>
+</section>
+
+<section id="hub" class="screen">
+  <div class="hub-wrap">
+    <img src="assets/hub_final.png" alt="Krvavý grimoár – Kam dál?">
+    <div id="hubStatus" class="hub-status"></div>
+    <div id="hubRadoviDone" class="hub-radovi-done" hidden><span class="check">✓</span><span class="code">T2</span></div>
+  </div>
+</section>
+</main>
+
+<div id="popup" class="popup" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="popup-card">
+    <div id="popupSeal" class="popup-seal"><img id="popupSealImg" src="assets/icon_exclamation.png" alt=""></div>
+    <h2 id="popupTitle" class="popup-title"></h2>
+    <div id="popupBody" class="popup-body"></div>
+    <div id="popupActions" class="popup-actions"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const A='assets/';
+const DATA={
+  radovi:{name:'Řádoví bratři',clues:['Řád','Kázeň','Kříže','Kámen','Sochy'],confirm:'confirm_radovi.webp',profile:'profile_radovi_approved.png',home:'loccard_radovi_home.png',taskArt:'taskcard_radovi.png',code:'T2',gps:[49.9471250,15.2646294],homeText:'Začínáte na místě, kde se řada kamenných světců dívá směrem k chrámu svaté Barbory. Jděte na roh Jezuitské koleje. Hledejte sochy. Ony vám vydají první úkol a možná i pečeť.',gpsOk:'Stojíte před bývalou Jezuitskou kolejí. Díváte se směrem k chrámu sv. Barbory. Před sebou vidíte řadu soch. Měli byste je mít po levé ruce.',gpsNo:'Musíte popojít. Hledáte dlouhou kolej řádových bratří – jezuitů. Podél boční zdi uvidíte řadu barokních soch.'},
+  zvonici:{name:'Zvoníci',clues:['Věž','Kostel','Zvony','Výška','Mapa'],confirm:'confirm_zvonici.webp',profile:'profile_zvonici_approved.png',home:'loccard_zvonici_home.png',gps:[49.9480756,15.2674039],homeText:'Začínáte u kostela, jehož vysoká věž vládne městu. Hledejte svatého Jakuba a jeho vyhlídku.',gpsOk:'Zvedněte oči, zvoník málokdy hledí k zemi…',gpsNo:'Najděte vyhlídku a na zemi plán města. To je správné místo.'},
+  haviri:{name:'Havíři',clues:['Tma','Štola','Mlátek','Stříbro','Muzeum'],confirm:'confirm_haviri.webp',profile:'profile_haviri_approved.png',home:'loccard_haviri_home.png',gps:[49.9477361,15.2654717],homeText:'Začínáte tam, kde se kutnohorské stříbro připomíná nejhlasitěji. Jděte k Hrádku, před vchod do Českého muzea stříbra.',gpsOk:'Tady se kdysi rozhodovalo o bohatství města mnohem víc než v radní síni.<br><br>Kutná Hora sice nahoře zářila kamenem, věžemi a penězi, ale dole pod ní se plazily štoly, v nichž se rodilo její skutečné bohatství.<br><br>Bez havířů by nebylo stříbro.<br>Bez stříbra by nebyla sláva.<br>A bez slávy by se tu nejspíš nikdo nehádal o moc, hříchy ani groše.<br><br>Ale ještě se neradujte. Havíř, který věří prvnímu dojmu, obvykle dlouho nefárá.',gpsNo:'<b>Korekce místa</b><br>Hledejte místo, kde sídlí České muzeum stříbra a odkud se vyráží za historií kutnohorského podzemí.'},
+  alchymiste:{name:'Alchymisté',clues:['Síra','Baňky','Pentagram','Tajemství','Infocentrum'],confirm:'confirm_alchymiste.webp',profile:'profile_alchymiste_approved.png',home:'loccard_alchymiste_home.png',gps:[49.9497917,15.2685242],homeText:'Hledejte <b>dům na hlavním náměstí</b>, kde se podle pověstí mísilo učené poznání, alchymie a pach tiskařské černě. Dnes tam sídlí informační centrum.',gpsOk:'Stojíte před Sankturinovským domem.',gpsNo:'Vraťte se na hlavní náměstí. Hledejte dům s informačním centrem a alchymistickou pověstí.'},
+  konesele:{name:'Konšelé',clues:['Kámen','Erby','Bohatství','Moc','Plán města'],confirm:'confirm_konesele.webp',profile:'profile_konesele_approved.png',home:'loccard_konesele_home.png',gps:[49.9498797,15.2653806],homeText:'Hledejte jeden z nejkrásnějších gotických domů ve městě – <b>palác s bohatě zdobenou kamennou fasádou. Místní mu říkají prostě – Kamenný.</b>',gpsOk:'Našli jste dům, kterému se v Kutné Hoře říká jednoduše Kamenný dům. Patřil k nejvýstavnějším měšťanským domům ve městě a jeho fasáda měla každému kolemjdoucímu jasně připomenout, kdo má peníze, vliv a dobré styky.<br><br>Dobře si dům prohlédněte.<br><br>Takové domy nestavěli lidé, kteří chtěli zůstat nenápadní.',gpsNo:'<b>Korekce místa</b><br>Hledejte dům, kterému se v Kutné Hoře říká jednoduše <b>Kamenný dům</b>.'},
+  mincmistri:{name:'Mincmistři',clues:['Stříbro','Razidlo','Groš','Váha','Prezident'],confirm:'confirm_mincmistri.webp',profile:'profile_mincmistri_approved.png',home:'loccard_mincmistri_home.png',gps:[49.9484506,15.2690364],homeText:'Jděte na místo, kde se z kutnohorského stříbra rodily mince pro celé království – <b>groše</b>. Zastavte se u sochy prezidenta před vchodem.',gpsOk:'Vlašský dvůr býval královskou mincovnou a později také královským palácem, kde pobýval panovník při návštěvách města.',gpsNo:'Hledejte místo, kde se kdysi rozhodovalo, zda má groš správnou váhu, a kde se razily královské mince. <b>Vlašský dvůr.</b>'},
+  lapkove:{name:'Lapkové',clues:['Stín','Zeď','Úkryt','Špína','Zadní vchod'],confirm:'confirm_lapkove.webp',profile:'profile_lapkove_approved.png',home:'loccard_lapkove_home.png',gps:[49.9478689,15.2661933],homeText:'V noci, kdy zmizel <b>Krvavý grimoár</b>, se ulicemi Kutné Hory neplížili jen purkmistrovi špiclové a městská stráž.<br>Ve stínech se pohybovali i jiní.<br><br>Ti, kteří znají každou díru v hradbách, každou zadní branku, každý průchod mezi domy a každou uličku, kde člověk zmizí dřív, než stráž stihne zakřičet.<br><br>Jeden z vašich lidí tvrdí, že v noci zahlédl muže s balíkem pod pláštěm.<br><br>Běžel.<br>Za ním dva strážní.<br>Před ním úzká ulice mezi vysokými zdmi.<br><br>Jenom vy víte, kde tuhle uličku hledat.<br><br>Pak zmizel.<br><br>Jestli nesl <b>Krvavý grimoár</b>, nikdo neví.<br><br>Váš člověk neuměl číst.<br>Psát také ne.<br>Ale hlavně nebyl takový trouba, aby u sebe nosil pergamen s názvem místa, kudy právě prchal někdo, koho hledá celé město.<br><br>Zanechal jen <b>obraz</b>.<br><br>Nedaleko sv. Jakuba.<br>Místní jí neřeknou jinak než <b>Ruthardská</b>.',gpsOk:'Našli jste správnou uličku.',gpsNo:'Buď jste slepí, nebo jste úplně jinde. A ani jedno není pro lapku dobrá zpráva. Tohle nenajdete z hlavní ulice, hledejte zadní průchod a zadní vchod do krčmy.<br><br>Hledejte dál, nemůžete to nenajít, je to asi nejslavnější ulička ve městě.'}
+};
+const PLACEHOLDERS={radovi:'např. Bratři posledního kázání',zvonici:'např. Bratrstvo posledního úderu',haviri:'např. Dědici svaté Barbory',alchymiste:'např. Řád rudé baňky',konesele:'např. Ctihodná městská rada',mincmistri:'např. Strážci stříbrného groše',lapkove:'např. Černé kápě'};
+let selected=null;
+const qs=new URLSearchParams(location.search);const TEST=qs.get('test')==='1';if(TEST)document.body.classList.add('test-on');
+function gameState(){try{return JSON.parse(localStorage.getItem('kg-clean-flow')||'{}')}catch{return {}}}
+function saveGame(s){localStorage.setItem('kg-clean-flow',JSON.stringify(s))}
+function ensureGame(){const s=gameState();s.penaltyMinutes=Number(s.penaltyMinutes||0);s.hints=s.hints||{};s.done=s.done||{};if(!Array.isArray(s.radoviOrder))s.radoviOrder=['LEV','LEBKA','RÝČ','VĚŽ','VĚDRO S VODOU'];return s}
+function addPenalty(minutes,key){const s=ensureGame();s.penaltyFlags=s.penaltyFlags||{};if(key&&s.penaltyFlags[key])return false;if(key)s.penaltyFlags[key]=true;s.penaltyMinutes+=minutes;saveGame(s);return true}
+
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id)?.classList.add('active');scrollTo(0,0)}
+const ICONS={
+ pin:'icon_pin.png',
+ alert:'icon_exclamation.png',
+ mining:'icon_hammers.png',
+ hourglass:'icon_hourglass.png',
+ lantern:'icon_lantern.png',
+ purse:'icon_moneybag.png',
+ seal:'icon_check.png',
+ broken:'icon_seal_broken.png',
+ scroll:'icon_scroll.png',
+ key:'icon_key.png',
+ correct:'icon_check.png',
+ wrong:'icon_wrong.png'
+};
+function popup({icon='alert',tone='',title='',html='',actions=[{label:'ROZUMÍME'}],dismissible=true}){
+  const p=document.getElementById('popup'),sealImg=document.getElementById('popupSealImg'),t=document.getElementById('popupTitle'),b=document.getElementById('popupBody'),a=document.getElementById('popupActions');
+  sealImg.src=A+(ICONS[icon]||ICONS.alert);sealImg.alt='';t.textContent=title;b.innerHTML=html;a.innerHTML='';a.className='popup-actions'+(actions.length===2?' two':'');
+  actions.forEach(x=>{const btn=document.createElement('button');btn.className='popup-btn '+(x.kind==='secondary'?'secondary':'');btn.textContent=x.label;btn.onclick=()=>{closePopup();x.fn?.()};a.appendChild(btn)});
+  p.classList.add('show');p.setAttribute('aria-hidden','false');p.onclick=dismissible?(e=>{if(e.target===p)closePopup()}):null;
+}
+function closePopup(){const p=document.getElementById('popup');p.classList.remove('show');p.setAttribute('aria-hidden','true');p.onclick=null}
+function pickFaction(id){selected=id;const d=DATA[id];document.getElementById('confirmArt').src=A+d.confirm;document.getElementById('confirmArt').alt='Potvrzení frakce '+d.name;const i=document.getElementById('teamName');i.value='';i.placeholder=PLACEHOLDERS[id];show('confirm');setTimeout(()=>i.focus(),80)}
+function confirmFaction(){const team=document.getElementById('teamName').value.trim();if(!selected){show('faction');return}if(!team){popup({icon:'alert',title:'CHYBÍ NÁZEV DRUŽINY',html:'<p>Napište název družiny.</p>'});return}const s={faction:selected,team,penaltyMinutes:0,hints:{},done:{},radoviOrder:['LEV','LEBKA','RÝČ','VĚŽ','VĚDRO S VODOU']};saveGame(s);const d=DATA[selected];document.getElementById('profileArt').src=A+d.profile;document.getElementById('profileArt').alt='Frakční karta '+d.name;show('profile')}
+function currentFaction(){try{return JSON.parse(localStorage.getItem('kg-clean-flow')||'{}').faction||selected}catch{return selected}}
+function openFirstStop(){const id=currentFaction();if(!id||!DATA[id]){show('faction');return}const d=DATA[id];popup({icon:'pin',tone:'gold',title:'VAŠE PRVNÍ STOPA',html:`<p>${d.homeText}</p>`,dismissible:false,actions:[{label:'VYRAZIT',kind:'gold',fn:()=>openHomeCard(id)}]})}
+function reopenFirstStop(){const id=document.getElementById('homeArt').dataset.faction||currentFaction();if(!id||!DATA[id])return;const d=DATA[id];popup({icon:'pin',tone:'gold',title:'VAŠE PRVNÍ STOPA',html:`<p>${d.homeText}</p>`,actions:[{label:'ZPĚT K LOKACI',kind:'gold'}]})}
+function openHomeCard(id){const d=DATA[id];const img=document.getElementById('homeArt');img.src=A+d.home;img.alt='Domovská lokace – '+d.name;img.dataset.faction=id;document.getElementById('homeClues').innerHTML=(d.clues||[]).map(x=>`<span>${x}</span>`).join('');show('home')}
+function distanceMeters(a,b,c,d){const R=6371000,p=Math.PI/180,x=(d-b)*p*Math.cos((a+c)*p/2),y=(c-a)*p;return Math.sqrt(x*x+y*y)*R}
+function verifyHome(){const id=document.getElementById('homeArt').dataset.faction||currentFaction(),d=DATA[id];if(!d)return;if(!navigator.geolocation){popup({icon:'alert',title:'POLOHU NELZE OVĚŘIT',html:'<p>Prohlížeč GPS nepodporuje nebo k ní nemá přístup.</p>'});return}navigator.geolocation.getCurrentPosition(pos=>{const m=distanceMeters(pos.coords.latitude,pos.coords.longitude,d.gps[0],d.gps[1]);if(m<=25){homeSuccess(id)}else{popup({icon:'alert',title:'JEŠTĚ NEJSTE NA MÍSTĚ',html:`<p>${d.gpsNo}</p><p><small>Přibližná vzdálenost: ${Math.round(m)} m.</small></p>`})}},()=>popup({icon:'alert',title:'POLOHU NELZE OVĚŘIT',html:'<p>Zkontrolujte oprávnění pro GPS. Na telefonu otevřete hru přímo v Chrome nebo Safari.</p>'}),{enableHighAccuracy:true,timeout:12000,maximumAge:5000})}
+function homeSuccess(id){const d=DATA[id];popup({icon:'pin',title:'POLOHA POTVRZENA',html:`<p>${d.gpsOk}</p>`,dismissible:false,actions:[{label:id==='radovi'?'K ÚKOLU':'ROZUMÍME',fn:()=>{if(id==='radovi')openRadoviTask()}}]})}
+function skipGps(){popup({icon:'hourglass',title:'OPRAVDU POKRAČOVAT BEZ GPS?',html:'<p>Pokračování bez ověření polohy přidá k výslednému času penalizaci.</p><p><b>+10 MIN</b></p>',actions:[{label:'ZPĚT',kind:'secondary'},{label:'POKRAČOVAT',fn:()=>{addPenalty(10,'gps-home-'+(document.getElementById('homeArt').dataset.faction||currentFaction()));homeSuccess(document.getElementById('homeArt').dataset.faction||currentFaction())}}]})}
+
+const RADOVI_CORRECT=['VĚŽ','RÝČ','LEV','VĚDRO S VODOU','LEBKA'];
+let radoviWrongReturn='main';
+function radoviOrder(){return ensureGame().radoviOrder}
+function setRadoviOrder(order){const s=ensureGame();s.radoviOrder=order;saveGame(s)}
+function moveRadovi(i,d){const o=[...radoviOrder()],j=i+d;if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];setRadoviOrder(o);renderRadoviOrder()}
+const RADOVI_STRIPS={'LEBKA':'radovi_order/lebka.png','LEV':'radovi_order/lev.png','VĚDRO S VODOU':'radovi_order/vedro.png','VĚŽ':'radovi_order/vez.png','RÝČ':'radovi_order/ryc.png'};
+let radoviDrag=null;
+function radoviIndexFromClientY(clientY,host){
+  const card=host.closest('.radovi-card');if(!card)return 0;
+  const r=card.getBoundingClientRect();
+  const rel=(clientY-r.top)/r.height*100;
+  const centers=[69.465,73.475,77.485,81.495,85.505];
+  let best=0,dist=Infinity;centers.forEach((c,i)=>{const d=Math.abs(rel-c);if(d<dist){dist=d;best=i}});
+  return best;
+}
+function startRadoviDrag(e,i,name,el){
+  if(e.pointerType==='mouse' && e.button!==0)return;
+  e.preventDefault();e.stopPropagation();
+  el.setPointerCapture?.(e.pointerId);el.classList.add('dragging');
+  radoviDrag={pointerId:e.pointerId,index:i,name,el};
+}
+function moveRadoviDrag(e){
+  if(!radoviDrag||e.pointerId!==radoviDrag.pointerId)return;
+  e.preventDefault();
+  const host=document.getElementById('radoviSortLayer');if(!host)return;
+  const target=radoviIndexFromClientY(e.clientY,host);
+  const current=radoviOrder().indexOf(radoviDrag.name);
+  if(target!==current){
+    const o=[...radoviOrder()];o.splice(current,1);o.splice(target,0,radoviDrag.name);setRadoviOrder(o);
+    radoviDrag.index=target;renderRadoviOrder(radoviDrag.name,e.pointerId);
+  }
+}
+function endRadoviDrag(e){
+  if(!radoviDrag||e.pointerId!==radoviDrag.pointerId)return;
+  e.preventDefault();radoviDrag.el?.classList.remove('dragging');radoviDrag=null;
+}
+function renderRadoviOrder(activeName=null,activePointerId=null){
+  const host=document.getElementById('radoviSortLayer');if(!host)return;
+  host.innerHTML='';
+  radoviOrder().forEach((name,i)=>{
+    const img=document.createElement('img');img.className=`radovi-strip r${i}`;img.src=A+RADOVI_STRIPS[name];img.alt=`${i+1}. ${name}`;host.appendChild(img);
+    const drag=document.createElement('div');drag.className=`radovi-drag r${i}`;drag.setAttribute('role','button');drag.setAttribute('aria-label',`Přesunout ${name}. Táhněte prstem nahoru nebo dolů.`);
+    drag.onpointerdown=e=>startRadoviDrag(e,i,name,drag);drag.onpointermove=moveRadoviDrag;drag.onpointerup=endRadoviDrag;drag.onpointercancel=endRadoviDrag;host.appendChild(drag);
+    if(name===activeName && radoviDrag){radoviDrag.el=drag;radoviDrag.index=i;try{drag.setPointerCapture(activePointerId)}catch(_){}}
+    const up=document.createElement('button');up.type='button';up.className=`radovi-arrow up r${i}`;up.setAttribute('aria-label',`Posunout ${name} nahoru`);up.onclick=e=>{e.preventDefault();e.stopPropagation();moveRadovi(i,-1)};host.appendChild(up);
+    const down=document.createElement('button');down.type='button';down.className=`radovi-arrow down r${i}`;down.setAttribute('aria-label',`Posunout ${name} dolů`);down.onclick=e=>{e.preventDefault();e.stopPropagation();moveRadovi(i,1)};host.appendChild(down);
+  });
+}
+function openRadoviTask(){
+  document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}taskcard_radovi.png" alt="Úkol Řádových bratří"><div id="radoviSortLayer"></div><button class="radovi-hot radovi-main-hint" type="button" aria-label="Nápověda" onclick="radoviHint()"></button><button class="radovi-hot radovi-main-check" type="button" aria-label="Ověřit odpověď" onclick="checkRadoviOrder()"></button></div>`;
+  renderRadoviOrder();show('task');window.scrollTo(0,0)
+}
+function radoviHint(){
+  let s=ensureGame();if((s.hints.radovi||0)<1){addPenalty(3,'hint-radovi');s=ensureGame();s.hints.radovi=1;saveGame(s)}
+  document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}hint_radovi_v2.png" alt="Nápověda Řádových bratří"><button class="radovi-hot radovi-hint-ok" type="button" aria-label="Rozumím" onclick="openRadoviHintAnswer()"></button></div>`;show('task');window.scrollTo(0,0)
+}
+function openRadoviHintAnswer(){
+  document.getElementById('taskContent').innerHTML=`<div class="radovi-answer-wrap"><h2>VAŠE ODPOVĚĎ</h2><div class="radovi-answer-grid"><label>PÍSMENO<input id="ignLetter" maxlength="1" autocomplete="off" placeholder="A–Z"></label><label>ČÍSLO<input id="ignWomen" inputmode="numeric" maxlength="1" autocomplete="off" placeholder="0–9"></label></div><div class="radovi-answer-actions"><button class="hint" type="button" onclick="radoviHint()">NÁPOVĚDA</button><button class="check" type="button" onclick="checkIgnatiusRadovi()">OVĚŘIT ODPOVĚĎ</button></div></div>`;show('task');setTimeout(()=>document.getElementById('ignLetter')?.focus(),80);window.scrollTo(0,0)
+}
+function checkIgnatiusRadovi(){const n=(document.getElementById('ignWomen')?.value||'').trim(),l=(document.getElementById('ignLetter')?.value||'').trim().toUpperCase();if(n==='2'&&l==='T')radoviCorrect();else{radoviWrongReturn='alt';showRadoviWrong()}}
+function checkRadoviOrder(){const o=radoviOrder();if(o.every((v,i)=>v===RADOVI_CORRECT[i]))radoviCorrect();else{radoviWrongReturn='main';showRadoviWrong()}}
+function showRadoviWrong(){document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}wrong_radovi_v2.png" alt="Špatné pořadí"><button class="radovi-hot radovi-wrong-back" type="button" aria-label="Zpět k úkolu" onclick="returnFromRadoviWrong()"></button><button class="radovi-hot radovi-wrong-giveup" type="button" aria-label="Vzdávám to za třicet minut" onclick="confirmRadoviSurrender()"></button></div>`;show('task');window.scrollTo(0,0)}
+function returnFromRadoviWrong(){radoviWrongReturn==='alt'?openRadoviHintAnswer():openRadoviTask()}
+function confirmRadoviSurrender(){popup({icon:'hourglass',title:'OPRAVDU VZDÁT ÚKOL?',html:'<p>Úkol bude považován za splněný.</p><p><b>+30 MIN</b></p>',actions:[{label:'ZPĚT',kind:'secondary'},{label:'VZDÁVÁM TO',fn:()=>{addPenalty(30,'surrender-radovi');showRadoviPreseal()}}]})}
+function radoviCorrect(){document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}correct_radovi_v2.png" alt="Správně"><button class="radovi-hot radovi-correct-next" type="button" aria-label="Dál" onclick="showRadoviPreseal()"></button></div>`;show('task');window.scrollTo(0,0)}
+function showRadoviPreseal(){document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}preseal_radovi_v2.png" alt="Literární aluze a rozlomení pečeti"><button class="radovi-hot radovi-preseal-break" type="button" aria-label="Rozlomit pečeť" onclick="breakRadoviSeal()"></button></div>`;show('task');window.scrollTo(0,0)}
+function breakRadoviSeal(){const s=ensureGame();s.done.radovi='T2';saveGame(s);document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}broken_radovi_v2.png" alt="Rozlomená pečeť Řádových bratří – T2"><button class="radovi-hot radovi-broken-hub" type="button" aria-label="Zpět na rozcestník" onclick="openHub()"></button></div>`;show('task');window.scrollTo(0,0)}
+function openHub(){const s=ensureGame(),team=s.team||'Družina';const doneCount=Object.keys(s.done||{}).length;document.getElementById('hubStatus').innerHTML=`<b>${team}</b><span>${doneCount}/7 pečetí</span>`;document.getElementById('hubRadoviDone').hidden=!s.done.radovi;show('hub');window.scrollTo(0,0)}
+
+// Navigation
+ document.querySelector('#title .hot-enter').onclick=()=>show('faction');
+ document.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>show(x.dataset.go));
+ document.querySelectorAll('[data-faction]').forEach(x=>x.onclick=()=>pickFaction(x.dataset.faction));
+ document.querySelector('.confirm-back').onclick=()=>show('faction');
+ document.querySelector('.confirm-go').onclick=confirmFaction;
+ document.getElementById('teamName').addEventListener('keydown',e=>{if(e.key==='Enter')confirmFaction()});
+ document.querySelector('.profile-next').onclick=()=>show('legend');
+ document.querySelector('#legend .next').onclick=()=>show('legend2');
+ document.querySelector('#legend2 .next').onclick=()=>show('legend3');
+ document.querySelector('#legend2 .backhot').onclick=()=>show('legend');
+ document.querySelector('#legend3 .legend-live-back').onclick=()=>show('legend2');
+ document.querySelector('#legend3 .howto').onclick=()=>show('howto');
+ document.querySelector('#legend3 .start').onclick=openFirstStop;
+ document.querySelector('#howto .start').onclick=openFirstStop;
+ document.querySelector('#howto .backhot').onclick=()=>show('legend3');
+ document.querySelector('#legend3 .parch').onclick=()=>popup({icon:'scroll',tone:'gold',title:'ZTRACENÝ PERGAMEN',html:'<p>Tuto mechaniku připojíme až po kontrole základního toku hry.</p>'});
+ document.querySelector('.home-reread').onclick=reopenFirstStop;
+ document.querySelector('.home-verify').onclick=verifyHome;
+ document.querySelector('.home-skip').onclick=skipGps;
+ document.getElementById('testConfirm').onclick=()=>homeSuccess(document.getElementById('homeArt').dataset.faction||currentFaction());
+
+// Optional fast faction test: ?test=1&f=haviri
+if(TEST&&qs.get('f')&&DATA[qs.get('f')]){selected=qs.get('f');saveGame({faction:selected,team:'TEST',penaltyMinutes:0,hints:{},done:{},radoviOrder:['LEV','LEBKA','RÝČ','VĚŽ','VĚDRO S VODOU']});openHomeCard(selected)}
+</script>
+</body>
+</html>
