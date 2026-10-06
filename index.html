@@ -397,7 +397,14 @@ const DATA={
 const PLACEHOLDERS={radovi:'např. Bratři posledního kázání',zvonici:'např. Bratrstvo posledního úderu',haviri:'např. Dědici svaté Barbory',alchymiste:'např. Řád rudé baňky',konesele:'např. Ctihodná městská rada',mincmistri:'např. Strážci stříbrného groše',lapkove:'např. Černé kápě'};
 let selected=null;
 let locationEntryMode='home';
-const qs=new URLSearchParams(location.search);const TEST=qs.get('test')==='1';if(TEST)document.body.classList.add('test-on');
+const qs=new URLSearchParams(location.search);
+if(qs.get('reset')==='1'){
+  try{localStorage.removeItem('kg-clean-flow')}catch(e){}
+  qs.delete('reset');
+  const cleanQuery=qs.toString();
+  history.replaceState(null,'',location.pathname+(cleanQuery?'?'+cleanQuery:'')+location.hash);
+}
+const TEST=qs.get('test')==='1';if(TEST)document.body.classList.add('test-on');
 const GAME_LIMIT_MS=4*60*60*1000;
 function gameState(){try{return JSON.parse(localStorage.getItem('kg-clean-flow')||'{}')}catch{return {}}}
 function saveGame(s){localStorage.setItem('kg-clean-flow',JSON.stringify(s))}
