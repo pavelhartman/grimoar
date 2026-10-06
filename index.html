@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes,viewport-fit=cover">
+<meta name="theme-color" content="#070403">
+<title>Krvavý grimoár – finální verze</title>
+<style>
+:root{
+  --bg:#070403;--bg2:#120806;--gold:#c99635;--gold2:#f2d17b;--blood:#731713;--blood2:#a32720;
+  --paper:#ead8aa;--paper2:#c99c61;--ink:#2a180d;--cream:#f2dfb6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#050302;color:#ead7aa;font-family:Georgia,"Times New Roman",serif;overflow-anchor:none}
+body{background:radial-gradient(circle at 50% -12%,rgba(123,25,17,.23),transparent 34rem),linear-gradient(#0b0504,#040202 75%)}
+button,input{font:inherit}
+button{touch-action:manipulation}
+.app{width:min(100%,941px);margin:0 auto;min-height:100vh;background:#050302}
+.screen{display:none;min-height:100vh;position:relative}.screen.active{display:block}
+.screen.padded{padding:18px 14px 42px}
+.art{position:relative;width:100%;margin:0 auto}.art>img{display:block;width:100%;height:auto}
+.hot{position:absolute;border:0;background:transparent;cursor:pointer;z-index:3}
+.hot:focus-visible{outline:2px solid rgba(242,209,123,.85);outline-offset:-3px}
+.backline{display:inline-flex;align-items:center;gap:7px;color:#e1b95f;text-decoration:none;margin:4px 0 14px;cursor:pointer;font-weight:700}
+
+/* title */
+#title .hot-enter{left:20.5%;top:84.1%;width:59%;height:7.7%}
+.age{text-align:center;padding:10px 12px 17px;font-size:.78rem;color:#ccb780;background:#050302}
+
+/* faction select */
+#faction .art{max-width:760px}
+.faction-hit{position:absolute;border:0;background:transparent;cursor:pointer;border-radius:8px}
+.faction-hit:focus-visible{outline:2px solid #efd174;outline-offset:-3px}
+
+/* confirm */
+#confirm{padding:0;background:#050302}
+.confirm-wrap{position:relative;width:100%;max-width:760px;margin:0 auto}.confirm-wrap>img{display:block;width:100%}
+#teamName{position:absolute;left:15.4%;top:57.95%;width:67.4%;height:3.45%;z-index:3;border:0;background:rgba(6,4,3,.985);color:#f4dfb3;padding:0 2.2%;text-align:left;font-size:clamp(.92rem,2.75vw,1.16rem);line-height:1.1;text-transform:none;box-shadow:inset 0 0 10px #000b;outline:none;border-radius:0}#teamName::placeholder{color:#d8c3a0;opacity:.9}
+.confirm-go{left:13.4%;top:70.55%;width:73.2%;height:6.8%}.confirm-back{left:22.2%;top:79.2%;width:55.6%;height:5.7%}
+
+/* profile */
+#profile,#legend,#legend2,#legend3,#howto,#home{padding:0;background:#050302}
+.profile-next{left:11.5%;top:87.35%;width:77%;height:6.65%}
+
+/* legend + howto */
+#legend .next{left:21%;top:85%;width:58%;height:7.5%}
+#legend2 .next{left:24%;top:84.1%;width:52%;height:6.9%}
+#legend2 .backhot{left:36%;top:91.2%;width:28%;height:5.4%}
+#legend3 .howto{left:16%;top:91.1%;width:32%;height:5.7%}
+#legend3 .start{left:49%;top:91.1%;width:38%;height:5.7%}
+#legend3 .parch{left:29%;top:83.35%;width:58%;height:4.7%}
+#legend3 .legend-live-back{position:absolute;left:2.2%;top:2.1%;z-index:5;border:1px solid #b88634;background:linear-gradient(#21130b,#0c0705);color:#efd394;padding:8px 14px;font-weight:700;letter-spacing:.04em;cursor:pointer;box-shadow:0 5px 14px #0008}
+#howto .start{left:6%;top:89.1%;width:58%;height:7%}
+#howto .backhot{left:66%;top:89.1%;width:29%;height:7%}
+
+/* home location */
+/* CONTROL PACKAGE: first/home location intentionally has no back-to-HUB control. */
+#home .art{max-width:941px}
+.home-verify{left:16%;top:77.3%;width:68%;height:8.2%}
+.home-skip{left:20%;top:86.7%;width:60%;height:4.4%}
+.home-clues{position:absolute;left:4.8%;right:4.8%;top:69.05%;display:grid;grid-template-columns:repeat(5,1fr);gap:0;z-index:4;pointer-events:none;text-align:center;color:#f2e3c0;text-shadow:0 2px 3px #000,0 0 6px #000;font-size:clamp(.66rem,2.45vw,1.34rem);line-height:1.05}
+.home-clues span{display:block;white-space:nowrap;transform:none}
+.home-reread{position:absolute;left:2.4%;top:1.05%;z-index:6;width:21.5%;height:5.1%;border:0;background:url("assets/popup_button_secondary.webp") center/100% 100% no-repeat;color:#f5dda3;padding:0 7px;font-family:Georgia,'Times New Roman',serif;font-size:clamp(.58rem,2.15vw,.95rem);font-weight:700;letter-spacing:.035em;cursor:pointer;text-shadow:0 2px 2px #000;text-transform:uppercase;-webkit-tap-highlight-color:transparent}.home-reread:hover,.home-reread:focus-visible{filter:brightness(1.12);outline:none}.home-reread:active{transform:translateY(1px)}
+.haviri-znacky-badge{position:absolute;right:1.5%;top:1.2%;z-index:12;width:22%;border:0;background:transparent;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 6px 12px rgba(0,0,0,.72))}.haviri-znacky-badge img{display:block;width:100%;height:auto;pointer-events:none}
+
+
+.prototype-note{max-width:700px;margin:12px auto 26px;padding:10px 12px;border:1px solid #68461f;background:#0f0906;color:#cdb887;text-align:center;font-size:.85rem}
+.test-confirm{display:none;max-width:700px;margin:10px auto 30px;width:calc(100% - 28px);padding:12px;border:1px solid #9a6d2f;background:#211108;color:#f1d077;font-weight:700;cursor:pointer}
+.test-on .test-confirm{display:block}
+
+/* popup – asset based master, no extra frames or fills */
+.popup{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.popup.show{display:flex}
+.popup-card{position:relative;width:min(94vw,820px);max-height:92vh;overflow:auto;padding:124px 78px 58px;text-align:center;color:#27160d;font-family:Georgia,"Times New Roman",serif;background:url("assets/popup_parchment_bg.webp") center/100% 100% no-repeat;filter:drop-shadow(0 26px 44px rgba(0,0,0,.66))}
+.popup-seal{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:118px;height:118px;display:grid;place-items:center;z-index:4;background:none;border:0;box-shadow:none}
+.popup-seal img{display:block;width:100%;height:100%;object-fit:contain}
+.popup-title{margin:0 0 12px;color:#74160f;font-size:clamp(2rem,5.6vw,3.35rem);line-height:1.02;text-transform:uppercase;letter-spacing:.018em;text-shadow:none}
+.popup-title:after{content:"◆";display:block;margin:10px auto 0;font-size:.72rem;color:#9b5a27}
+.popup-body{max-width:88%;margin:0 auto;font-size:clamp(1.08rem,2.8vw,1.65rem);line-height:1.42}
+.popup-body p{margin:.62em 0}.popup-body b{color:#72160f}.popup-body small{font-size:.82em;color:#5a4630}
+.popup-actions{display:grid;gap:14px;justify-items:center;margin-top:26px}.popup-actions.two{grid-template-columns:1fr 1fr;align-items:center}.popup-actions.two .popup-btn{width:100%}
+.popup-btn{position:relative;display:block;width:min(86%,590px);min-height:66px;padding:17px 58px;border:0;background:url("assets/popup_button_primary.webp") center/100% 100% no-repeat;color:#f6df9d;font-weight:700;font-size:clamp(1.1rem,2.8vw,1.65rem);line-height:1.05;text-transform:uppercase;letter-spacing:.035em;cursor:pointer;text-shadow:0 2px 2px #430806;box-shadow:none}
+.popup-btn.secondary{background-image:url("assets/popup_button_secondary.webp");color:#ecd8ad}
+.popup-btn:hover,.popup-btn:focus-visible{filter:brightness(1.07);outline:none}
+@media(max-width:520px){.popup{padding:6px}.popup-card{width:98vw;padding:104px 34px 40px}.popup-seal{top:8px;width:96px;height:96px}.popup-title{font-size:clamp(1.75rem,8vw,2.6rem)}.popup-body{max-width:94%;font-size:clamp(1rem,4.5vw,1.35rem)}.popup-actions.two{grid-template-columns:1fr}.popup-btn{width:94%;min-height:58px;padding:14px 38px}}
+
+
+/* HUB – approved art; first location completion overlay */
+#hub .hub-wrap{position:relative;width:100%;max-width:941px;margin:0 auto;background:#050302}
+#hub .hub-wrap>img{display:block;width:100%;height:auto}
+.hub-status{position:absolute;z-index:4;left:10.5%;right:10.5%;top:15.1%;height:6.7%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 2.8%;color:#f1d390;text-shadow:0 2px 4px #000;pointer-events:none}.hub-status b{font-size:clamp(.9rem,3.8vw,1.5rem)}.hub-status span{font-size:clamp(.78rem,3vw,1.15rem);font-weight:700}
+.hub-radovi-done{position:absolute;z-index:5;left:9.8%;top:32.6%;width:38.6%;height:16.9%;pointer-events:none}.hub-radovi-done .check{position:absolute;left:3%;top:3%;width:clamp(34px,8vw,54px);height:clamp(34px,8vw,54px);border-radius:50%;display:grid;place-items:center;border:2px solid #f1d25f;background:rgba(9,5,3,.92);color:#ffe77c;font-size:clamp(1.25rem,5vw,2rem);box-shadow:0 0 16px rgba(231,188,66,.5)}.hub-radovi-done .code{position:absolute;right:3%;top:3%;padding:4px 10px;border:2px solid #e8c24d;background:rgba(8,5,3,.94);color:#ffe27a;font-weight:700;font-size:clamp(.9rem,3.5vw,1.35rem);box-shadow:0 0 14px rgba(231,188,66,.35)}
+@media(max-width:520px){.task-order li{font-size:.72rem}.task-order .arrows button{min-width:28px;padding:1px 5px}.alt-grid{grid-template-columns:1fr}.task-live{padding-left:8px;padding-right:8px}}
+
+/* hidden test badge */
+.test-badge{display:none;position:fixed;right:8px;top:8px;z-index:1500;padding:5px 8px;background:#130906;border:1px solid #b9842f;color:#f0cf72;font-size:11px;font-weight:700}.test-on .test-badge{display:block}
+
+/* ===== RADOVI TASK FLOW v3: approved art + unobtrusive interactive controls ===== */
+#task{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.radovi-card{position:relative;width:min(941px,100%);margin:0 auto;background:#050302;filter:drop-shadow(0 18px 34px rgba(0,0,0,.68))}
+.radovi-card>img{display:block;width:100%;height:auto}
+.radovi-hot{position:absolute;z-index:30;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+
+/* Řádoví: the original illustrated rows stay visible. Only the illustrated icon+name strips move; no CSS row boxes are drawn over the artwork. */
+.radovi-strip{position:absolute;z-index:22;left:18.6%;width:64.3%;height:4.01%;object-fit:fill;pointer-events:none;filter:none;transition:top .14s ease}
+.radovi-strip.r0{top:67.46%}.radovi-strip.r1{top:71.47%}.radovi-strip.r2{top:75.48%}.radovi-strip.r3{top:79.49%}.radovi-strip.r4{top:83.50%}
+/* Klikaci plochy presne kopiruji dve sipky nad sebou v puvodni grafice. */
+.radovi-arrow{position:absolute;z-index:34;left:83.35%;width:5.15%;height:1.72%;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:0;margin:0;touch-action:manipulation}
+.radovi-arrow.up.r0{top:67.52%}.radovi-arrow.down.r0{top:69.34%}
+.radovi-arrow.up.r1{top:71.53%}.radovi-arrow.down.r1{top:73.35%}
+.radovi-arrow.up.r2{top:75.54%}.radovi-arrow.down.r2{top:77.36%}
+.radovi-arrow.up.r3{top:79.55%}.radovi-arrow.down.r3{top:81.37%}
+.radovi-arrow.up.r4{top:83.56%}.radovi-arrow.down.r4{top:85.38%}
+.radovi-arrow:focus-visible{outline:2px solid rgba(255,222,135,.72);outline-offset:-2px}
+/* Cela graficka polozka je zaroven dotykovy drag-handle. Bez viditelneho HTML ramecku. */
+.radovi-drag{position:absolute;z-index:32;left:18.6%;width:64.0%;height:4.01%;border:0;background:transparent;padding:0;margin:0;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent}
+.radovi-drag.r0{top:67.46%}.radovi-drag.r1{top:71.47%}.radovi-drag.r2{top:75.48%}.radovi-drag.r3{top:79.49%}.radovi-drag.r4{top:83.50%}
+.radovi-drag.dragging{cursor:grabbing}
+.radovi-main-hint{left:5.8%;top:90.5%;width:42.6%;height:7.5%}
+.radovi-main-check{left:50.2%;top:90.5%;width:44%;height:7.5%}
+.radovi-hint-ok{left:24%;top:71.8%;width:52%;height:8.2%}
+.radovi-correct-next{left:20%;top:74.5%;width:60%;height:8.8%}
+.radovi-wrong-back{left:8.7%;top:67.5%;width:39.5%;height:8.8%}
+.radovi-wrong-giveup{left:50.3%;top:67.5%;width:41%;height:8.8%}
+.radovi-preseal-break{left:7%;top:88.2%;width:86%;height:8.4%}
+.radovi-broken-hub{left:21%;top:79.3%;width:58%;height:8.3%}
+
+/* Alternative answer after the hint — same gothic black/red/gold language as the task card. */
+.radovi-answer-wrap{position:relative;width:min(760px,94%);margin:22px auto 56px;padding:22px 22px 20px;box-sizing:border-box;background:radial-gradient(circle at 50% 0,rgba(74,12,10,.62),transparent 44%),linear-gradient(180deg,#0b0706,#030303 72%);border:2px solid #c69435;outline:1px solid rgba(97,51,10,.85);outline-offset:-7px;box-shadow:0 16px 38px #000c,inset 0 0 34px rgba(111,54,14,.18);color:#f0d38a;font-family:Georgia,'Times New Roman',serif}
+.radovi-answer-wrap:before,.radovi-answer-wrap:after{content:'◆';position:absolute;top:8px;color:#d9a53a;font-size:.7rem}.radovi-answer-wrap:before{left:10px}.radovi-answer-wrap:after{right:10px}
+.radovi-answer-wrap h2{text-align:center;margin:0 0 18px;color:#f4df9f;font-size:clamp(1.35rem,5vw,2.05rem);letter-spacing:.035em;text-shadow:0 2px 2px #000}
+.radovi-answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:17px}
+.radovi-answer-grid label{display:block;text-align:center;color:#dcae52;font-weight:700;font-size:.82rem;letter-spacing:.05em}
+.radovi-answer-grid input{display:block;width:100%;box-sizing:border-box;margin-top:7px;padding:13px 12px;background:linear-gradient(180deg,#080707,#0b0908);border:1.5px solid #c18c2d;box-shadow:inset 0 0 13px #000;color:#f4e7bd;text-align:center;font-family:Georgia,serif;font-size:1.18rem;text-transform:uppercase;outline:none}
+.radovi-answer-grid input:focus{border-color:#e0bb60;box-shadow:inset 0 0 13px #000,0 0 0 1px rgba(232,193,99,.38)}
+.radovi-answer-actions{display:grid;grid-template-columns:1fr 1.42fr;gap:12px}
+.radovi-answer-actions button{min-height:58px;border:0;color:#f6e6bb;font-family:Georgia,serif;font-weight:700;font-size:clamp(.9rem,3.3vw,1.18rem);cursor:pointer;text-transform:uppercase;letter-spacing:.015em;text-shadow:0 2px 2px #000}
+.radovi-answer-actions .hint{background:url("assets/popup_button_secondary.webp") center/100% 100% no-repeat}
+.radovi-answer-actions .check{background:url("assets/popup_button_primary.webp") center/100% 100% no-repeat}
+.radovi-answer-actions button:active{transform:translateY(1px)}
+@media(max-width:520px){.radovi-answer-grid{gap:10px}.radovi-answer-actions{grid-template-columns:1fr 1.3fr}.radovi-answer-wrap{padding:18px 14px 16px}}
+
+
+/* ===== ZTRACENY PERGAMEN ===== */
+#parchment{padding:0;background:#050302}
+.parchment-wrap{position:relative;width:100%;max-width:941px;margin:0 auto;background:#050302}
+.parchment-wrap>img{display:block;width:100%;height:auto}
+.parchment-back{left:17.0%;top:91.0%;width:20.7%;height:5.8%}
+.parchment-check{left:39.1%;top:91.0%;width:41.7%;height:5.8%}
+.parchment-solved{display:none;position:absolute;right:4%;top:2.2%;z-index:6;padding:8px 12px;background:rgba(8,5,3,.9);border:2px solid #d8aa3f;color:#f5d675;font-weight:700;letter-spacing:.05em;box-shadow:0 5px 16px #000a;text-transform:uppercase}
+.parchment-solved.show{display:block}
+.parchment-answer{display:block;width:min(92%,520px);margin:18px auto 4px;padding:13px 14px;border:2px solid #a66f24;background:#160b07;color:#f2ddb1;text-align:center;font-size:clamp(1.1rem,3.5vw,1.45rem);font-family:Georgia,"Times New Roman",serif;letter-spacing:.06em;text-transform:uppercase;outline:none;box-shadow:inset 0 0 16px #000b}
+.parchment-answer:focus{border-color:#d9ad4d;box-shadow:inset 0 0 16px #000b,0 0 0 2px rgba(217,173,77,.22)}
+.hub-parch-hotspot{position:absolute;z-index:20;left:9.4%;width:81.2%;top:22.7%;height:9.1%;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;pointer-events:auto;touch-action:manipulation}
+
+.hub-parch-status{position:absolute;z-index:21;left:36.0%;right:10.5%;top:27.35%;min-height:2.6%;display:flex;align-items:center;justify-content:center;text-align:center;color:#ead7a4;font-family:Georgia,"Times New Roman",serif;font-size:clamp(.62rem,2.35vw,1.05rem);font-weight:700;line-height:1.15;letter-spacing:.015em;text-shadow:0 2px 3px #000,0 0 7px #000;pointer-events:none}
+.hub-parch-status.solved{color:#ffe07a;font-size:clamp(.72rem,2.7vw,1.18rem);letter-spacing:.05em}
+
+
+/* ===== LAPKOVE HOME FLOW ===== */
+.lapkove-card{position:relative;width:min(941px,100%);margin:0 auto;background:#050302;filter:drop-shadow(0 18px 34px rgba(0,0,0,.68))}
+.lapkove-card>img{display:block;width:100%;height:auto}
+.lapkove-hot{position:absolute;z-index:30;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.lapkove-story-next{left:20%;top:89.2%;width:60%;height:6.4%}
+.lapkove-wrong-back{left:19%;top:77.8%;width:62%;height:7.4%}
+.lapkove-correct-next{left:20%;top:89.0%;width:60%;height:6.8%}
+.lapkove-villon-next{left:18%;top:88.6%;width:64%;height:8.0%}
+.lapkove-broken-hub{left:22%;top:80.3%;width:56%;height:6.8%}
+.hub-lapkove-done{position:absolute;z-index:5;left:23%;top:85.0%;width:54%;height:13.0%;pointer-events:none}
+.hub-lapkove-done .check{position:absolute;left:3%;top:3%;width:clamp(34px,8vw,54px);height:clamp(34px,8vw,54px);border-radius:50%;display:grid;place-items:center;border:2px solid #f1d25f;background:rgba(9,5,3,.92);color:#ffe77c;font-size:clamp(1.25rem,5vw,2rem);box-shadow:0 0 16px rgba(231,188,66,.5)}
+.hub-lapkove-done .code{position:absolute;right:3%;top:3%;padding:4px 10px;border:2px solid #e8c24d;background:rgba(8,5,3,.94);color:#ffe27a;font-weight:700;font-size:clamp(.9rem,3.5vw,1.35rem);box-shadow:0 0 14px rgba(231,188,66,.35)}
+.hub-lapkove-hotspot{position:absolute;z-index:18;left:23.0%;top:85.0%;width:54.0%;height:12.7%;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.hub-radovi-hotspot{position:absolute;z-index:18;left:9.8%;top:32.6%;width:38.6%;height:16.9%;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.lapkove-story-others-next{left:20%;top:89.2%;width:60%;height:6.4%}
+.home-hub-back{position:absolute;z-index:8;left:2.2%;top:1.2%;width:34%;height:4.8%;border:0;background:url("assets/popup_button_secondary.webp") center/100% 100% no-repeat;color:#f3d995;font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:clamp(.62rem,2.2vw,1rem);letter-spacing:.02em;text-shadow:0 2px 2px #000;cursor:pointer;-webkit-tap-highlight-color:transparent;display:none;padding:0 8px}
+#home.hub-mode .home-hub-back{display:block}
+.home-hub-back:active{transform:translateY(1px)}
+
+
+/* ===== ZVONICI FLOW ===== */
+.zvonici-card{position:relative;width:min(941px,100%);margin:0 auto;background:#050302;filter:drop-shadow(0 18px 34px rgba(0,0,0,.68))}
+.zvonici-card>img{display:block;width:100%;height:auto}
+.zvonici-hot{position:absolute;z-index:30;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.zvonici-story-back{display:none!important}
+.zvonici-story-patch{position:absolute;z-index:26;left:0;top:0;width:45%;height:6.1%;pointer-events:none;background:linear-gradient(90deg,rgba(5,3,2,.99) 0%,rgba(5,3,2,.98) 72%,rgba(5,3,2,.72) 88%,transparent 100%)}
+.zvonici-story-next{left:20%;top:89.3%;width:60%;height:6.6%}
+.zvonici-task-hint{left:4.4%;top:90.0%;width:43.0%;height:7.5%}
+.zvonici-task-check{left:49.0%;top:90.0%;width:46.0%;height:7.5%}
+.zvonici-digit{position:absolute;z-index:35;top:84.15%;width:11.8%;height:4.45%;border:0;background:transparent;color:#f6d777;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.35rem,5vw,2.5rem);font-weight:700;line-height:1;outline:none;text-shadow:0 2px 3px #000;caret-color:#f6d777;padding:0 0 .10em!important;text-indent:0!important;box-sizing:border-box;-webkit-appearance:none;appearance:none}
+.zvonici-digit.d1{left:22.9%}.zvonici-digit.d2{left:36.7%}.zvonici-digit.d3{left:50.5%}.zvonici-digit.d4{left:64.3%}
+.zvonici-correct-next{left:19%;top:89.5%;width:62%;height:6.8%}
+.zvonici-literary-next{left:15%;top:88.6%;width:70%;height:8.1%}
+.zvonici-broken-hub{left:22%;top:80.4%;width:56%;height:7.0%}
+.zvonici-advantage{position:absolute;z-index:38;left:18%;top:22.4%;width:64%;height:5.4%;box-sizing:border-box;padding:.75% 6% .7%;background:url("assets/popup_button_primary.webp") center/100% 100% no-repeat;color:#f5e5b7;font-family:Georgia,'Times New Roman',serif;font-size:clamp(.62rem,2.0vw,.88rem);line-height:1.12;text-align:center;text-shadow:0 2px 2px #000;filter:drop-shadow(0 5px 9px rgba(0,0,0,.58));pointer-events:none;display:flex;flex-direction:column;justify-content:center}
+.zvonici-advantage b{display:block;color:#ffe17d;letter-spacing:.045em;font-size:1.04em;margin-bottom:1px}
+.zvonici-hint-cost{position:absolute;z-index:36;left:4.4%;top:95.05%;width:43%;text-align:center;color:#f5d77d;font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:clamp(.52rem,1.8vw,.78rem);pointer-events:none;text-shadow:0 2px 2px #000}
+
+.hub-zvonici-hotspot{position:absolute;z-index:18;left:51.4%;top:32.6%;width:38.6%;height:16.9%;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.hub-zvonici-done{position:absolute;z-index:5;left:51.4%;top:32.6%;width:38.6%;height:16.9%;pointer-events:none}
+.hub-zvonici-done .check{position:absolute;left:3%;top:3%;width:clamp(34px,8vw,54px);height:clamp(34px,8vw,54px);border-radius:50%;display:grid;place-items:center;border:2px solid #f1d25f;background:rgba(9,5,3,.92);color:#ffe77c;font-size:clamp(1.25rem,5vw,2rem);box-shadow:0 0 16px rgba(231,188,66,.5)}
+.hub-zvonici-done .code{position:absolute;right:3%;top:3%;padding:4px 10px;border:2px solid #e8c24d;background:rgba(8,5,3,.94);color:#ffe27a;font-weight:700;font-size:clamp(.9rem,3.5vw,1.35rem);box-shadow:0 0 14px rgba(231,188,66,.35)}
+
+
+/* ===== ALCHYMISTE FLOW ===== */
+.alch-card{position:relative;width:min(941px,100%);margin:0 auto;background:#050302;filter:drop-shadow(0 18px 34px rgba(0,0,0,.68))}
+.alch-card>img{display:block;width:100%;height:auto}.alch-hot{position:absolute;z-index:32;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.alch-first-next{left:10%;top:89%;width:80%;height:7%}.alch-story-next{left:14%;top:88.5%;width:72%;height:7%}
+.alch-digit{position:absolute;z-index:36;top:82.05%;width:12.4%;height:5.25%;border:0;background:transparent;color:#f5e3b0;text-align:center;font-family:Georgia,serif;font-size:clamp(1.65rem,6.8vw,3rem);font-weight:700;line-height:1;outline:none;text-transform:uppercase;caret-color:#f5d77d;padding:0;margin:0;box-sizing:border-box}.alch-digit.d1{left:27.7%}.alch-digit.d2{left:43.8%}.alch-digit.d3{left:59.9%}
+.alch-task-hint{left:3.8%;top:88.2%;width:45.5%;height:6.2%}.alch-task-check{left:50.7%;top:88.2%;width:45.5%;height:6.2%}.alch-task-giveup{left:3.8%;top:94.3%;width:92.4%;height:4.3%}
+.alch-hint-back{left:10%;top:88.5%;width:80%;height:8%}.alch-wrong-back{left:4%;top:78%;width:44%;height:8.7%}.alch-wrong-giveup{left:50%;top:78%;width:46%;height:8.7%}
+.alch-correct-break{left:8%;top:88.8%;width:84%;height:7.4%}.alch-broken-hub{left:15%;top:80.5%;width:70%;height:7%}
+.alch-advantage{position:absolute;z-index:44;right:2.0%;top:1.3%;width:18.5%;aspect-ratio:1.33/1;border:0;background:transparent;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 5px 10px rgba(0,0,0,.72))}.alch-advantage img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.alch-stereo-hot{position:absolute;z-index:34;left:12.2%;top:31.0%;width:75.6%;height:10.8%;border:0;background:transparent;cursor:zoom-in;-webkit-tap-highlight-color:transparent}.image-zoom{position:fixed;inset:0;z-index:1000;display:none;background:rgba(0,0,0,.97);overflow:auto;-webkit-overflow-scrolling:touch}.image-zoom.open{display:block}.image-zoom-inner{min-width:max(100%,1550px);min-height:100%;display:flex;align-items:center;justify-content:flex-start;padding:64px 18px 28px;box-sizing:border-box}.image-zoom img{display:block;width:1550px;height:auto;max-width:none;flex:0 0 auto;box-shadow:0 0 28px rgba(0,0,0,.8)}.image-zoom-close{position:fixed;z-index:1001;right:14px;top:14px;border:1px solid #d8ad43;background:#160b07;color:#f7e7ad;font:700 1rem Georgia,serif;padding:.55rem .8rem;border-radius:8px;cursor:pointer}
+.alch-location-mask{position:absolute;z-index:7;left:0;top:0;width:43%;height:5.2%;background:linear-gradient(90deg,#050302 0%,#050302 78%,rgba(5,3,2,.82) 90%,transparent 100%);display:none;pointer-events:none}#home.alch-home-mode .alch-location-mask{display:block}#home.alch-home-mode .home-hub-back{display:none!important}#home.alch-home-mode .home-reread{display:block;z-index:9}#home.alch-location .home-clues{display:none!important}#home.alch-location .home-verify{left:17%;top:79%;width:66%;height:6.8%}#home.alch-location .home-skip{left:20%;top:86.2%;width:60%;height:3.3%}#home.alch-location.hub-mode .home-hub-back{left:1.6%;top:.5%;width:38%;height:4.8%;background:transparent;color:transparent;text-shadow:none}
+#home.haviri-location .home-clues{display:none!important}
+#home.haviri-location .home-verify{left:16%;top:73.0%;width:68%;height:7.4%}
+#home.haviri-location .home-skip{left:20%;top:81.7%;width:60%;height:4.0%}
+#home.konesele-location .home-clues{display:none!important}
+#home.konesele-location .home-verify{left:16%;top:75.9%;width:68%;height:7.6%}
+#home.konesele-location .home-skip{left:20%;top:82.7%;width:60%;height:3.6%}
+.hub-alchymiste-hotspot{position:absolute;z-index:18;left:51.4%;top:50.6%;width:38.6%;height:16.9%;border:0;background:transparent;cursor:pointer;touch-action:manipulation}.hub-alchymiste-done{position:absolute;z-index:5;left:51.4%;top:50.6%;width:38.6%;height:16.9%;pointer-events:none}.hub-alchymiste-done .check{position:absolute;left:3%;top:3%;width:clamp(34px,8vw,54px);height:clamp(34px,8vw,54px);border-radius:50%;display:grid;place-items:center;border:2px solid #f1d25f;background:rgba(9,5,3,.92);color:#ffe77c;font-size:clamp(1.25rem,5vw,2rem)}.hub-alchymiste-done .code{position:absolute;right:3%;top:3%;padding:4px 10px;border:2px solid #e8c24d;background:rgba(8,5,3,.94);color:#ffe27a;font-weight:700;font-size:clamp(.9rem,3.5vw,1.35rem)}
+
+.hub-haviri-hotspot{position:absolute;z-index:18;left:9.8%;top:50.6%;width:38.6%;height:16.9%;border:0;background:transparent;cursor:pointer;touch-action:manipulation}.hub-haviri-done{position:absolute;z-index:5;left:9.8%;top:50.6%;width:38.6%;height:16.9%;pointer-events:none}.hub-haviri-done .check{position:absolute;left:3%;top:3%;width:clamp(34px,8vw,54px);height:clamp(34px,8vw,54px);border-radius:50%;display:grid;place-items:center;border:2px solid #f1d25f;background:rgba(9,5,3,.92);color:#ffe77c;font-size:clamp(1.25rem,5vw,2rem);box-shadow:0 0 16px rgba(231,188,66,.5)}.hub-haviri-done .code{position:absolute;right:3%;top:3%;padding:4px 10px;border:2px solid #e8c24d;background:rgba(8,5,3,.94);color:#ffe27a;font-weight:700;font-size:clamp(.9rem,3.5vw,1.35rem);box-shadow:0 0 14px rgba(231,188,66,.35)}
+
+.kon-card{position:relative;width:100%;max-width:760px;margin:0 auto;background:#090604}.kon-card img{display:block;width:100%;height:auto}.kon-hot{position:absolute;z-index:25;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}.kon-answer{position:absolute;z-index:32;left:25.3%;top:79.05%;width:49.4%;height:3.45%;border:0;background:rgba(7,7,7,.97);color:#f5e3b0;text-align:center;font-family:Georgia,serif;font-size:clamp(1.15rem,4.6vw,2rem);font-weight:700;line-height:1.05;outline:none;text-transform:uppercase;caret-color:#f5d77d;padding:.15em .35em 0;box-sizing:border-box;box-shadow:inset 0 0 10px rgba(0,0,0,.8)}.kon-story{min-height:100vh;background:radial-gradient(circle at 50% 0,#49200d 0,#140b07 35%,#050403 100%);border:2px solid #9c681d;box-shadow:inset 0 0 0 3px #241306,inset 0 0 45px #000;padding:5.5% 5.5% 8%;color:#2d160d;position:relative}.kon-story:before{content:'PECUNIA, LEX ET MENDACIUM';display:block;text-align:center;color:#f3d58b;font-family:Georgia,serif;font-weight:700;font-size:clamp(1.35rem,5vw,2.6rem);letter-spacing:.04em;text-shadow:0 2px 4px #000;background:linear-gradient(#49100d,#210604);border:2px solid #c89227;padding:5% 2%;margin:-5.5% -5.5% 4.5%}.kon-parch{background:#e9c98f;background:linear-gradient(#f0d7a5,#e2bd7c);border:2px solid #6a3919;padding:6% 6% 5%;font-family:Georgia,serif;font-size:clamp(1rem,3.5vw,1.45rem);line-height:1.42;text-align:center;box-shadow:0 0 25px #0008}.kon-parch h2{color:#781c16;margin:.2em 0 .6em;font-size:1.35em}.kon-parch p{margin:.65em 0}.kon-story-btn{display:block;width:70%;margin:5% auto 0;background:linear-gradient(#8d1a12,#4b0d09);border:3px solid #d2a13a;color:#f5d995;font-family:Georgia,serif;font-weight:700;font-size:clamp(1.25rem,4.8vw,2rem);padding:3.2% 2%;text-align:center;box-shadow:0 0 0 2px #2e1607,0 4px 12px #000;cursor:pointer}
+.hub-konesele-hotspot{position:absolute;z-index:18;left:9.8%;top:68.6%;width:38.6%;height:16.9%;border:0;background:transparent;cursor:pointer;touch-action:manipulation}.hub-konesele-done{position:absolute;z-index:5;left:9.8%;top:68.6%;width:38.6%;height:16.9%;pointer-events:none}.hub-konesele-done .check{position:absolute;left:3%;top:3%;width:clamp(34px,8vw,54px);height:clamp(34px,8vw,54px);border-radius:50%;display:grid;place-items:center;border:2px solid #f1d25f;background:rgba(9,5,3,.92);color:#ffe77c;font-size:clamp(1.25rem,5vw,2rem)}.hub-konesele-done .code{position:absolute;right:3%;top:3%;padding:4px 10px;border:2px solid #e8c24d;background:rgba(8,5,3,.94);color:#ffe27a;font-weight:700;font-size:clamp(.9rem,3.5vw,1.35rem)}
+
+/* ===== MINCMISTRI FLOW ===== */
+.minc-card{position:relative;width:min(941px,100%);margin:0 auto;background:#050302;filter:drop-shadow(0 18px 34px rgba(0,0,0,.68))}
+.minc-card>img{display:block;width:100%;height:auto}
+.minc-hot{position:absolute;z-index:34;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.minc-first-next{left:17%;top:87.5%;width:66%;height:7.2%}
+.minc-story-next{left:25%;top:88.0%;width:50%;height:7.8%}
+.minc-answer{position:absolute;z-index:37;left:22.0%;top:82.2%;width:56.0%;height:4.8%;border:0;background:rgba(8,8,8,.96);color:#f5e3b0;text-align:center;font-family:Georgia,serif;font-size:clamp(1.15rem,4.6vw,2rem);font-weight:700;line-height:1.05;outline:none;text-transform:uppercase;caret-color:#f5d77d;padding:.1em .35em 0;box-sizing:border-box;box-shadow:inset 0 0 10px rgba(0,0,0,.82)}
+.minc-task-hint{left:4.8%;top:89.1%;width:27.7%;height:6.0%}
+.minc-task-check{left:34.0%;top:89.1%;width:32.0%;height:6.0%}
+.minc-task-giveup{left:67.5%;top:89.1%;width:27.7%;height:6.0%}
+.minc-advantage{position:absolute;z-index:48;right:1.5%;top:1.0%;width:18.5%;border:0;background:transparent;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 5px 10px rgba(0,0,0,.72))}
+.minc-advantage img{display:block;width:100%;height:auto;pointer-events:none}
+.kon-advantage-badge{position:absolute;z-index:64;right:1.4%;top:1.2%;width:20.5%;border:0;background:transparent;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 6px 10px rgba(0,0,0,.7))}.kon-advantage-badge img{display:block;width:100%;height:auto;pointer-events:none}.kon-card .kon-advantage-badge{width:25%;right:1.2%;top:1.2%}
+#home.mincmistri-location .home-clues{display:none!important}
+#home.mincmistri-location .home-verify{left:16%;top:72.4%;width:68%;height:6.4%}
+#home.mincmistri-location .home-skip{left:20%;top:79.8%;width:60%;height:3.2%}
+.hub-mincmistri-hotspot{position:absolute;z-index:18;left:51.4%;top:68.6%;width:38.6%;height:16.9%;border:0;background:transparent;cursor:pointer;touch-action:manipulation}
+.hub-mincmistri-done{position:absolute;z-index:5;left:51.4%;top:68.6%;width:38.6%;height:16.9%;pointer-events:none}
+.hub-mincmistri-done .check{position:absolute;left:3%;top:3%;width:clamp(34px,8vw,54px);height:clamp(34px,8vw,54px);border-radius:50%;display:grid;place-items:center;border:2px solid #f1d25f;background:rgba(9,5,3,.92);color:#ffe77c;font-size:clamp(1.25rem,5vw,2rem)}
+.hub-mincmistri-done .code{position:absolute;right:3%;top:3%;padding:4px 10px;border:2px solid #e8c24d;background:rgba(8,5,3,.94);color:#ffe27a;font-weight:700;font-size:clamp(.9rem,3.5vw,1.35rem)}
+
+
+/* ===== FINÁLE – testovací lineární větev ===== */
+.final-card{position:relative;width:min(941px,100%);margin:0 auto;background:#050302;filter:drop-shadow(0 18px 34px rgba(0,0,0,.68))}.final-card>img{display:block;width:100%;height:auto}.final-hot{position:absolute;z-index:40;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+body.final-mode{overflow:hidden}
+#ultima.active,#inFovea.active,#foundGrimoar.active,#grimoarYours.active,#finis.active,#timeExpired.active,#gameClosed.active{display:block;position:fixed;z-index:900;top:0;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,941px);min-height:0;height:100dvh;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:#050302;padding:0;margin:0;overflow-anchor:none}
+#ultima.active .final-card,#inFovea.active .final-card,#foundGrimoar.active .final-card,#grimoarYours.active .final-card,#finis.active .final-card,#timeExpired.active .final-card{margin:0 auto;padding:0;top:0}
+.ultima-hint1{left:7.5%;top:78.2%;width:42.5%;height:7.3%}.ultima-hint2{left:50.2%;top:78.2%;width:42.2%;height:7.3%}.ultima-verify{left:9.5%;top:86.0%;width:81%;height:7.0%}
+.in-fovea-next{left:15%;top:88.0%;width:70%;height:7.0%}.grimoar-found-next{left:17%;top:89.0%;width:66%;height:7.0%}.grimoar-yours-next{left:17%;top:88.5%;width:66%;height:7.5%}.finis-save{left:14%;top:90.2%;width:72%;height:7.0%}
+.time-expired-end{left:21%;top:90.0%;width:58%;height:7.0%}.closed-panel{min-height:100dvh;width:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:28px;background:#050302;color:#ead7aa}.closed-panel h1{margin:0 0 12px;color:#d7a842;font-size:clamp(2rem,8vw,4rem)}.closed-panel p{margin:0;font-size:clamp(1rem,4vw,1.4rem);line-height:1.45}
+.grimoar-dynamic{position:absolute;z-index:34;left:27%;top:70.2%;width:46%;height:9.5%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.22em;background:transparent;color:#8b1a13;font-family:Georgia,'Times New Roman',serif;text-align:center;border:0;box-shadow:none;padding:0 .8%}.grimoar-dynamic .faction{font-weight:700;font-size:clamp(1.05rem,4vw,1.9rem);line-height:1.08}.grimoar-dynamic .team{font-weight:700;font-size:clamp(1.2rem,4.6vw,2.25rem);line-height:1.04}
+.result-value{position:absolute;z-index:36;right:16.8%;width:31.5%;height:2.45%;display:flex;align-items:center;justify-content:flex-start;padding-left:1.2%;background:transparent;color:#ead8aa;font-family:Georgia,'Times New Roman',serif;font-size:clamp(.72rem,2.45vw,1.15rem);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,.65)}.rv-team{top:66.75%}.rv-faction{top:69.55%}.rv-date{top:72.35%}.rv-clean{top:75.15%}.rv-penalty{top:77.95%}.rv-total{top:80.75%}
+@media(max-width:520px){.result-value{font-size:clamp(.62rem,2.7vw,.9rem)}}
+
+</style>
+</head>
+<body>
+<div class="test-badge">TEST MODE</div>
+<main class="app">
+<section id="title" class="screen active">
+  <div class="art"><img src="assets/title.webp" alt="Krvavý grimoár a Sedm pečetí"><button class="hot hot-enter" aria-label="Vstoupit do hry"></button></div>
+  <div class="age"><b>15+</b> · černý humor · hrubší jazyk · <b>historicky nekorektní osoby</b></div>
+</section>
+
+<section id="faction" class="screen">
+  <div class="art" style="max-width:760px">
+    <img src="assets/faction_select.webp" alt="Vyberte svou frakci">
+    <button class="faction-hit" style="left:4.4%;top:25.4%;width:44.8%;height:17.1%" data-faction="radovi" aria-label="Řádoví bratři"></button>
+    <button class="faction-hit" style="left:51.4%;top:25.4%;width:44.8%;height:17.1%" data-faction="zvonici" aria-label="Zvoníci"></button>
+    <button class="faction-hit" style="left:4.4%;top:43.8%;width:44.8%;height:17.1%" data-faction="haviri" aria-label="Havíři"></button>
+    <button class="faction-hit" style="left:51.4%;top:43.8%;width:44.8%;height:17.1%" data-faction="alchymiste" aria-label="Alchymisté"></button>
+    <button class="faction-hit" style="left:4.4%;top:62.3%;width:44.8%;height:17.1%" data-faction="konesele" aria-label="Konšelé"></button>
+    <button class="faction-hit" style="left:51.4%;top:62.3%;width:44.8%;height:17.1%" data-faction="mincmistri" aria-label="Mincmistři"></button>
+    <button class="faction-hit" style="left:17.1%;top:80.5%;width:66%;height:15.7%" data-faction="lapkove" aria-label="Lapkové"></button>
+  </div>
+</section>
+
+<section id="confirm" class="screen">
+  <div class="confirm-wrap">
+    <img id="confirmArt" src="assets/confirm_radovi.webp" alt="Potvrzení frakce">
+    <input id="teamName" maxlength="40" autocomplete="off" aria-label="Název družiny" placeholder="Název družiny">
+    <button class="hot confirm-go" aria-label="Potvrdit frakci"></button>
+    <button class="hot confirm-back" aria-label="Zpět k výběru frakce"></button>
+  </div>
+</section>
+
+<section id="profile" class="screen">
+  <div class="art"><img id="profileArt" src="assets/profile_radovi_approved.webp" alt="Frakční karta"><button class="hot profile-next" aria-label="Pokračovat k legendě"></button></div>
+</section>
+
+<section id="legend" class="screen"><div class="art"><img src="assets/legend_1_final.webp" alt="Legenda – první část"><button class="hot next" aria-label="Pokračovat"></button></div></section>
+<section id="legend2" class="screen"><div class="art"><img src="assets/legend_2_final.webp" alt="Legenda – druhá část"><button class="hot next" aria-label="Pokračovat"></button><button class="hot backhot" aria-label="Zpět"></button></div></section>
+<section id="legend3" class="screen"><div class="art"><img src="assets/legend_3_final.webp" alt="Legenda – třetí část"><button class="legend-live-back" type="button" aria-label="Zpět na předchozí část legendy">← ZPĚT</button><button class="hot parch" aria-label="Ztracený pergamen"></button><button class="hot howto" aria-label="Jak hrát"></button><button class="hot start" aria-label="Vyrazit na první stopu"></button></div></section>
+<section id="howto" class="screen"><div class="art"><img src="assets/how_to_play_final.webp" alt="Jak hrát"><button class="hot start" aria-label="Vyrazit na první stopu"></button><button class="hot backhot" aria-label="Zpět k legendě"></button></div></section>
+
+<section id="home" class="screen">
+  <div class="art"><img id="homeArt" src="assets/loccard_radovi_home.webp" alt="Domovská lokace"><div class="alch-location-mask" aria-hidden="true"></div><button class="home-hub-back" type="button" aria-label="Zpět na rozcestník" onclick="openHub()">← ZPĚT NA ROZCESTNÍK</button><button class="home-reread" type="button" aria-label="Znovu zobrazit první stopu">PRVNÍ STOPA</button><button id="haviriZnackyBadge" class="haviri-znacky-badge" type="button" aria-label="Hornické značky – jednorázová výhoda" onclick="useHaviriZnacky()" hidden><img src="assets/haviri_znacky_badge.webp" alt="Hornické značky – jen 1x"></button><div id="homeClues" class="home-clues" aria-hidden="true"></div><button class="hot home-verify" aria-label="Ověřit polohu"></button><button class="hot home-skip" aria-label="Pokračovat bez GPS za 10 minut"></button></div>
+  <button class="test-confirm" id="testConfirm">TEST: SIMULOVAT SPRÁVNOU POLOHU</button>
+</section>
+
+
+
+<section id="lapkoveStory" class="screen">
+  <div class="lapkove-card">
+    <img src="assets/lapkove_story_home.webp" alt="Lapkové – první stopa">
+    <button class="lapkove-hot lapkove-story-next" type="button" aria-label="Ukázat obraz" onclick="locationEntryMode==='hub'?openLapkoveLocationFromHub():openHomeCard('lapkove')"></button>
+  </div>
+</section>
+
+<section id="lapkoveStoryOthers" class="screen">
+  <div class="lapkove-card">
+    <img src="assets/lapkove_story_others.webp" alt="Lapkové – příběh pro ostatní frakce">
+    <button class="lapkove-hot lapkove-story-others-next" type="button" aria-label="Ukázat obraz" onclick="openLapkoveLocationFromHub()"></button>
+  </div>
+</section>
+
+<section id="alchymisteFirstStop" class="screen"><div class="alch-card"><img src="assets/alchymiste_first_stop.webp" alt="Alchymisté – vaše první stopa"><button class="alch-hot alch-first-next" type="button" aria-label="Rozumím" onclick="locationEntryMode='home';openHomeCard('alchymiste')"></button></div></section>
+<section id="haviriFirstStop" class="screen"><div class="alch-card"><img src="assets/haviri_first_stop.webp" alt="Havíři – vaše první stopa"><button class="alch-hot" style="left:10%;top:88.2%;width:80%;height:7.2%;" type="button" aria-label="Rozumím" onclick="locationEntryMode='home';openHomeCard('haviri')"></button></div></section>
+<section id="mincmistriFirstStop" class="screen"><div class="minc-card"><img src="assets/mincmistri_first_stop.webp" alt="Mincmistři – vaše první stopa"><button class="minc-hot minc-first-next" type="button" aria-label="Pokračovat" onclick="locationEntryMode='home';openHomeCard('mincmistri')"></button></div></section>
+
+<section id="parchment" class="screen">
+  <div class="parchment-wrap">
+    <img src="assets/sifra.webp" alt="Ztracený pergamen – Útržek písaře">
+    <div id="parchmentSolved" class="parchment-solved">✓ VYŘEŠENO</div>
+    <button class="hot parchment-back" type="button" aria-label="Zpět" onclick="returnFromParchment()"></button>
+    <button class="hot parchment-check" type="button" aria-label="Ověřit řešení" onclick="openParchmentAnswer()"></button>
+  </div>
+</section>
+
+<section id="task" class="screen">
+  <div id="taskContent"></div>
+</section>
+
+<section id="hub" class="screen">
+  <div class="hub-wrap">
+    <img src="assets/hub_final.webp" alt="Krvavý grimoár – Kam dál?">
+    <button class="hub-parch-hotspot" type="button" aria-label="Ztracený pergamen" onclick="openParchment('hub')"></button>
+    <div id="hubParchStatus" class="hub-parch-status">Lze rozluštit kdykoli během hry.</div>
+    <div id="hubStatus" class="hub-status"></div>
+    <button id="hubRadoviHotspot" class="hub-radovi-hotspot" type="button" aria-label="Otevřít lokaci Řádových bratří"></button>
+    <div id="hubRadoviDone" class="hub-radovi-done" hidden><span class="check">✓</span><span class="code">T2</span></div>
+    <button id="hubZvoniciHotspot" class="hub-zvonici-hotspot" type="button" aria-label="Otevřít lokaci Zvoníků"></button>
+    <div id="hubZvoniciDone" class="hub-zvonici-done" hidden><span class="check">✓</span><span class="code">P4</span></div>
+    <button id="hubHaviriHotspot" class="hub-haviri-hotspot" type="button" aria-label="Otevřít lokaci Havířů"></button>
+    <div id="hubHaviriDone" class="hub-haviri-done" hidden><span class="check">✓</span><span class="code">N7</span></div>
+    <button id="hubAlchymisteHotspot" class="hub-alchymiste-hotspot" type="button" aria-label="Otevřít lokaci Alchymistů"></button>
+    <div id="hubAlchymisteDone" class="hub-alchymiste-done" hidden><span class="check">✓</span><span class="code">U1</span></div>
+    <button id="hubKoneseleHotspot" class="hub-konesele-hotspot" type="button" aria-label="Otevřít lokaci Konšelů"></button>
+    <div id="hubKoneseleDone" class="hub-konesele-done" hidden><span class="check">✓</span><span class="code">U3</span></div>
+    <button id="hubMincmistriHotspot" class="hub-mincmistri-hotspot" type="button" aria-label="Otevřít lokaci Mincmistrů"></button>
+    <div id="hubMincmistriDone" class="hub-mincmistri-done" hidden><span class="check">✓</span><span class="code">A8</span></div>
+    <button id="hubLapkoveHotspot" class="hub-lapkove-hotspot" type="button" aria-label="Otevřít lokaci Lapků"></button>
+    <div id="hubLapkoveDone" class="hub-lapkove-done" hidden><span class="check">✓</span><span class="code">U6</span></div>
+  </div>
+</section>
+</main>
+<section id="ultima" class="screen">
+  <div class="final-card"><img src="assets/ultima_sigilla.webp" alt="Ultima Sigilla – poslední pečeť, poslední cesta"><button class="final-hot ultima-hint1" type="button" aria-label="První nápověda" onclick="finalHintOne()"></button><button class="final-hot ultima-hint2" type="button" aria-label="Poslední nápověda" onclick="finalHintTwo()"></button><button class="final-hot ultima-verify" type="button" aria-label="Ověřit, že jsme na místě" onclick="verifyFinalPlace()"></button></div>
+</section>
+<section id="inFovea" class="screen"><div class="final-card"><img src="assets/in_fovea_veritas.webp" alt="In Fovea Veritas – V díře se skrývá pravda"><button class="final-hot in-fovea-next" type="button" aria-label="Dál" onclick="openFoundGrimoar()"></button></div></section>
+<section id="foundGrimoar" class="screen"><div class="final-card"><img src="assets/grimoar_nalezen.webp" alt="Liber Peccatorum Montanorum – Krvavý grimoár"><button class="final-hot grimoar-found-next" type="button" aria-label="Dál" onclick="openGrimoarYours()"></button></div></section>
+<section id="grimoarYours" class="screen"><div class="final-card"><img src="assets/grimoar_je_vas.webp" alt="Grimoár je váš"><div class="grimoar-dynamic"><div id="finalFaction" class="faction"></div><div id="finalTeam" class="team"></div></div><button class="final-hot grimoar-yours-next" type="button" aria-label="Dál" onclick="openFinis()"></button></div></section>
+<section id="finis" class="screen"><div class="final-card"><img src="assets/finis_vysledek.webp" alt="Finis – Grimoár je váš – výsledková karta"><div id="rvTeam" class="result-value rv-team"></div><div id="rvFaction" class="result-value rv-faction"></div><div id="rvDate" class="result-value rv-date"></div><div id="rvClean" class="result-value rv-clean"></div><div id="rvPenalty" class="result-value rv-penalty"></div><div id="rvTotal" class="result-value rv-total"></div><button class="final-hot finis-save" type="button" aria-label="Uložit památeční kartu" onclick="saveMemorialCard()"></button></div></section>
+<section id="timeExpired" class="screen"><div class="final-card"><img src="assets/tempus_expiravit.webp" alt="Tempus Expiravit – váš čas vypršel"><button class="final-hot time-expired-end" type="button" aria-label="Konec" onclick="closeGame()"></button></div></section>
+<section id="gameClosed" class="screen"><div class="closed-panel"><div><h1>HRA UKONČENA</h1><p>Krvavý grimoár už nelze znovu otevřít.</p></div></div></section>
+
+<div id="imageZoom" class="image-zoom" aria-hidden="true" role="dialog" aria-modal="true"><button class="image-zoom-close" type="button" onclick="closeImageZoom()">ZAVŘÍT</button><div class="image-zoom-inner" onclick="closeImageZoom(event)"><img id="imageZoomImg" src="assets/alchymiste_stereogram_hd.jpg" alt="Alchymistický obraz ve vysokém rozlišení" onclick="event.stopPropagation()"></div></div>
+<div id="popup" class="popup" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="popup-card">
+    <div id="popupSeal" class="popup-seal"><img id="popupSealImg" src="assets/icon_exclamation.webp" alt=""></div>
+    <h2 id="popupTitle" class="popup-title"></h2>
+    <div id="popupBody" class="popup-body"></div>
+    <div id="popupActions" class="popup-actions"></div>
+  </div>
+</div>
+
+<script src="supabase-results.js"></script>
+<script>
+'use strict';
+const A='assets/';
+const DATA={
+  radovi:{name:'Řádoví bratři',clues:['Řád','Kázeň','Kříže','Kámen','Sochy'],confirm:'confirm_radovi.webp',profile:'profile_radovi_approved.webp',home:'loccard_radovi_home.webp',taskArt:'taskcard_radovi.webp',code:'T2',gps:[49.9471250,15.2646294],homeText:'Začínáte na místě, kde se řada kamenných světců dívá směrem k chrámu svaté Barbory. Jděte na roh Jezuitské koleje. Hledejte sochy. Ony vám vydají první úkol a možná i pečeť.',gpsOk:'Stojíte před bývalou Jezuitskou kolejí. Díváte se směrem k chrámu sv. Barbory. Před sebou vidíte řadu soch. Měli byste je mít po levé ruce.',gpsNo:'Musíte popojít. Hledáte dlouhou kolej řádových bratří – jezuitů. Podél boční zdi uvidíte řadu barokních soch.'},
+  zvonici:{name:'Zvoníci',clues:['Věž','Kostel','Zvony','Výška','Mapa'],confirm:'confirm_zvonici.webp',profile:'profile_zvonici_approved.webp',home:'loccard_zvonici_home.webp',gps:[49.9480756,15.2674039],homeText:'Začínáte u kostela, jehož vysoká věž vládne městu. Hledejte svatého Jakuba a jeho vyhlídku.',gpsOk:'Zvedněte oči, zvoník málokdy hledí k zemi…',gpsNo:'Najděte vyhlídku a na zemi plán města. To je správné místo.'},
+  haviri:{name:'Havíři',clues:['Tma','Štola','Mlátek','Stříbro','Muzeum'],confirm:'confirm_haviri.webp',profile:'profile_haviri_approved.webp',home:'loccard_haviri_home.webp',gps:[49.9477361,15.2654717],homeText:'Začínáte tam, kde se kutnohorské stříbro připomíná nejhlasitěji. Jděte k Hrádku, před vchod do Českého muzea stříbra.',gpsOk:'Tady se kdysi rozhodovalo o bohatství města mnohem víc než v radní síni.<br><br>Kutná Hora sice nahoře zářila kamenem, věžemi a penězi, ale dole pod ní se plazily štoly, v nichž se rodilo její skutečné bohatství.<br><br>Bez havířů by nebylo stříbro.<br>Bez stříbra by nebyla sláva.<br>A bez slávy by se tu nejspíš nikdo nehádal o moc, hříchy ani groše.<br><br>Ale ještě se neradujte. Havíř, který věří prvnímu dojmu, obvykle dlouho nefárá.',gpsNo:'<b>Korekce místa</b><br>Hledejte místo, kde sídlí České muzeum stříbra a odkud se vyráží za historií kutnohorského podzemí.'},
+  alchymiste:{name:'Alchymisté',clues:['Síra','Baňky','Pentagram','Tajemství','Infocentrum'],confirm:'confirm_alchymiste.webp',profile:'profile_alchymiste_approved.webp',home:'loccard_alchymiste_new.webp',gps:[49.9497917,15.2685242],homeText:'Jděte na <b>hlavní náměstí</b> a hledejte <b>dům</b>, kde se podle pověstí mísilo učené poznání, alchymie a pach tiskařské černě. Dnes tam sídlí informační centrum.',gpsOk:'Stojíte před Sankturinovským domem.',gpsNo:'Nejste správně. Hledáte dům na hlavním náměstí, který nese jméno kutnohorského radního a vysokého úředníka Sankturina.'},
+  konesele:{name:'Konšelé',clues:['Kámen','Erby','Bohatství','Moc','Plán města'],confirm:'confirm_konesele.webp',profile:'profile_konesele_approved.webp',home:'loccard_konesele_home.webp',gps:[49.9498797,15.2653806],homeText:'Hledejte jeden z nejkrásnějších gotických domů ve městě – <b>palác s bohatě zdobenou kamennou fasádou. Místní mu říkají prostě – Kamenný.</b>',gpsOk:'Našli jste dům, kterému se v Kutné Hoře říká jednoduše Kamenný dům. Patřil k nejvýstavnějším měšťanským domům ve městě a jeho fasáda měla každému kolemjdoucímu jasně připomenout, kdo má peníze, vliv a dobré styky.<br><br>Dobře si dům prohlédněte.<br><br>Takové domy nestavěli lidé, kteří chtěli zůstat nenápadní.',gpsNo:'<b>Korekce místa</b><br>Hledejte dům, kterému se v Kutné Hoře říká jednoduše <b>Kamenný dům</b>.'},
+  mincmistri:{name:'Mincmistři',clues:['Stříbro','Razidlo','Groš','Váha','Prezident'],confirm:'confirm_mincmistri.webp',profile:'profile_mincmistri_approved.webp',home:'loccard_mincmistri_home.webp',gps:[49.9484506,15.2690364],homeText:'Jděte na místo, kde se z kutnohorského stříbra rodily mince pro celé království – k bývalé mincovně ve Vlašském dvoře. Zastavte se u sochy prezidenta před vchodem.',gpsOk:'Vlašský dvůr býval královskou mincovnou a později také královským palácem, kde pobýval panovník při návštěvách města.',gpsNo:'Ještě nejste tam, kde se kdysi rozhodovalo o tom, zda má groš správnou váhu, a kde se rodily mince pro celé království – groše, musíte stát před vchodem do královské mincovny.'},
+  lapkove:{name:'Lapkové',clues:['Stín','Zeď','Úkryt','Špína','Zadní vchod'],confirm:'confirm_lapkove.webp',profile:'profile_lapkove_approved.webp',home:'loccard_lapkove_home.webp',gps:[49.9478689,15.2661933],homeText:'V noci, kdy zmizel <b>Krvavý grimoár</b>, se ulicemi Kutné Hory neplížili jen purkmistrovi špiclové a městská stráž.<br>Ve stínech se pohybovali i jiní.<br><br>Ti, kteří znají každou díru v hradbách, každou zadní branku, každý průchod mezi domy a každou uličku, kde člověk zmizí dřív, než stráž stihne zakřičet.<br><br>Jeden z vašich lidí tvrdí, že v noci zahlédl muže s balíkem pod pláštěm.<br><br>Běžel.<br>Za ním dva strážní.<br>Před ním úzká ulice mezi vysokými zdmi.<br><br>Jenom vy víte, kde tuhle uličku hledat.<br><br>Pak zmizel.<br><br>Jestli nesl <b>Krvavý grimoár</b>, nikdo neví.<br><br>Váš člověk neuměl číst.<br>Psát také ne.<br>Ale hlavně nebyl takový trouba, aby u sebe nosil pergamen s názvem místa, kudy právě prchal někdo, koho hledá celé město.<br><br>Zanechal jen <b>obraz</b>.<br><br>Nedaleko sv. Jakuba.<br>Místní jí neřeknou jinak než <b>Ruthardská</b>.',gpsOk:'Našli jste správnou uličku.',gpsNo:'Buď jste slepí, nebo jste úplně jinde. A ani jedno není pro lapku dobrá zpráva. Tohle nenajdete z hlavní ulice, hledejte zadní průchod a zadní vchod do krčmy.<br><br>Hledejte dál, nemůžete to nenajít, je to asi nejslavnější ulička ve městě.'}
+};
+const PLACEHOLDERS={radovi:'např. Bratři posledního kázání',zvonici:'např. Bratrstvo posledního úderu',haviri:'např. Dědici svaté Barbory',alchymiste:'např. Řád rudé baňky',konesele:'např. Ctihodná městská rada',mincmistri:'např. Strážci stříbrného groše',lapkove:'např. Černé kápě'};
+let selected=null;
+let locationEntryMode='home';
+const qs=new URLSearchParams(location.search);const TEST=qs.get('test')==='1';if(TEST)document.body.classList.add('test-on');
+const GAME_LIMIT_MS=4*60*60*1000;
+function gameState(){try{return JSON.parse(localStorage.getItem('kg-clean-flow')||'{}')}catch{return {}}}
+function saveGame(s){localStorage.setItem('kg-clean-flow',JSON.stringify(s))}
+function ensureGame(){const s=gameState();s.penaltyMinutes=Number(s.penaltyMinutes||0);s.hints=s.hints||{};s.done=s.done||{};if(!Array.isArray(s.radoviOrder))s.radoviOrder=['LEV','LEBKA','RÝČ','VĚŽ','VĚDRO S VODOU'];return s}
+function officialElapsed(s=ensureGame(),now=Date.now()){if(!s.startedAt)return 0;const stop=Number(s.endedAt||now);return Math.max(0,stop-Number(s.startedAt))+Number(s.penaltyMinutes||0)*60000}
+function expireGame(){const s=ensureGame();if(!s.startedAt||s.endedAt||s.gameClosed)return false;if(!s.timedOut){s.timedOut=true;s.timedOutAt=Date.now();s.lastScreen='timeExpired';saveGame(s)}show('timeExpired',{persist:false});return true}
+function checkGameClock(){const s=ensureGame();if(!s.startedAt||s.endedAt||s.gameClosed)return false;if(s.timedOut){show('timeExpired',{persist:false});return true}if(officialElapsed(s)>=GAME_LIMIT_MS)return expireGame();return false}
+function addPenalty(minutes,key){const s=ensureGame();s.penaltyFlags=s.penaltyFlags||{};if(key&&s.penaltyFlags[key])return false;if(key)s.penaltyFlags[key]=true;s.penaltyMinutes+=minutes;saveGame(s);checkGameClock();return true}
+
+
+const FINAL_SCREENS=new Set(['ultima','inFovea','foundGrimoar','grimoarYours','finis','timeExpired','gameClosed']);
+function resetViewport(target){try{document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}catch(_){ }try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(_){ }const root=document.scrollingElement||document.documentElement||document.body;root.scrollTop=0;document.documentElement.scrollTop=0;document.body.scrollTop=0;window.scrollTo(0,0);if(target)target.scrollTop=0;requestAnimationFrame(()=>{root.scrollTop=0;window.scrollTo(0,0);if(target)target.scrollTop=0;setTimeout(()=>{root.scrollTop=0;window.scrollTo(0,0);if(target)target.scrollTop=0},80)})}
+function show(id,opts={}){let gs=ensureGame();if(gs.gameClosed&&id!=='gameClosed'){id='gameClosed';opts={...opts,persist:false}}else if(gs.startedAt&&!gs.endedAt&&id!=='timeExpired'&&id!=='gameClosed'&&(gs.timedOut||officialElapsed(gs)>=GAME_LIMIT_MS)){if(!gs.timedOut){gs.timedOut=true;gs.timedOutAt=Date.now();gs.lastScreen='timeExpired';saveGame(gs)}id='timeExpired';opts={...opts,persist:false}}document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const target=document.getElementById(id);target?.classList.add('active');document.body.classList.toggle('final-mode',FINAL_SCREENS.has(id));if(opts.persist!==false){const st=ensureGame();if(st.startedAt&&!st.gameClosed&&!st.timedOut){st.lastScreen=id;st.locationEntryMode=locationEntryMode;if(id==='task')st.lastTaskHtml=document.getElementById('taskContent')?.innerHTML||'';if(id==='home'){const art=document.getElementById('homeArt');st.lastHomeFaction=art?.dataset?.faction||currentFaction();st.lastHomeClass=document.getElementById('home')?.className||'screen';}saveGame(st)}}resetViewport(target)}
+const ICONS={
+ pin:'icon_pin.webp',
+ alert:'icon_exclamation.webp',
+ mining:'icon_hammers.webp',
+ hourglass:'icon_hourglass.webp',
+ lantern:'icon_lantern.webp',
+ purse:'icon_moneybag.webp',
+ seal:'icon_check.webp',
+ broken:'icon_seal_broken.webp',
+ scroll:'icon_scroll.webp',
+ key:'icon_key.webp',
+ correct:'icon_check.webp',
+ wrong:'icon_wrong.webp'
+};
+function popup({icon='alert',tone='',title='',html='',actions=[{label:'ROZUMÍME'}],dismissible=true}){
+  const gs=gameState();if(gs.gameClosed){show('gameClosed',{persist:false});return}if(gs.timedOut&&!gs.endedAt){show('timeExpired',{persist:false});return}
+  const p=document.getElementById('popup'),sealImg=document.getElementById('popupSealImg'),t=document.getElementById('popupTitle'),b=document.getElementById('popupBody'),a=document.getElementById('popupActions');
+  sealImg.src=A+(ICONS[icon]||ICONS.alert);sealImg.alt='';t.textContent=title;b.innerHTML=html;a.innerHTML='';a.className='popup-actions'+(actions.length===2?' two':'');
+  actions.forEach(x=>{const btn=document.createElement('button');btn.className='popup-btn '+(x.kind==='secondary'?'secondary':'');btn.textContent=x.label;btn.onclick=()=>{closePopup();x.fn?.()};a.appendChild(btn)});
+  p.classList.add('show');p.setAttribute('aria-hidden','false');p.onclick=dismissible?(e=>{if(e.target===p)closePopup()}):null;
+}
+function closePopup(){const p=document.getElementById('popup');p.classList.remove('show');p.setAttribute('aria-hidden','true');p.onclick=null}
+function pickFaction(id){selected=id;const d=DATA[id];document.getElementById('confirmArt').src=A+d.confirm;document.getElementById('confirmArt').alt='Potvrzení frakce '+d.name;const i=document.getElementById('teamName');i.value='';i.placeholder=PLACEHOLDERS[id];show('confirm');setTimeout(()=>i.focus(),80)}
+function confirmFaction(){const team=document.getElementById('teamName').value.trim();if(!selected){show('faction');return}if(!team){popup({icon:'alert',title:'CHYBÍ NÁZEV DRUŽINY',html:'<p>Napište název družiny.</p>'});return}const s={faction:selected,team,startedAt:Date.now(),penaltyMinutes:0,hints:{},done:{},testGame:TEST,lastScreen:'profile',radoviOrder:['LEV','LEBKA','RÝČ','VĚŽ','VĚDRO S VODOU']};saveGame(s);const d=DATA[selected];document.getElementById('profileArt').src=A+d.profile;document.getElementById('profileArt').alt='Frakční karta '+d.name;show('profile')}
+function currentFaction(){try{return JSON.parse(localStorage.getItem('kg-clean-flow')||'{}').faction||selected}catch{return selected}}
+function hasKoneseleAdvantage(){const s=ensureGame();return currentFaction()==='konesele'&&!s.koneseleBribeUsed}
+function renderKoneseleAdvantage(target){if(!hasKoneseleAdvantage())return '';return `<button class="kon-advantage-badge" type="button" aria-label="Úplatek – jednorázová výhoda" onclick="useKoneseleAdvantage('${target}')"><img src="${A}konsele_uplatek_badge.webp" alt="ÚPLATEK – JEN 1×"></button>`}
+function reopenTaskForAdvantage(target){const map={radovi:openRadoviTask,zvonici:openZvoniciTask,alchymiste:openAlchymisteTask,konesele:openKoneseleTask,mincmistri:openMincmistriTask,haviri:openHaviriTask};(map[target]||openHub)()}
+function applyKoneseleAdvantage(target){const map={radovi:()=>radoviHint(true),zvonici:()=>zvoniciHint(true),alchymiste:()=>alchymisteHint(true),konesele:()=>koneseleHint(true),mincmistri:()=>mincmistriHint(true),haviri:()=>haviriHint(true)};(map[target]||(()=>{}))()}
+function useKoneseleAdvantage(target){const s=ensureGame();if(currentFaction()!=='konesele'||s.koneseleBribeUsed){reopenTaskForAdvantage(target);return}popup({icon:'purse',title:'ÚPLATEK',html:'<p>Konšelé dovedou správným měšcem rozvázat nejeden jazyk.</p><p>Chcete teď získat <b>nápovědu zdarma</b>, bez penalizace?</p><p><small>Tuto výhodu můžete použít jen jednou.</small></p>',dismissible:false,actions:[{label:'ZPĚT K ÚKOLU',kind:'secondary',fn:()=>reopenTaskForAdvantage(target)},{label:'POUŽÍT ÚPLATEK',fn:()=>{const st=ensureGame();if(st.koneseleBribeUsed){reopenTaskForAdvantage(target);return}st.koneseleBribeUsed=true;saveGame(st);applyKoneseleAdvantage(target)}}]})}
+function openFirstStop(){const id=currentFaction();if(!id||!DATA[id]){show('faction');return}if(id==='lapkove'){locationEntryMode='home';show('lapkoveStory');return}if(id==='alchymiste'){locationEntryMode='home';show('alchymisteFirstStop');return}if(id==='haviri'){locationEntryMode='home';show('haviriFirstStop');return}if(id==='mincmistri'){locationEntryMode='home';show('mincmistriFirstStop');return}const d=DATA[id];popup({icon:'pin',tone:'gold',title:'VAŠE PRVNÍ STOPA',html:`<p>${d.homeText}</p>`,dismissible:false,actions:[{label:'VYRAZIT',kind:'gold',fn:()=>openHomeCard(id)}]})}
+function reopenFirstStop(){const id=document.getElementById('homeArt').dataset.faction||currentFaction();if(!id||!DATA[id])return;if(id==='lapkove'){show('lapkoveStory');return}if(id==='alchymiste'){show('alchymisteFirstStop');return}if(id==='haviri'){show('haviriFirstStop');return}if(id==='mincmistri'){show('mincmistriFirstStop');return}const d=DATA[id];popup({icon:'pin',tone:'gold',title:'VAŠE PRVNÍ STOPA',html:`<p>${d.homeText}</p>`,actions:[{label:'ZPĚT K LOKACI',kind:'gold'}]})}
+function openHomeCard(id){locationEntryMode='home';renderLocationCard(id)}
+function openRadoviFromHub(){const s=ensureGame();if(s.done?.radovi)return;locationEntryMode='hub';renderLocationCard('radovi')}
+function openZvoniciFromHub(){const s=ensureGame();if(s.done?.zvonici)return;locationEntryMode='hub';renderLocationCard('zvonici')}
+function openAlchymisteFromHub(){const s=ensureGame();if(s.done?.alchymiste)return;locationEntryMode='hub';renderLocationCard('alchymiste')}
+function openMincmistriFromHub(){const s=ensureGame();if(s.done?.mincmistri)return;locationEntryMode='hub';renderLocationCard('mincmistri')}
+function openKoneseleFromHub(){const s=ensureGame();if(s.done?.konesele)return;locationEntryMode='hub';renderLocationCard('konesele')}
+function openLapkoveFromHub(){const s=ensureGame();if(s.done?.lapkove)return;locationEntryMode='hub';show('lapkoveStoryOthers');window.scrollTo(0,0)}
+function openLapkoveLocationFromHub(){locationEntryMode='hub';renderLocationCard('lapkove')}
+const HAVIRI_ZNACKY_CLUES={
+  radovi:'Začínáte na místě, kde se řada kamenných světců dívá směrem k chrámu svaté Barbory. Jděte na roh Jezuitské koleje. Hledejte sochy. Ony vám vydají první úkol a možná i pečeť.',
+  zvonici:'Začínáte u kostela, jehož vysoká věž vládne městu. Hledejte svatého Jakuba a jeho vyhlídku.',
+  alchymiste:'Vydejte se na hlavní náměstí. Hledáte dům, který nese jméno kutnohorského radního a vysokého úředníka Sankturina. Až dorazíte před jeho hlavní vchod, ověřte svou polohu.',
+  konesele:'Hledejte jeden z nejkrásnějších gotických domů ve městě – palác s bohatě zdobenou kamennou fasádou. Místní mu říkají prostě – Kamenný.',
+  mincmistri:'Jděte na místo, kde se z kutnohorského stříbra rodily mince pro celé království – k bývalé mincovně ve Vlašském dvoře. Zastavte se u sochy prezidenta před vchodem.'
+};
+function shouldShowHaviriZnacky(id){const s=ensureGame();return currentFaction()==='haviri'&&!s.haviriZnackyUsed&&id!=='haviri'&&id!=='lapkove'&&!!HAVIRI_ZNACKY_CLUES[id]}
+function updateHaviriZnackyBadge(id){const b=document.getElementById('haviriZnackyBadge');if(!b)return;b.hidden=!shouldShowHaviriZnacky(id)}
+function useHaviriZnacky(){const id=document.getElementById('homeArt').dataset.faction||currentFaction();if(!shouldShowHaviriZnacky(id))return;const s=ensureGame();s.haviriZnackyUsed=true;saveGame(s);updateHaviriZnackyBadge(id);popup({icon:'hammers',title:'HORNICKÉ ZNAČKY',html:`<p>${HAVIRI_ZNACKY_CLUES[id]}</p><p><small>Výhoda byla použita. Další značky už neuvidíte.</small></p>`,dismissible:false,actions:[{label:'ROZUMÍM'}]})}
+function renderLocationCard(id){const d=DATA[id];const home=document.getElementById('home'),img=document.getElementById('homeArt');img.src=A+d.home;img.alt=(locationEntryMode==='hub'?'Lokace':'Domovská lokace')+' – '+d.name;img.dataset.faction=id;home.classList.toggle('hub-mode',locationEntryMode==='hub');home.classList.toggle('alch-location',id==='alchymiste');home.classList.toggle('alch-home-mode',id==='alchymiste'&&locationEntryMode==='home');home.classList.toggle('haviri-location',id==='haviri');home.classList.toggle('konesele-location',id==='konesele');home.classList.toggle('mincmistri-location',id==='mincmistri');const clues=document.getElementById('homeClues'),skip=document.querySelector('.home-skip'),reread=document.querySelector('.home-reread');if(id==='lapkove'){clues.innerHTML='';clues.style.display='none';skip.style.display='none';reread.style.display=locationEntryMode==='home'?'block':'none'}else if(id==='alchymiste'||id==='haviri'||id==='konesele'||id==='mincmistri'){clues.innerHTML='';clues.style.display='none';skip.style.display='block';reread.style.display=locationEntryMode==='home'?'block':'none'}else{clues.style.display='grid';clues.innerHTML=(d.clues||[]).map(x=>`<span>${x}</span>`).join('');skip.style.display='block';reread.style.display=locationEntryMode==='home'?'block':'none'}updateHaviriZnackyBadge(id);show('home');window.scrollTo(0,0)}
+
+let parchmentReturn='legend3';
+function normAnswer(v){return String(v||'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z]/g,'')}
+function updateParchmentHubStatus(){
+  const s=ensureGame(),el=document.getElementById('hubParchStatus'),hot=document.querySelector('.hub-parch-hotspot');if(!el)return;
+  const doneCount=Object.keys(s.done||{}).length;
+  if(s.parchment){
+    const hideWord=!!(s.parchmentSurrendered&&doneCount<7);
+    el.textContent=hideWord?'✓ VYŘEŠENO':'✓ VYŘEŠENO · OPĚT';el.classList.add('solved');
+    if(hot){hot.disabled=true;hot.setAttribute('aria-disabled','true');hot.style.pointerEvents='none';hot.style.cursor='default'}
+  }else{
+    el.textContent='Lze rozluštit kdykoli během hry.';el.classList.remove('solved');
+    if(hot){hot.disabled=false;hot.removeAttribute('aria-disabled');hot.style.pointerEvents='auto';hot.style.cursor='pointer'}
+  }
+}
+function openParchment(from){parchmentReturn=from||'legend3';const s=ensureGame();if(from==='hub'&&s.parchment){openHub();return}document.getElementById('parchmentSolved')?.classList.toggle('show',!!s.parchment);show('parchment')}
+function returnFromParchment(){if(parchmentReturn==='hub'){openHub()}else{show('legend3')}}
+function openParchmentAnswer(){
+  const s=ensureGame();
+  if(s.parchment){const doneCount=Object.keys(s.done||{}).length;if(s.parchmentSurrendered&&doneCount<7){popup({icon:'scroll',title:'PERGAMEN JE VYŘEŠENÝ',html:'<p>Útržek se počítá jako dokončený.</p><p>Jeho indicie se odhalí, až dokončíte všech sedm lokací.</p>',actions:[{label:'ROZUMÍM',fn:returnFromParchment}]});return}popup({icon:'scroll',title:'SPRÁVNĚ. SLOVO MÁTE.',html:'<p><b>OPĚT</b></p><p>Slovo máte. Co znamená, zatím neřešte. Schovejte si ho. Budete ho ještě potřebovat.</p>',actions:[{label:'ROZUMÍM',fn:returnFromParchment}]});return}
+  const actions=[];
+  if(s.parchmentHintUnlocked)actions.push({label:'NÁPOVĚDA',kind:'secondary',fn:showParchmentHint});
+  actions.push({label:'VZDÁT ODPOVĚĎ (+30 MIN)',kind:'secondary',fn:confirmParchmentSurrender});
+  actions.push({label:'OVĚŘIT ODPOVĚĎ',fn:checkParchmentAnswer});
+  popup({icon:'scroll',title:'ZTRACENÝ PERGAMEN',html:'<p>Zadejte rozluštěné slovo.</p><input id="parchmentAnswer" class="parchment-answer" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ROZLUŠTĚNÉ SLOVO">',actions});
+  setTimeout(()=>document.getElementById('parchmentAnswer')?.focus(),80)
+}
+function checkParchmentAnswer(){
+  const input=document.getElementById('parchmentAnswer'),v=normAnswer(input?.value);
+  if(v==='OPET'){
+    const s=ensureGame();s.parchment=true;s.parchmentWord='OPĚT';saveGame(s);
+    document.getElementById('parchmentSolved')?.classList.add('show');updateParchmentHubStatus();
+    popup({icon:'scroll',title:'SPRÁVNĚ. SLOVO MÁTE.',html:'<p>Slovo máte. Co znamená, zatím neřešte. Schovejte si ho. Budete ho ještě potřebovat.</p>',dismissible:false,actions:[{label:'ROZUMÍM',fn:returnFromParchment}]});return
+  }
+  const s=ensureGame();s.parchmentHintUnlocked=true;saveGame(s);
+  popup({icon:'wrong',title:'TOHLE NENÍ ONO',html:'<p>Útržek zatím neodhalil správné slovo.</p><p><small>Nápověda je teď dostupná.</small></p>',actions:[{label:'ZPĚT K PERGAMENU',kind:'secondary',fn:()=>show('parchment')},{label:'NÁPOVĚDA',fn:showParchmentHint}]})
+}
+function showParchmentHint(){
+  const s=ensureGame();s.parchmentHintUnlocked=true;s.parchmentHintUsed=true;saveGame(s);
+  popup({icon:'lantern',title:'NÁPOVĚDA',html:'<p>Věta má právě tolik písmen, kolik je polí ve čtverci <b>5 × 5</b>.</p><p><b>Dejte znamením správný řád.</b></p><p>Až propálený pergamen přiložíte, nezapomeňte, že slunce vždy stojí nahoře.</p>',actions:[{label:'ZPĚT K PERGAMENU',fn:()=>show('parchment')}]})
+}
+function confirmParchmentSurrender(){
+  popup({icon:'hourglass',title:'OPRAVDU VZDÁT ODPOVĚĎ?',html:'<p>Ztracený pergamen bude považován za vyřešený.</p><p><b>+30 MIN</b></p>',actions:[{label:'ZPĚT',kind:'secondary',fn:openParchmentAnswer},{label:'VZDÁVÁM TO',fn:surrenderParchment}]})
+}
+function surrenderParchment(){
+  addPenalty(30,'surrender-parchment');const s=ensureGame();s.parchment=true;s.parchmentWord='OPĚT';s.parchmentSurrendered=true;if(!s.surrendered||typeof s.surrendered!=='object'||Array.isArray(s.surrendered))s.surrendered={};s.surrendered.parchment=true;saveGame(s);
+  document.getElementById('parchmentSolved')?.classList.add('show');updateParchmentHubStatus();openHub()
+}
+
+function distanceMeters(a,b,c,d){const R=6371000,p=Math.PI/180,x=(d-b)*p*Math.cos((a+c)*p/2),y=(c-a)*p;return Math.sqrt(x*x+y*y)*R}
+function verifyHome(){const id=document.getElementById('homeArt').dataset.faction||currentFaction(),d=DATA[id];if(!d)return;if(!navigator.geolocation){popup({icon:'alert',title:'POLOHU NELZE OVĚŘIT',html:'<p>Prohlížeč GPS nepodporuje nebo k ní nemá přístup.</p>'});return}navigator.geolocation.getCurrentPosition(pos=>{const m=distanceMeters(pos.coords.latitude,pos.coords.longitude,d.gps[0],d.gps[1]);if(m<=25){homeSuccess(id)}else{if(id==='lapkove'){showLapkoveWrong()}else{popup({icon:'alert',title:'JEŠTĚ NEJSTE NA MÍSTĚ',html:`<p>${d.gpsNo}</p><p><small>Přibližná vzdálenost: ${Math.round(m)} m.</small></p>`})}}},()=>popup({icon:'alert',title:'POLOHU NELZE OVĚŘIT',html:'<p>Zkontrolujte oprávnění pro GPS. Na telefonu otevřete hru přímo v Chrome nebo Safari.</p>'}),{enableHighAccuracy:true,timeout:12000,maximumAge:5000})}
+function homeSuccess(id){const d=DATA[id];if(id==='lapkove'){showLapkoveCorrect();return}if(id==='zvonici'){popup({icon:'pin',title:'POLOHA POTVRZENA',html:`<p>${d.gpsOk}</p>`,dismissible:false,actions:[{label:'K PŘÍBĚHU',fn:()=>openZvoniciStory()}]});return}if(id==='alchymiste'){popup({icon:'pin',title:'POLOHA POTVRZENA',html:`<p>${d.gpsOk}</p>`,dismissible:false,actions:[{label:'K PŘÍBĚHU',fn:()=>openAlchymisteStory()}]});return}if(id==='haviri'){openHaviriPlaceOk();return}if(id==='konesele'){popup({icon:'pin',title:'ANO – JSTE SPRÁVNĚ',html:`<p>${d.gpsOk}</p>`,dismissible:false,actions:[{label:'K PŘÍBĚHU',fn:openKoneseleStory}]});return}if(id==='mincmistri'){popup({icon:'pin',title:'ANO – JSTE SPRÁVNĚ',html:`<p>${d.gpsOk}</p>`,dismissible:false,actions:[{label:'K PŘÍBĚHU',fn:openMincmistriStory}]});return}popup({icon:'pin',title:'POLOHA POTVRZENA',html:`<p>${d.gpsOk}</p>`,dismissible:false,actions:[{label:id==='radovi'?'K ÚKOLU':'ROZUMÍME',fn:()=>{if(id==='radovi')openRadoviTask()}}]})}
+function skipGps(){const id=document.getElementById('homeArt').dataset.faction||currentFaction();popup({icon:'hourglass',title:'OPRAVDU POKRAČOVAT BEZ GPS?',html:'<p>Pokračování bez ověření polohy přidá k výslednému času penalizaci.</p><p><b>+10 MIN</b></p>',actions:[{label:'ZPĚT',kind:'secondary'},{label:'POKRAČOVAT',fn:()=>{addPenalty(10,'gps-home-'+id);if(id==='zvonici'){openZvoniciStory();return}if(id==='mincmistri'){openMincmistriStory();return}homeSuccess(id)}}]})}
+
+function showLapkoveWrong(){document.getElementById('taskContent').innerHTML=`<div class="lapkove-card"><img src="${A}lapkove_wrong.webp" alt="Lapkové – špatná poloha"><button class="lapkove-hot lapkove-wrong-back" type="button" aria-label="Zpět k hledání" onclick="locationEntryMode==='hub'?openLapkoveLocationFromHub():openHomeCard('lapkove')"></button></div>`;show('task');window.scrollTo(0,0)}
+function showLapkoveCorrect(){document.getElementById('taskContent').innerHTML=`<div class="lapkove-card"><img src="${A}lapkove_correct.webp" alt="Lapkové – správně"><button class="lapkove-hot lapkove-correct-next" type="button" aria-label="Dál" onclick="showLapkoveVillon()"></button></div>`;show('task');window.scrollTo(0,0)}
+function showLapkoveVillon(){document.getElementById('taskContent').innerHTML=`<div class="lapkove-card"><img src="${A}lapkove_villon.webp" alt="François Villon – literární aluze pro Lapky"><button class="lapkove-hot lapkove-villon-next" type="button" aria-label="Dál" onclick="breakLapkoveSeal()"></button></div>`;show('task');window.scrollTo(0,0)}
+function goLapkoveHub(){try{openHub()}catch(e){console.error('Lapkove hub fallback',e);const s=ensureGame();show('hub');const st=document.getElementById('hubStatus');if(st)st.innerHTML=`<b>${s.team||'Družina'}</b><span>${Object.keys(s.done||{}).length}/7 pečetí</span>`;const d=document.getElementById('hubLapkoveDone');if(d)d.hidden=!s.done.lapkove;window.scrollTo(0,0)}}
+function breakLapkoveSeal(){const s=ensureGame();s.done.lapkove='U6';saveGame(s);document.getElementById('taskContent').innerHTML=`<div class="lapkove-card"><img src="${A}lapkove_broken.webp" alt="Rozlomená pečeť Lapků – U6"><button class="lapkove-hot lapkove-broken-hub" style="z-index:80" type="button" aria-label="Zpět na rozcestník" onclick="goLapkoveHub();return false;"></button></div>`;show('task');window.scrollTo(0,0)}
+
+function openZvoniciStory(){
+  document.getElementById('taskContent').innerHTML=`<div class="zvonici-card"><img src="${A}zvonici_story.webp" alt="Zvon. Hlas. Smrt. – příběh Zvoníků"><div class="zvonici-story-patch" aria-hidden="true"></div><button class="zvonici-hot zvonici-story-next" type="button" aria-label="Dál" onclick="openZvoniciTask()"></button></div>`;
+  show('task');window.scrollTo(0,0)
+}
+function openZvoniciTask(){
+  const advantage=currentFaction()==='zvonici'?`<div class="zvonici-advantage"><b>VAŠE VÝHODA</b>Nasloucháte i tomu, co není řečeno nahlas. První dva zvony volají na milence a havíře.</div>`:'';
+  document.getElementById('taskContent').innerHTML=`<div class="zvonici-card"><img src="${A}zvonici_task.webp" alt="Úkol Zvoníků – Vox Campanae, Vox Mortis">${advantage}${renderKoneseleAdvantage('zvonici')}<input class="zvonici-digit d1" id="zv1" inputmode="numeric" maxlength="1" pattern="[0-9]*" aria-label="První číslice"><input class="zvonici-digit d2" id="zv2" inputmode="numeric" maxlength="1" pattern="[0-9]*" aria-label="Druhá číslice"><input class="zvonici-digit d3" id="zv3" inputmode="numeric" maxlength="1" pattern="[0-9]*" aria-label="Třetí číslice"><input class="zvonici-digit d4" id="zv4" inputmode="numeric" maxlength="1" pattern="[0-9]*" aria-label="Čtvrtá číslice"><button class="zvonici-hot zvonici-task-hint" type="button" aria-label="Nápověda plus tři minuty" onclick="zvoniciHint()"></button><span class="zvonici-hint-cost">(+3 MINUTY)</span><button class="zvonici-hot zvonici-task-check" type="button" aria-label="Ověřit odpověď" onclick="checkZvonici()"></button></div>`;
+  ['zv1','zv2','zv3','zv4'].forEach((id,i)=>{const el=document.getElementById(id);el.addEventListener('input',()=>{el.value=el.value.replace(/\D/g,'').slice(0,1);if(el.value&&i<3)document.getElementById('zv'+(i+2))?.focus()});el.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!el.value&&i>0)document.getElementById('zv'+i)?.focus()})});
+  show('task');window.scrollTo(0,0);setTimeout(()=>document.getElementById('zv1')?.focus(),80)
+}
+function zvoniciHint(free=false){
+  let s=ensureGame();if((s.hints.zvonici||0)<1){if(!free)addPenalty(3,'hint-zvonici');s=ensureGame();s.hints.zvonici=1;saveGame(s)}
+  const costHtml=free?'<p><small>bez penalizace díky výhodě ÚPLATEK</small></p>':'<p><small>+3 MIN</small></p>';
+  popup({icon:'lantern',title:'NÁPOVĚDA',html:'<p>Nezkoumejte celou báseň.</p><p>Zaměřte se na verše:</p><p><b>Na milence a na havíře,<br>na zbloudilé a na mrtvé…</b></p><p>Tady máte správné <b>pořadí</b>.</p>'+costHtml,dismissible:false,actions:[{label:'ZPĚT K ÚKOLU',kind:'secondary',fn:()=>openZvoniciTask()},{label:'VZDÁT ÚKOL (+30 MIN)',fn:confirmZvoniciSurrender}]})
+}
+function checkZvonici(){
+  const ans=['zv1','zv2','zv3','zv4'].map(id=>document.getElementById(id)?.value||'').join('');
+  if(ans==='2413'){showZvoniciCorrect();return}
+  popup({icon:'wrong',title:'TOHLE NENÍ ONO',html:'<p>Ne. Zvony volaly v jiném pořadí.</p>',actions:[{label:'ZPĚT K ÚKOLU',kind:'secondary',fn:()=>openZvoniciTask()},{label:'VZDÁT ÚKOL (+30 MIN)',fn:confirmZvoniciSurrender}]})
+}
+function confirmZvoniciSurrender(){popup({icon:'hourglass',title:'OPRAVDU VZDÁT ÚKOL?',html:'<p>Úkol bude považován za splněný.</p><p><b>+30 MIN</b></p>',actions:[{label:'ZPĚT',kind:'secondary',fn:()=>openZvoniciTask()},{label:'VZDÁVÁM TO',fn:()=>{addPenalty(30,'surrender-zvonici');const s=ensureGame();if(!s.surrendered||typeof s.surrendered!=='object'||Array.isArray(s.surrendered))s.surrendered={};s.surrendered.zvonici=true;s.done.zvonici='P4';saveGame(s);goZvoniciHub()}}]})}
+function showZvoniciCorrect(){document.getElementById('taskContent').innerHTML=`<div class="zvonici-card"><img src="${A}zvonici_correct.webp" alt="Zvoníci – správně"><button class="zvonici-hot zvonici-correct-next" type="button" aria-label="Dál" onclick="showZvoniciLiterary()"></button></div>`;show('task');window.scrollTo(0,0)}
+function showZvoniciLiterary(){document.getElementById('taskContent').innerHTML=`<div class="zvonici-card"><img src="${A}zvonici_literary.webp" alt="Jiří Orten a Jan Tleskač – literární aluze Zvoníků"><button class="zvonici-hot zvonici-literary-next" type="button" aria-label="Rozlomit pečeť" onclick="breakZvoniciSeal()"></button></div>`;show('task');window.scrollTo(0,0)}
+function goZvoniciHub(){try{openHub()}catch(e){console.error('Zvonici hub fallback',e);const s=ensureGame();show('hub');const st=document.getElementById('hubStatus');if(st)st.innerHTML=`<b>${s.team||'Družina'}</b><span>${Object.keys(s.done||{}).length}/7 pečetí</span>`;const d=document.getElementById('hubZvoniciDone');if(d)d.hidden=!s.done.zvonici;window.scrollTo(0,0)}}
+function breakZvoniciSeal(){const s=ensureGame();s.done.zvonici='P4';saveGame(s);document.getElementById('taskContent').innerHTML=`<div class="zvonici-card"><img src="${A}zvonici_broken.webp" alt="Rozlomená pečeť Zvoníků – P4"><button class="zvonici-hot zvonici-broken-hub" style="z-index:80" type="button" aria-label="Zpět na rozcestník" onclick="goZvoniciHub();return false;"></button></div>`;show('task');window.scrollTo(0,0)}
+
+function openAlchymisteStory(){document.getElementById('taskContent').innerHTML=`<div class="alch-card"><img src="${A}alchymiste_story.webp" alt="Alchymisté – příběh"><button class="alch-hot alch-story-next" type="button" aria-label="K obrazu" onclick="openAlchymisteTask()"></button></div>`;show('task');window.scrollTo(0,0)}
+function alchymisteAdvantage(){popup({icon:'lantern',title:'VAŠE VÝHODA',html:'<p>To nejdůležitější se nikdy neukrývá na povrchu. Umíte latinsky lépe než většina téhle chátry a z učených knih jste vyčetli, že slovo, které hledáte, znamená <b>TAJEMSTVÍ</b>.</p>',actions:[{label:'ROZUMÍM'}]})}
+function openAlchymisteTask(){const advantage=currentFaction()==='alchymiste'?`<button class="alch-advantage" type="button" aria-label="Vaše výhoda" onclick="alchymisteAdvantage()"><img src="${A}alch_advantage_badge.webp" alt="Vaše výhoda"></button>`:'';document.getElementById('taskContent').innerHTML=`<div class="alch-card"><img src="${A}alchymiste_task.webp" alt="Alchymisté – úkol">${advantage}${renderKoneseleAdvantage('alchymiste')}<button class="alch-stereo-hot" type="button" aria-label="Zvětšit obraz" onclick="openImageZoom()"></button><input id="alch1" class="alch-digit d1" maxlength="1" autocomplete="off" aria-label="První písmeno"><input id="alch2" class="alch-digit d2" maxlength="1" autocomplete="off" aria-label="Druhé písmeno"><input id="alch3" class="alch-digit d3" maxlength="1" autocomplete="off" aria-label="Třetí písmeno"><button class="alch-hot alch-task-hint" type="button" aria-label="Nápověda plus tři minuty" onclick="alchymisteHint()"></button><button class="alch-hot alch-task-check" type="button" aria-label="Ověřit odpověď" onclick="checkAlchymiste()"></button><button class="alch-hot alch-task-giveup" type="button" aria-label="Vzdávám to plus třicet minut" onclick="confirmAlchymisteSurrender()"></button></div>`;show('task');window.scrollTo(0,0);setTimeout(()=>{const ids=['alch1','alch2','alch3'];ids.forEach((id,i)=>{const el=document.getElementById(id);if(!el)return;el.addEventListener('input',()=>{el.value=el.value.slice(-1).toUpperCase();if(el.value&&i<2)document.getElementById(ids[i+1])?.focus()});el.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!el.value&&i>0)document.getElementById(ids[i-1])?.focus()})})},0)}
+function openImageZoom(){const z=document.getElementById('imageZoom');z.classList.add('open');z.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
+function closeImageZoom(e){if(e&&e.target&&e.target.id==='imageZoomImg')return;const z=document.getElementById('imageZoom');z.classList.remove('open');z.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+function alchymisteHint(free=false){let st=ensureGame();if((st.hints.alchymiste||0)<1){if(!free)addPenalty(3,'hint-alchymiste');st=ensureGame();st.hints.alchymiste=1;saveGame(st)}document.getElementById('taskContent').innerHTML=`<div class="alch-card"><img src="${A}alchymiste_hint.webp" alt="Alchymisté – nápověda"><button class="alch-hot alch-hint-back" type="button" aria-label="Rozumím" onclick="openAlchymisteTask()"></button></div>`;show('task');window.scrollTo(0,0)}
+function checkAlchymiste(){const v=['alch1','alch2','alch3'].map(id=>(document.getElementById(id)?.value||'').trim().toUpperCase()).join('');if(v==='CAM')showAlchymisteCorrect();else showAlchymisteWrong()}
+function showAlchymisteWrong(){document.getElementById('taskContent').innerHTML=`<div class="alch-card"><img src="${A}alchymiste_wrong.webp" alt="Alchymisté – chybné zadání"><button class="alch-hot alch-wrong-back" type="button" aria-label="Zpět k úkolu" onclick="openAlchymisteTask()"></button><button class="alch-hot alch-wrong-giveup" type="button" aria-label="Vzdávám to plus třicet minut" onclick="confirmAlchymisteSurrender()"></button></div>`;show('task');window.scrollTo(0,0)}
+function confirmAlchymisteSurrender(){popup({icon:'hourglass',title:'OPRAVDU VZDÁT ÚKOL?',html:'<p>Úkol bude považován za splněný.</p><p><b>+30 MIN</b></p>',actions:[{label:'ZPĚT',kind:'secondary',fn:()=>openAlchymisteTask()},{label:'VZDÁVÁM TO',fn:()=>{addPenalty(30,'surrender-alchymiste');const s=ensureGame();if(!s.surrendered||typeof s.surrendered!=='object'||Array.isArray(s.surrendered))s.surrendered={};s.surrendered.alchymiste=true;s.done.alchymiste='U1';saveGame(s);goAlchymisteHub()}}]})}
+function showAlchymisteCorrect(){document.getElementById('taskContent').innerHTML=`<div class="alch-card"><img src="${A}alchymiste_correct.webp" alt="Alchymisté – správně"><button class="alch-hot alch-correct-break" type="button" aria-label="Rozlomit pečeť" onclick="breakAlchymisteSeal()"></button></div>`;show('task');window.scrollTo(0,0)}
+function goAlchymisteHub(){try{openHub()}catch(e){console.error('Alchymiste hub fallback',e);const s=ensureGame();show('hub');const st=document.getElementById('hubStatus');if(st)st.innerHTML=`<b>${s.team||'Družina'}</b><span>${Object.keys(s.done||{}).length}/7 pečetí</span>`;const d=document.getElementById('hubAlchymisteDone');if(d)d.hidden=!s.done.alchymiste;window.scrollTo(0,0)}}
+function breakAlchymisteSeal(){const st=ensureGame();st.done.alchymiste='U1';saveGame(st);document.getElementById('taskContent').innerHTML=`<div class="alch-card"><img src="${A}alchymiste_broken.webp" alt="Rozlomená pečeť Alchymistů – U1"><button class="alch-hot alch-broken-hub" style="z-index:80" type="button" aria-label="K rozcestníku" onclick="goAlchymisteHub();return false;"></button></div>`;show('task');window.scrollTo(0,0)}
+
+const RADOVI_CORRECT=['VĚŽ','RÝČ','LEV','VĚDRO S VODOU','LEBKA'];
+let radoviWrongReturn='main';
+function radoviOrder(){return ensureGame().radoviOrder}
+function setRadoviOrder(order){const s=ensureGame();s.radoviOrder=order;saveGame(s)}
+function moveRadovi(i,d){const o=[...radoviOrder()],j=i+d;if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];setRadoviOrder(o);renderRadoviOrder()}
+const RADOVI_STRIPS={'LEBKA':'radovi_order/lebka.png','LEV':'radovi_order/lev.png','VĚDRO S VODOU':'radovi_order/vedro.png','VĚŽ':'radovi_order/vez.png','RÝČ':'radovi_order/ryc.png'};
+let radoviDrag=null;
+function radoviIndexFromClientY(clientY,host){
+  const card=host.closest('.radovi-card');if(!card)return 0;
+  const r=card.getBoundingClientRect();
+  const rel=(clientY-r.top)/r.height*100;
+  const centers=[69.465,73.475,77.485,81.495,85.505];
+  let best=0,dist=Infinity;centers.forEach((c,i)=>{const d=Math.abs(rel-c);if(d<dist){dist=d;best=i}});
+  return best;
+}
+function startRadoviDrag(e,i,name,el){
+  if(e.pointerType==='mouse' && e.button!==0)return;
+  e.preventDefault();e.stopPropagation();
+  el.setPointerCapture?.(e.pointerId);el.classList.add('dragging');
+  radoviDrag={pointerId:e.pointerId,index:i,name,el};
+}
+function moveRadoviDrag(e){
+  if(!radoviDrag||e.pointerId!==radoviDrag.pointerId)return;
+  e.preventDefault();
+  const host=document.getElementById('radoviSortLayer');if(!host)return;
+  const target=radoviIndexFromClientY(e.clientY,host);
+  const current=radoviOrder().indexOf(radoviDrag.name);
+  if(target!==current){
+    const o=[...radoviOrder()];o.splice(current,1);o.splice(target,0,radoviDrag.name);setRadoviOrder(o);
+    radoviDrag.index=target;renderRadoviOrder(radoviDrag.name,e.pointerId);
+  }
+}
+function endRadoviDrag(e){
+  if(!radoviDrag||e.pointerId!==radoviDrag.pointerId)return;
+  e.preventDefault();radoviDrag.el?.classList.remove('dragging');radoviDrag=null;
+}
+function renderRadoviOrder(activeName=null,activePointerId=null){
+  const host=document.getElementById('radoviSortLayer');if(!host)return;
+  host.innerHTML='';
+  radoviOrder().forEach((name,i)=>{
+    const img=document.createElement('img');img.className=`radovi-strip r${i}`;img.src=A+RADOVI_STRIPS[name];img.alt=`${i+1}. ${name}`;host.appendChild(img);
+    const drag=document.createElement('div');drag.className=`radovi-drag r${i}`;drag.setAttribute('role','button');drag.setAttribute('aria-label',`Přesunout ${name}. Táhněte prstem nahoru nebo dolů.`);
+    drag.onpointerdown=e=>startRadoviDrag(e,i,name,drag);drag.onpointermove=moveRadoviDrag;drag.onpointerup=endRadoviDrag;drag.onpointercancel=endRadoviDrag;host.appendChild(drag);
+    if(name===activeName && radoviDrag){radoviDrag.el=drag;radoviDrag.index=i;try{drag.setPointerCapture(activePointerId)}catch(_){}}
+    const up=document.createElement('button');up.type='button';up.className=`radovi-arrow up r${i}`;up.setAttribute('aria-label',`Posunout ${name} nahoru`);up.onclick=e=>{e.preventDefault();e.stopPropagation();moveRadovi(i,-1)};host.appendChild(up);
+    const down=document.createElement('button');down.type='button';down.className=`radovi-arrow down r${i}`;down.setAttribute('aria-label',`Posunout ${name} dolů`);down.onclick=e=>{e.preventDefault();e.stopPropagation();moveRadovi(i,1)};host.appendChild(down);
+  });
+}
+function openRadoviTask(){
+  const taskArt=currentFaction()==='radovi'?'taskcard_radovi.webp':'taskcard_radovi_home.webp';
+  document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}${taskArt}" alt="Úkol Řádových bratří">${renderKoneseleAdvantage('radovi')}<div id="radoviSortLayer"></div><button class="radovi-hot radovi-main-hint" type="button" aria-label="Nápověda" onclick="radoviHint()"></button><button class="radovi-hot radovi-main-check" type="button" aria-label="Ověřit odpověď" onclick="checkRadoviOrder()"></button></div>`;
+  renderRadoviOrder();show('task');window.scrollTo(0,0)
+}
+function radoviHint(free=false){
+  let s=ensureGame();if((s.hints.radovi||0)<1){if(!free)addPenalty(3,'hint-radovi');s=ensureGame();s.hints.radovi=1;saveGame(s)}
+  document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}hint_radovi_v2.webp" alt="Nápověda Řádových bratří"><button class="radovi-hot radovi-hint-ok" type="button" aria-label="Rozumím" onclick="openRadoviHintAnswer()"></button></div>`;show('task');window.scrollTo(0,0)
+}
+function openRadoviHintAnswer(){
+  document.getElementById('taskContent').innerHTML=`<div class="radovi-answer-wrap"><h2>VAŠE ODPOVĚĎ</h2><div class="radovi-answer-grid"><label>PÍSMENO<input id="ignLetter" maxlength="1" autocomplete="off" placeholder="A–Z"></label><label>ČÍSLO<input id="ignWomen" inputmode="numeric" maxlength="1" autocomplete="off" placeholder="0–9"></label></div><div class="radovi-answer-actions"><button class="hint" type="button" onclick="radoviHint()">NÁPOVĚDA</button><button class="check" type="button" onclick="checkIgnatiusRadovi()">OVĚŘIT ODPOVĚĎ</button></div></div>`;show('task');setTimeout(()=>document.getElementById('ignLetter')?.focus(),80);window.scrollTo(0,0)
+}
+function checkIgnatiusRadovi(){const n=(document.getElementById('ignWomen')?.value||'').trim(),l=(document.getElementById('ignLetter')?.value||'').trim().toUpperCase();if(n==='2'&&l==='T')radoviCorrect();else{radoviWrongReturn='alt';showRadoviWrong()}}
+function checkRadoviOrder(){const o=radoviOrder();if(o.every((v,i)=>v===RADOVI_CORRECT[i]))radoviCorrect();else{radoviWrongReturn='main';showRadoviWrong()}}
+function showRadoviWrong(){document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}wrong_radovi_v2.webp" alt="Špatné pořadí"><button class="radovi-hot radovi-wrong-back" type="button" aria-label="Zpět k úkolu" onclick="returnFromRadoviWrong()"></button><button class="radovi-hot radovi-wrong-giveup" type="button" aria-label="Vzdávám to za třicet minut" onclick="confirmRadoviSurrender()"></button></div>`;show('task');window.scrollTo(0,0)}
+function returnFromRadoviWrong(){radoviWrongReturn==='alt'?openRadoviHintAnswer():openRadoviTask()}
+function confirmRadoviSurrender(){popup({icon:'hourglass',title:'OPRAVDU VZDÁT ÚKOL?',html:'<p>Úkol bude považován za splněný.</p><p><b>+30 MIN</b></p>',actions:[{label:'ZPĚT',kind:'secondary'},{label:'VZDÁVÁM TO',fn:()=>{addPenalty(30,'surrender-radovi');const s=ensureGame();s.surrendered=s.surrendered||{};s.surrendered.radovi=true;s.done.radovi=DATA.radovi.code;saveGame(s);goRadoviHub()}}]})}
+function radoviCorrect(){document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}correct_radovi_v2.webp" alt="Správně"><button class="radovi-hot radovi-correct-next" type="button" aria-label="Dál" onclick="showRadoviPreseal()"></button></div>`;show('task');window.scrollTo(0,0)}
+function showRadoviPreseal(){document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}preseal_radovi_v2.webp" alt="Literární aluze a rozlomení pečeti"><button class="radovi-hot radovi-preseal-break" type="button" aria-label="Rozlomit pečeť" onclick="breakRadoviSeal()"></button></div>`;show('task');window.scrollTo(0,0)}
+function goRadoviHub(){try{openHub()}catch(e){console.error('Radovi hub fallback',e);const s=ensureGame();show('hub');const st=document.getElementById('hubStatus');if(st)st.innerHTML=`<b>${s.team||'Družina'}</b><span>${Object.keys(s.done||{}).length}/7 pečetí</span>`;const rd=document.getElementById('hubRadoviDone');if(rd)rd.hidden=!s.done.radovi;window.scrollTo(0,0)}}
+function breakRadoviSeal(){const s=ensureGame();s.done.radovi='T2';saveGame(s);document.getElementById('taskContent').innerHTML=`<div class="radovi-card"><img src="${A}broken_radovi_v2.webp" alt="Rozlomená pečeť Řádových bratří – T2"><button class="radovi-hot radovi-broken-hub" style="z-index:80" type="button" aria-label="Zpět na rozcestník" onclick="goRadoviHub();return false;"></button></div>`;show('task');window.scrollTo(0,0)}
+function openHaviriFromHub(){locationEntryMode='hub';renderLocationCard('haviri')}
+
+function openKoneseleStory(){document.getElementById('taskContent').innerHTML=`<div class="kon-card"><img src="${A}konesele_story.webp" alt="Konšelé – příběh"><button class="kon-hot" style="left:18%;top:88.0%;width:64%;height:7.1%" onclick="openKoneseleTask()" aria-label="Dál"></button></div>`;show('task');window.scrollTo(0,0)}
+function openKoneseleTask(){document.getElementById('taskContent').innerHTML=`<div class="kon-card"><img src="${A}konesele_task.webp" alt="Konšelé – úkol">${renderKoneseleAdvantage('konesele')}<input id="konAnswer" class="kon-answer" autocomplete="off" aria-label="Vaše odpověď"><button class="kon-hot" style="left:15%;top:83.35%;width:70%;height:5.35%" type="button" onclick="checkKonesele()" aria-label="Ověřit odpověď"></button><button class="kon-hot" style="left:7%;top:89.25%;width:42%;height:6.65%" type="button" onclick="koneseleHint()" aria-label="Nápověda plus tři minuty"></button><button class="kon-hot" style="left:51%;top:89.25%;width:42%;height:6.65%" type="button" onclick="confirmKoneseleSurrender()" aria-label="Vzdávám to plus třicet minut"></button></div>`;show('task');window.scrollTo(0,0);setTimeout(()=>document.getElementById('konAnswer')?.focus(),80)}
+function normKon(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z]/g,'').toUpperCase()}
+function checkKonesele(){if(normKon(document.getElementById('konAnswer')?.value)==='BENES'){showKoneseleCorrect();return}document.getElementById('taskContent').innerHTML=`<div class="kon-card"><img src="${A}konesele_wrong.webp" alt="Konšelé – chybná odpověď"><button class="kon-hot" style="left:15%;top:72.5%;width:70%;height:8%" onclick="openKoneseleTask()" aria-label="Zpět k úkolu"></button><button class="kon-hot" style="left:5%;top:82.3%;width:45%;height:8%" onclick="koneseleHint()" aria-label="Penalizační nápověda"></button><button class="kon-hot" style="left:51%;top:82.3%;width:44%;height:8%" onclick="confirmKoneseleSurrender()" aria-label="Vzdávám to plus třicet minut"></button></div>`;show('task');window.scrollTo(0,0)}
+function koneseleHint(free=false){let st=ensureGame();let n=Number(st.hints.konesele||0);if(n<2){if(!free)addPenalty(3,'hint-konesele-'+(n+1));st=ensureGame();st.hints.konesele=n+1;saveGame(st);n++}const costHtml=free?'<p><small>bez penalizace díky výhodě ÚPLATEK</small></p>':'<p><small>+3 MIN</small></p>';const nextLabel=free?'DALŠÍ NÁPOVĚDA (+3 MIN)':'DALŠÍ NÁPOVĚDA (+3 MIN)';if(n===1){popup({icon:'lantern',title:'NÁPOVĚDA',html:'<p>Nezkoušejte hned přiřazovat jména.</p><p>Nejdřív si vyřešte funkce a peníze.</p><p>Všimněte si dvou řetězců:</p><p><b>rychtář → purkmistr → správce městské pokladny</b></p><p>a</p><p><b>městský písař → výběrčí cla</b></p><p>Částky se liší po stovkách.</p>'+costHtml,dismissible:false,actions:[{label:'ZPĚT K ÚKOLU',fn:openKoneseleTask},{label:nextLabel,fn:()=>koneseleHint(false)}]})}else{popup({icon:'lantern',title:'KDYŽ UŽ KONŠELŮM OPRAVDU TEČE DO BOT',html:'<p>Začněte městským písařem.</p><p>Výběrčí cla má přesně dvojnásobek jeho částky.</p><p>Z možností <b>100 – 200 – 300 – 400 – 500</b> není použitelných dvojic mnoho.</p><p>Pak se vraťte k trojici: <b>rychtář – purkmistr – správce pokladny</b>.</p><p>Jejich částky jdou vždy o 100 grošů nahoru.</p>'+costHtml,dismissible:false,actions:[{label:'ZPĚT K ÚKOLU',fn:openKoneseleTask},{label:'VZDÁVÁM TO (+30 MIN)',fn:confirmKoneseleSurrender}]})}}
+function confirmKoneseleSurrender(){popup({icon:'hourglass',title:'OPRAVDU VZDÁT ÚKOL?',html:'<p>Úkol bude považován za splněný.</p><p><b>+30 MIN</b></p>',actions:[{label:'ZPĚT',kind:'secondary',fn:openKoneseleTask},{label:'VZDÁVÁM TO',fn:()=>{addPenalty(30,'surrender-konesele');const s=ensureGame();if(!s.surrendered||typeof s.surrendered!=='object'||Array.isArray(s.surrendered))s.surrendered={};s.surrendered.konesele=true;s.done.konesele='U3';saveGame(s);goKoneseleHub()}}]})}
+function showKoneseleCorrect(){document.getElementById('taskContent').innerHTML=`<div class="kon-card"><img src="${A}konesele_correct.webp" alt="Konšelé – správně"><button class="kon-hot" style="left:18%;top:87%;width:64%;height:8%" onclick="showKoneseleLiterary()" aria-label="Dál"></button></div>`;show('task');window.scrollTo(0,0)}
+function showKoneseleLiterary(){document.getElementById('taskContent').innerHTML=`<div class="kon-card"><img src="${A}konesele_literary.webp" alt="Konšelé – rozsudek padl"><button class="kon-hot" style="left:14%;top:91.5%;width:72%;height:6%" onclick="breakKoneseleSeal()" aria-label="Rozlomit pečeť"></button></div>`;show('task');window.scrollTo(0,0)}
+function goKoneseleHub(){show('hub');try{openHub()}catch(e){console.error('Konsele hub fallback',e);const s=ensureGame();const st=document.getElementById('hubStatus');if(st)st.innerHTML=`<b>${s.team||'Družina'}</b><span>${Object.keys(s.done||{}).length}/7 pečetí</span>`;const kd=document.getElementById('hubKoneseleDone');if(kd)kd.hidden=!s.done.konesele;window.scrollTo(0,0)}}
+function breakKoneseleSeal(){const st=ensureGame();st.done.konesele='U3';saveGame(st);document.getElementById('taskContent').innerHTML=`<div class="kon-card"><img src="${A}konesele_broken.webp" alt="Rozlomená pečeť Konšelů – U3"><button class="kon-hot" style="left:11%;top:78.0%;width:78%;height:12.5%;z-index:80" type="button" onclick="goKoneseleHub();return false;" aria-label="K rozcestníku"></button></div>`;show('task');window.scrollTo(0,0)}
+
+function openMincmistriStory(){document.getElementById('taskContent').innerHTML=`<div class="minc-card"><img src="${A}mincmistri_story.webp" alt="Mincmistři – příběh Argentum, Moneta et Fraus"><button class="minc-hot minc-story-next" type="button" aria-label="Dál" onclick="openMincmistriTask()"></button></div>`;show('task');window.scrollTo(0,0)}
+function mincmistriAdvantage(){popup({icon:'purse',title:'VAŠE VÝHODA',html:'<p><b>Mincmistrovské oko se málokdy mýlí.</b></p><p>Už při prvním pohledu víte, že problém je ve <b>čtvrté várce</b>.</p>',dismissible:false,actions:[{label:'ROZUMÍM',fn:openMincmistriTask}]})}
+function openMincmistriTask(){const advantage=currentFaction()==='mincmistri'?`<button class="minc-advantage" type="button" aria-label="Vaše výhoda" onclick="mincmistriAdvantage()"><img src="${A}mincmistri_advantage_badge.webp" alt="Vaše výhoda"></button>`:'';document.getElementById('taskContent').innerHTML=`<div class="minc-card"><img src="${A}mincmistri_task.webp" alt="Mincmistrova váha – úkol">${advantage}${renderKoneseleAdvantage('mincmistri')}<input id="mincmistriAnswer" class="minc-answer" autocomplete="off" aria-label="Napište den" placeholder="Napište den..." oninput="this.value=this.value.toUpperCase()"><button class="minc-hot minc-task-hint" type="button" aria-label="Nápověda plus tři minuty" onclick="mincmistriHint()"></button><button class="minc-hot minc-task-check" type="button" aria-label="Ověřit odpověď" onclick="checkMincmistri()"></button><button class="minc-hot minc-task-giveup" type="button" aria-label="Vzdávám to plus třicet minut" onclick="confirmMincmistriSurrender()"></button></div>`;show('task');window.scrollTo(0,0);setTimeout(()=>document.getElementById('mincmistriAnswer')?.focus(),80)}
+function mincmistriHint(free=false){const st=ensureGame();if(!st.hints.mincmistri){if(!free)addPenalty(3,'hint-mincmistri');const s2=ensureGame();s2.hints.mincmistri=1;saveGame(s2)}const costHtml=free?'<p><small>bez penalizace díky výhodě ÚPLATEK</small></p>':'<p><small>+3 MIN</small></p>';popup({icon:'lantern',title:'NÁPOVĚDA',html:'<p>Sečtěte u každé várky <b>stříbro a příměs</b>.</p><p>Pak zjistěte, zda příměs tvoří <b>1/10 výsledku</b>.</p>'+costHtml,dismissible:false,actions:[{label:'ROZUMÍM',fn:openMincmistriTask}]})}
+function checkMincmistri(){const v=normWord(document.getElementById('mincmistriAnswer')?.value||'');if(v==='CTVRTEK'){showMincmistriCorrect();return}popup({icon:'wrong',title:'TOHLE NENÍ ONO',html:'<p>Tahle várka mincmistrovo pravidlo neporušuje.</p><p>Zkontrolujte, zda příměs tvoří opravdu jednu desetinu <b>celkové hmotnosti směsi</b>.</p>',dismissible:false,actions:[{label:'ZPĚT K ÚKOLU',kind:'secondary',fn:openMincmistriTask},{label:'NÁPOVĚDA (+3 MIN)',fn:mincmistriHint}]})}
+function confirmMincmistriSurrender(){popup({icon:'hourglass',title:'OPRAVDU VZDÁT ÚKOL?',html:'<p>Úkol bude považován za splněný.</p><p><b>+30 MIN</b></p>',actions:[{label:'ZPĚT',kind:'secondary',fn:()=>openMincmistriTask()},{label:'VZDÁVÁM TO',fn:()=>{addPenalty(30,'surrender-mincmistri');const s=ensureGame();if(!s.surrendered||typeof s.surrendered!=='object'||Array.isArray(s.surrendered))s.surrendered={};s.surrendered.mincmistri=true;s.done.mincmistri='A8';saveGame(s);goMincmistriHub()}}]})}
+function showMincmistriCorrect(){document.getElementById('taskContent').innerHTML=`<div class="minc-card"><img src="${A}mincmistri_correct.webp" alt="Mincmistři – správně"><button class="minc-hot" style="left:22%;top:85.4%;width:56%;height:6.8%;z-index:80" type="button" aria-label="Dál" onclick="showMincmistriLiterary();return false;"></button></div>`;show('task');window.scrollTo(0,0)}
+function showMincmistriLiterary(){document.getElementById('taskContent').innerHTML=`<div class="minc-card"><img src="${A}mincmistri_literary.webp" alt="Mincmistři – Harpagon a Lakomec"><button class="minc-hot" style="left:13%;top:90.0%;width:74%;height:6.8%" type="button" aria-label="Rozlomit pečeť" onclick="breakMincmistriSeal()"></button></div>`;show('task');window.scrollTo(0,0)}
+function goMincmistriHub(){try{openHub()}catch(e){console.error('Mincmistri hub fallback',e);const s=ensureGame();show('hub');const st=document.getElementById('hubStatus');if(st)st.innerHTML=`<b>${s.team||'Družina'}</b><span>${Object.keys(s.done||{}).length}/7 pečetí</span>`;const md=document.getElementById('hubMincmistriDone');if(md)md.hidden=!s.done.mincmistri;window.scrollTo(0,0)}}
+function breakMincmistriSeal(){const st=ensureGame();st.done.mincmistri='A8';saveGame(st);document.getElementById('taskContent').innerHTML=`<div class="minc-card"><img src="${A}mincmistri_broken.webp" alt="Rozlomená pečeť Mincmistrů – A8"><button class="minc-hot" style="left:18%;top:81.2%;width:64%;height:6.8%;z-index:80" type="button" aria-label="Zpět na rozcestník" onclick="goMincmistriHub();return false;"></button></div>`;show('task');window.scrollTo(0,0)}
+
+function finaleReady(){const s=ensureGame();return Object.keys(s.done||{}).length>=7&&!!s.parchment}
+function openUltima(){show('ultima');window.scrollTo(0,0)}
+function finalHintOne(){addPenalty(3,'final-hint-1');popup({icon:'lantern',title:'PRVNÍ NÁPOVĚDA',html:'<p><b>Čísla určují pořadí. Písmena ukazují cestu.</b></p><p><small>+3 MIN</small></p>',dismissible:false,actions:[{label:'ZPĚT',fn:openUltima}]})}
+function finalHintTwo(){addPenalty(10,'final-hint-2');popup({icon:'wrong',title:'POSLEDNÍ NÁPOVĚDA',html:'<p><b>U _ _ _ _ _ _ A</b> se scházela místní chátra od nepaměti.</p><p>Běžte rovnou <b>TAM</b>.</p><p><small>+10 MIN</small></p>',dismissible:false,actions:[{label:'ZPĚT',fn:openUltima}]})}
+const FINAL_GPS=[49.9487582,15.2727794];
+function completeFinalLocation(){if(checkGameClock())return;const s=ensureGame();if(!s.endedAt){s.endedAt=Date.now();s.finishedAtTupoun=true;s.lastScreen='inFovea';saveGame(s)}submitFinalResult();openInFovea()}
+function verifyFinalPlace(){if(TEST){completeFinalLocation();return}if(!navigator.geolocation){popup({icon:'alert',title:'POLOHU NELZE OVĚŘIT',html:'<p>Prohlížeč GPS nepodporuje nebo k ní nemá přístup.</p>',actions:[{label:'ZPĚT',fn:openUltima}]});return}navigator.geolocation.getCurrentPosition(pos=>{const m=distanceMeters(pos.coords.latitude,pos.coords.longitude,FINAL_GPS[0],FINAL_GPS[1]);if(m<=25){completeFinalLocation()}else{popup({icon:'alert',title:'JEŠTĚ NEJSTE TAM.',html:`<p>Díra se sama nenajde. Podívejte se znovu na písmena a čísla. Najděte to místo. Ptejte se. Pátrejte.</p><p><small>Přibližná vzdálenost: ${Math.round(m)} m.</small></p>`,actions:[{label:'ZPĚT',fn:openUltima}]})}},()=>popup({icon:'alert',title:'POLOHU NELZE OVĚŘIT',html:'<p>Zkontrolujte oprávnění pro GPS. Na telefonu otevřete hru přímo v Chrome nebo Safari.</p>',actions:[{label:'ZPĚT',fn:openUltima}]}),{enableHighAccuracy:true,timeout:12000,maximumAge:5000})}
+function openInFovea(){show('inFovea')}
+function openFoundGrimoar(){show('foundGrimoar')}
+function openGrimoarYours(){const s=ensureGame(),f=DATA[s.faction]?.name||s.faction||'Frakce';document.getElementById('finalFaction').textContent=f;document.getElementById('finalTeam').textContent=s.team||'Družina';show('grimoarYours')}
+function formatDuration(ms){ms=Math.max(0,Number(ms)||0);const sec=Math.floor(ms/1000),h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return [h,m,s].map(x=>String(x).padStart(2,'0')).join(':')}
+function finalValues(){const s=ensureGame();const ended=Number(s.endedAt||Date.now()),started=Number(s.startedAt||ended),clean=Math.max(0,ended-started),pen=Number(s.penaltyMinutes||0)*60000,total=clean+pen;const d=new Date(ended);return {team:s.team||'Družina',faction:DATA[s.faction]?.name||s.faction||'Frakce',date:d.toLocaleDateString('cs-CZ'),clean:formatDuration(clean),penalty:'+'+Number(s.penaltyMinutes||0)+' min',total:formatDuration(total)}}
+function cloudResultPayload(){const s=ensureGame();if(!s.endedAt||!s.team||!s.faction||TEST||s.testGame)return null;if(!s.gameId){s.gameId=crypto.randomUUID();saveGame(s)}const hints=Object.values(s.hints||{}).reduce((sum,n)=>sum+Number(n||0),0)+(s.penaltyFlags?.['final-hint-1']?1:0)+(s.penaltyFlags?.['final-hint-2']?1:0);const surrendered=Object.values(s.surrendered||{}).filter(Boolean).length;return {game_id:s.gameId,tym:s.team,frakce:DATA[s.faction]?.name||s.faction,zacatek:new Date(s.startedAt).toISOString(),konec:new Date(s.endedAt).toISOString(),penalizace_min:Number(s.penaltyMinutes||0),peceti:Object.keys(s.done||{}).length,napovedy:hints,vzdani:surrendered}}
+function submitFinalResult(){const payload=cloudResultPayload();if(payload&&window.KGResults?.submit)window.KGResults.submit(payload)}
+function renderFinalResults(){const v=finalValues();document.getElementById('rvTeam').textContent=v.team;document.getElementById('rvFaction').textContent=v.faction;document.getElementById('rvDate').textContent=v.date;document.getElementById('rvClean').textContent=v.clean;document.getElementById('rvPenalty').textContent=v.penalty;document.getElementById('rvTotal').textContent=v.total;submitFinalResult()}
+function openFinis(){renderFinalResults();show('finis')}
+function saveMemorialCard(){const v=finalValues(),img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);const rows=[0.6675,0.6955,0.7235,0.7515,0.7795,0.8075],vals=[v.team,v.faction,v.date,v.clean,v.penalty,v.total];ctx.font='28px Georgia';ctx.textBaseline='middle';rows.forEach((r,i)=>{const y=r*c.height;ctx.fillStyle='#ead8aa';ctx.fillText(vals[i],c.width*.535,y)});c.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement('a');a.download='Krvavy_grimoar_'+String(v.team).replace(/[^A-Za-z0-9_-]+/g,'_')+'.png';a.href=url;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)},'image/png')};img.src=A+'finis_vysledek.webp'}
+function openHub(){if(finaleReady()){openUltima();return}const s=ensureGame(),team=s.team||'Družina';const doneCount=Object.keys(s.done||{}).length;document.getElementById('hubStatus').innerHTML=`<b>${team}</b><span>${doneCount}/7 pečetí</span>`;const radoviDone=document.getElementById('hubRadoviDone');radoviDone.hidden=!s.done.radovi;const radoviCode=radoviDone.querySelector('.code');if(radoviCode)radoviCode.hidden=!!(s.surrendered&&s.surrendered.radovi&&doneCount<7);const zvoniciDone=document.getElementById('hubZvoniciDone');zvoniciDone.hidden=!s.done.zvonici;const zvoniciCode=zvoniciDone.querySelector('.code');if(zvoniciCode)zvoniciCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.zvonici&&doneCount<7);document.getElementById('hubLapkoveDone').hidden=!s.done.lapkove;const alchymisteDone=document.getElementById('hubAlchymisteDone');alchymisteDone.hidden=!s.done.alchymiste;const alchymisteCode=alchymisteDone.querySelector('.code');if(alchymisteCode)alchymisteCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.alchymiste&&doneCount<7);const haviriDone=document.getElementById('hubHaviriDone');haviriDone.hidden=!s.done.haviri;const haviriCode=haviriDone.querySelector('.code');if(haviriCode)haviriCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.haviri&&doneCount<7);const koneseleDone=document.getElementById('hubKoneseleDone');koneseleDone.hidden=!s.done.konesele;const koneseleCode=koneseleDone.querySelector('.code');if(koneseleCode)koneseleCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.konesele&&doneCount<7);const mincmistriDone=document.getElementById('hubMincmistriDone');mincmistriDone.hidden=!s.done.mincmistri;const mincmistriCode=mincmistriDone.querySelector('.code');if(mincmistriCode)mincmistriCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.mincmistri&&doneCount<7);const radHot=document.getElementById('hubRadoviHotspot');if(radHot){radHot.disabled=!!s.done.radovi;radHot.style.pointerEvents=s.done.radovi?'none':'auto';radHot.onclick=openRadoviFromHub}const zvHot=document.getElementById('hubZvoniciHotspot');if(zvHot){zvHot.disabled=!!s.done.zvonici;zvHot.style.pointerEvents=s.done.zvonici?'none':'auto';zvHot.onclick=openZvoniciFromHub}const lapHot=document.getElementById('hubLapkoveHotspot');if(lapHot){lapHot.disabled=!!s.done.lapkove;lapHot.style.pointerEvents=s.done.lapkove?'none':'auto';lapHot.onclick=openLapkoveFromHub}const alHot=document.getElementById('hubAlchymisteHotspot');if(alHot){alHot.disabled=!!s.done.alchymiste;alHot.style.pointerEvents=s.done.alchymiste?'none':'auto';alHot.onclick=openAlchymisteFromHub}const havHot=document.getElementById('hubHaviriHotspot');if(havHot){havHot.disabled=!!s.done.haviri;havHot.style.pointerEvents=s.done.haviri?'none':'auto';havHot.onclick=openHaviriFromHub}const konHot=document.getElementById('hubKoneseleHotspot');if(konHot){konHot.disabled=!!s.done.konesele;konHot.style.pointerEvents=s.done.konesele?'none':'auto';konHot.onclick=openKoneseleFromHub}const minHot=document.getElementById('hubMincmistriHotspot');if(minHot){minHot.disabled=!!s.done.mincmistri;minHot.style.pointerEvents=s.done.mincmistri?'none':'auto';minHot.onclick=openMincmistriFromHub}updateParchmentHubStatus();show('hub');window.scrollTo(0,0)}
+
+
+function normWord(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z]/g,'').toUpperCase()}
+function openHaviriPlaceOk(){document.getElementById('taskContent').innerHTML=`<div class="alch-card"><img src="${A}haviri_place_ok.webp" alt="Havíři – jste správně"><button class="alch-hot" style="left:22%;top:88.2%;width:56%;height:7.4%;" type="button" aria-label="Dál" onclick="openHaviriTask()"></button></div>`;show('task');window.scrollTo(0,0)}
+function openHaviriTask(){document.getElementById('taskContent').innerHTML=`<div class="alch-card"><img src="${A}haviri_task.webp" alt="Havíři – důlní bludiště">${renderKoneseleAdvantage('haviri')}<input id="haviriAnswer" autocomplete="off" aria-label="Vaše odpověď" style="position:absolute;z-index:36;left:28%;top:82.55%;width:44%;height:4.45%;border:0;background:transparent;color:#f5e3b0;text-align:center;font-family:Georgia,serif;font-size:clamp(1.5rem,5vw,2.5rem);font-weight:700;line-height:1;outline:none;text-transform:uppercase;caret-color:#f5d77d;padding:0;margin:0;box-sizing:border-box;" oninput="this.value=this.value.toUpperCase()"><button class="alch-hot" style="left:24%;top:87.1%;width:52%;height:4.3%;" type="button" aria-label="Ověřit odpověď" onclick="checkHaviri()"></button><button class="alch-hot" style="left:29%;top:92.6%;width:42%;height:3.3%;" type="button" aria-label="Nápověda plus tři minuty" onclick="haviriHint()"></button><button class="alch-hot" style="left:24.5%;top:96.0%;width:51%;height:2.9%;" type="button" aria-label="Vzdávám to plus třicet minut" onclick="confirmHaviriSurrender()"></button></div>`;show('task');window.scrollTo(0,0);setTimeout(()=>document.getElementById('haviriAnswer')?.focus(),80)}
+function haviriHint(free=false){let st=ensureGame();if((st.hints.haviri||0)<1){if(!free)addPenalty(3,'hint-haviri');st=ensureGame();st.hints.haviri=1;saveGame(st)}const costHtml=free?'<p><small>bez penalizace díky výhodě ÚPLATEK</small></p>':'<p><small>+3 MIN</small></p>';popup({icon:'lantern',title:'NÁPOVĚDA',html:'<p>Nečtěte všechna písmena, která v bludišti vidíte.</p><p>Čtěte jen ta, která leží na <b>jediné správné cestě od vstupu k havíři</b>.</p>'+costHtml,dismissible:false,actions:[{label:'ZPĚT K ÚKOLU',kind:'secondary',fn:()=>openHaviriTask()},{label:'VZDÁT ÚKOL (+30 MIN)',fn:confirmHaviriSurrender}]})}
+function checkHaviri(){const v=normWord(document.getElementById('haviriAnswer')?.value||'');if(v==='KUTNA')showHaviriCorrect();else popup({icon:'wrong',title:'CHYBNÉ ŘEŠENÍ',html:'<p>Zkuste to znovu. Písmena ve slepých chodbách do řešení nepatří.</p>',dismissible:false,actions:[{label:'ZPĚT K ÚKOLU',kind:'secondary',fn:()=>openHaviriTask()},{label:'VZDÁVÁM TO (+30 MIN)',fn:confirmHaviriSurrender}]})}
+function confirmHaviriSurrender(){popup({icon:'hourglass',title:'OPRAVDU VZDÁT ÚKOL?',html:'<p>Úkol bude považován za splněný.</p><p><b>+30 MIN</b></p>',actions:[{label:'ZPĚT',kind:'secondary',fn:()=>openHaviriTask()},{label:'VZDÁVÁM TO',fn:()=>{addPenalty(30,'surrender-haviri');const s=ensureGame();if(!s.surrendered||typeof s.surrendered!=='object'||Array.isArray(s.surrendered))s.surrendered={};s.surrendered.haviri=true;s.done.haviri='N7';saveGame(s);goHaviriHub()}}]})}
+function showHaviriCorrect(){document.getElementById('taskContent').innerHTML=`<div class="alch-card"><img src="${A}haviri_correct.webp" alt="Havíři – pečeť havířů je vaše"><button class="alch-hot" style="left:14%;top:92.1%;width:72%;height:5.6%;" type="button" aria-label="Rozlomit pečeť" onclick="breakHaviriSeal()"></button></div>`;show('task');window.scrollTo(0,0)}
+function goHaviriHub(){try{openHub()}catch(e){console.error('Haviri hub fallback',e);const s=ensureGame();show('hub');const st=document.getElementById('hubStatus');if(st)st.innerHTML=`<b>${s.team||'Družina'}</b><span>${Object.keys(s.done||{}).length}/7 pečetí</span>`;const d=document.getElementById('hubHaviriDone');if(d)d.hidden=!s.done.haviri;window.scrollTo(0,0)}}
+function breakHaviriSeal(){const st=ensureGame();st.done.haviri='N7';saveGame(st);document.getElementById('taskContent').innerHTML=`<div class="alch-card"><img src="${A}haviri_broken.webp" alt="Rozlomená pečeť Havířů – N7"><button class="alch-hot" style="left:20%;top:81.35%;width:60%;height:7.0%;z-index:80" type="button" aria-label="K rozcestníku" onclick="goHaviriHub();return false;"></button></div>`;show('task');window.scrollTo(0,0)}
+
+
+function closeGame(){const s=ensureGame();s.gameClosed=true;s.closedAt=Date.now();s.lastScreen='gameClosed';saveGame(s);show('gameClosed',{persist:false});setTimeout(()=>{try{window.close()}catch(_){ }},120)}
+function restoreLastPosition(){const s=ensureGame();if(!s.startedAt)return false;if(s.gameClosed){show('gameClosed',{persist:false});return true}if(s.timedOut&&!s.endedAt){show('timeExpired',{persist:false});return true}if(!s.endedAt&&officialElapsed(s)>=GAME_LIMIT_MS){expireGame();return true}selected=s.faction||selected;locationEntryMode=s.locationEntryMode||'home';const id=s.lastScreen||'profile';if(id==='hub'){openHub();return true}if(id==='task'&&s.lastTaskHtml){if(s.lastTaskHtml.includes('id="radoviSortLayer"')){openRadoviTask();return true}document.getElementById('taskContent').innerHTML=s.lastTaskHtml;show('task',{persist:false});return true}if(id==='home'&&s.lastHomeFaction&&DATA[s.lastHomeFaction]){openHomeCard(s.lastHomeFaction);return true}if(id==='profile'&&DATA[s.faction]){document.getElementById('profileArt').src=A+DATA[s.faction].profile;document.getElementById('profileArt').alt='Frakční karta '+DATA[s.faction].name}if(id==='grimoarYours'){document.getElementById('finalFaction').textContent=DATA[s.faction]?.name||s.faction||'Frakce';document.getElementById('finalTeam').textContent=s.team||'Družina'}if(id==='finis')renderFinalResults();if(document.getElementById(id)){show(id,{persist:false});return true}openHub();return true}
+setInterval(()=>{checkGameClock()},1000);
+
+// Navigation
+ document.querySelector('#title .hot-enter').onclick=()=>show('faction');
+ document.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>show(x.dataset.go));
+ document.querySelectorAll('[data-faction]').forEach(x=>x.onclick=()=>pickFaction(x.dataset.faction));
+ document.querySelector('.confirm-back').onclick=()=>show('faction');
+ document.querySelector('.confirm-go').onclick=confirmFaction;
+ document.getElementById('teamName').addEventListener('keydown',e=>{if(e.key==='Enter')confirmFaction()});
+ document.querySelector('.profile-next').onclick=()=>show('legend');
+ document.querySelector('#legend .next').onclick=()=>show('legend2');
+ document.querySelector('#legend2 .next').onclick=()=>show('legend3');
+ document.querySelector('#legend2 .backhot').onclick=()=>show('legend');
+ document.querySelector('#legend3 .legend-live-back').onclick=()=>show('legend2');
+ document.querySelector('#legend3 .howto').onclick=()=>show('howto');
+ document.querySelector('#legend3 .start').onclick=openFirstStop;
+ document.querySelector('#howto .start').onclick=openFirstStop;
+ document.querySelector('#howto .backhot').onclick=()=>show('legend3');
+ document.querySelector('#legend3 .parch').onclick=()=>openParchment('legend3');
+ document.querySelector('.parchment-back').onclick=returnFromParchment;
+ document.querySelector('.parchment-check').onclick=openParchmentAnswer;
+ document.querySelector('.hub-parch-hotspot').onclick=()=>openParchment('hub');
+ document.querySelector('.home-reread').onclick=reopenFirstStop;
+ document.querySelector('.home-verify').onclick=verifyHome;
+ document.querySelector('.home-skip').onclick=skipGps;
+ document.getElementById('testConfirm').onclick=()=>homeSuccess(document.getElementById('homeArt').dataset.faction||currentFaction());
+
+// Optional fast faction test: ?test=1&f=haviri
+if(qs.get('f')&&DATA[qs.get('f')]){selected=qs.get('f')}
+restoreLastPosition();
+</script>
+</body>
+</html>
