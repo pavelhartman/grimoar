@@ -404,7 +404,10 @@ if(qs.get('reset')==='1'){
   const cleanQuery=qs.toString();
   history.replaceState(null,'',location.pathname+(cleanQuery?'?'+cleanQuery:'')+location.hash);
 }
-const TEST=qs.get('test')==='1';if(TEST)document.body.classList.add('test-on');
+const TEST=qs.get('test')==='1';
+const DBTEST=qs.get('dbtest')==='1';
+const TEST_TOOLS=TEST||DBTEST;
+if(TEST_TOOLS){document.body.classList.add('test-on');const b=document.querySelector('.test-badge');if(b)b.textContent=DBTEST?'DB TEST MODE':'TEST MODE'}
 const GAME_LIMIT_MS=4*60*60*1000;
 function gameState(){try{return JSON.parse(localStorage.getItem('kg-clean-flow')||'{}')}catch{return {}}}
 function saveGame(s){localStorage.setItem('kg-clean-flow',JSON.stringify(s))}
@@ -667,7 +670,7 @@ function finalHintOne(){addPenalty(3,'final-hint-1');popup({icon:'lantern',title
 function finalHintTwo(){addPenalty(10,'final-hint-2');popup({icon:'wrong',title:'POSLEDNÍ NÁPOVĚDA',html:'<p><b>U _ _ _ _ _ _ A</b> se scházela místní chátra od nepaměti.</p><p>Běžte rovnou <b>TAM</b>.</p><p><small>+10 MIN</small></p>',dismissible:false,actions:[{label:'ZPĚT',fn:openUltima}]})}
 const FINAL_GPS=[49.9487582,15.2727794];
 function completeFinalLocation(){if(checkGameClock())return;const s=ensureGame();if(!s.endedAt){s.endedAt=Date.now();s.finishedAtTupoun=true;s.lastScreen='inFovea';saveGame(s)}submitFinalResult();openInFovea()}
-function verifyFinalPlace(){if(TEST){completeFinalLocation();return}if(!navigator.geolocation){popup({icon:'alert',title:'POLOHU NELZE OVĚŘIT',html:'<p>Prohlížeč GPS nepodporuje nebo k ní nemá přístup.</p>',actions:[{label:'ZPĚT',fn:openUltima}]});return}navigator.geolocation.getCurrentPosition(pos=>{const m=distanceMeters(pos.coords.latitude,pos.coords.longitude,FINAL_GPS[0],FINAL_GPS[1]);if(m<=25){completeFinalLocation()}else{popup({icon:'alert',title:'JEŠTĚ NEJSTE TAM.',html:`<p>Díra se sama nenajde. Podívejte se znovu na písmena a čísla. Najděte to místo. Ptejte se. Pátrejte.</p><p><small>Přibližná vzdálenost: ${Math.round(m)} m.</small></p>`,actions:[{label:'ZPĚT',fn:openUltima}]})}},()=>popup({icon:'alert',title:'POLOHU NELZE OVĚŘIT',html:'<p>Zkontrolujte oprávnění pro GPS. Na telefonu otevřete hru přímo v Chrome nebo Safari.</p>',actions:[{label:'ZPĚT',fn:openUltima}]}),{enableHighAccuracy:true,timeout:12000,maximumAge:5000})}
+function verifyFinalPlace(){if(TEST_TOOLS){completeFinalLocation();return}if(!navigator.geolocation){popup({icon:'alert',title:'POLOHU NELZE OVĚŘIT',html:'<p>Prohlížeč GPS nepodporuje nebo k ní nemá přístup.</p>',actions:[{label:'ZPĚT',fn:openUltima}]});return}navigator.geolocation.getCurrentPosition(pos=>{const m=distanceMeters(pos.coords.latitude,pos.coords.longitude,FINAL_GPS[0],FINAL_GPS[1]);if(m<=25){completeFinalLocation()}else{popup({icon:'alert',title:'JEŠTĚ NEJSTE TAM.',html:`<p>Díra se sama nenajde. Podívejte se znovu na písmena a čísla. Najděte to místo. Ptejte se. Pátrejte.</p><p><small>Přibližná vzdálenost: ${Math.round(m)} m.</small></p>`,actions:[{label:'ZPĚT',fn:openUltima}]})}},()=>popup({icon:'alert',title:'POLOHU NELZE OVĚŘIT',html:'<p>Zkontrolujte oprávnění pro GPS. Na telefonu otevřete hru přímo v Chrome nebo Safari.</p>',actions:[{label:'ZPĚT',fn:openUltima}]}),{enableHighAccuracy:true,timeout:12000,maximumAge:5000})}
 function openInFovea(){show('inFovea')}
 function openFoundGrimoar(){show('foundGrimoar')}
 function openGrimoarYours(){const s=ensureGame(),f=DATA[s.faction]?.name||s.faction||'Frakce';document.getElementById('finalFaction').textContent=f;document.getElementById('finalTeam').textContent=s.team||'Družina';show('grimoarYours')}
