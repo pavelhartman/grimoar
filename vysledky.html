@@ -3,96 +3,71 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#090604">
-<title>Krvavý grimoár – pořadí družin</title>
+<meta name="theme-color" content="#080403">
+<title>Krvavý grimoár – Tabula Honoris</title>
 <style>
-:root{--bg:#070403;--gold:#d1a24b;--gold2:#f1d27b;--ink:#ead8aa;--muted:#bda87f}
-*{box-sizing:border-box} html{background:var(--bg)}
-body{margin:0;min-height:100vh;color:var(--ink);font-family:Georgia,"Times New Roman",serif;background:
-radial-gradient(circle at 50% -8%,rgba(128,29,18,.28),transparent 32rem),
-linear-gradient(180deg,#120a07 0,#070403 58%,#030201 100%)}
-main{width:min(100%,980px);margin:auto;padding:28px 14px 56px}
-.frame{position:relative;border:1px solid #9c7131;background:linear-gradient(145deg,rgba(18,10,7,.97),rgba(6,4,3,.99));box-shadow:0 20px 56px rgba(0,0,0,.6),inset 0 0 0 5px rgba(7,4,3,.8),inset 0 0 0 6px rgba(202,151,58,.13);padding:24px 16px 22px}
-.frame:before{content:"";position:absolute;inset:8px;border:1px solid rgba(218,168,72,.18);pointer-events:none}
-.brand{text-align:center;color:#c89d52;font-size:.78rem;letter-spacing:.23em;text-transform:uppercase;margin-bottom:8px}
-h1{text-align:center;margin:0;color:var(--gold2);font-size:clamp(2rem,8vw,4rem);line-height:1;text-transform:uppercase;text-shadow:0 2px 0 #4c200d,0 10px 26px #000}
-.subtitle{text-align:center;color:var(--muted);font-style:italic;margin:11px auto 20px;max-width:650px}
-.rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px 0}
-.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:16px}
-.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-label{font-size:.92rem;color:#d8bf8b}
-input[type=date]{background:#0b0705;color:#f2deb2;border:1px solid #8e652d;padding:9px 10px;font:inherit}
-button{border:1px solid #b27f34;background:linear-gradient(#8a261f,#4a0d09);color:#f7dda0;padding:10px 14px;font:700 .9rem Georgia,serif;letter-spacing:.04em;text-transform:uppercase;cursor:pointer}
-button:hover{filter:brightness(1.08)}
-.meta{font-size:.82rem;color:#ab9977;text-align:right}
-.status{margin:12px 0;padding:11px 12px;border:1px solid #5d4224;background:#0e0906;color:#d7c198}
-.status.error{border-color:#7f2b24;color:#efb0a8}
-.table-wrap{overflow:auto;border:1px solid #7c5728;box-shadow:0 12px 30px rgba(0,0,0,.35)}
-table{width:100%;border-collapse:collapse;min-width:690px;background:rgba(8,5,3,.88)}
-thead th{position:sticky;top:0;background:#1a0c08;color:#e9c56f;text-transform:uppercase;letter-spacing:.055em;font-size:.78rem;padding:12px 10px;border-bottom:1px solid #9d7131;text-align:left}
-tbody td{padding:12px 10px;border-bottom:1px solid rgba(108,76,39,.55);vertical-align:middle}
-tbody tr:nth-child(1){background:linear-gradient(90deg,rgba(174,127,42,.17),transparent)}
-tbody tr:nth-child(2){background:linear-gradient(90deg,rgba(170,170,170,.08),transparent)}
-tbody tr:nth-child(3){background:linear-gradient(90deg,rgba(128,77,37,.13),transparent)}
-.rank{font-size:1.25rem;font-weight:bold;color:#f0ce73;width:62px;text-align:center}
-.team{font-weight:bold;color:#f0dfb8}.faction{color:#cdb37e}.time{font-variant-numeric:tabular-nums;white-space:nowrap}.result{font-weight:bold;color:#f1cd68;font-size:1.06rem}
-.empty{text-align:center;padding:32px 12px;color:#bda987}.footer{text-align:center;margin-top:18px;color:#8e7c60;font-size:.8rem}
-@media(max-width:600px){main{padding:0 0 36px}.frame{border-left:0;border-right:0;padding:20px 10px 18px}.toolbar{align-items:flex-start}.meta{text-align:left;width:100%}}
+:root{--bg:#060302;--gold:#c99537;--gold2:#f1cf78;--ink:#ead8aa;--muted:#bda97e;--red:#7d1814;--line:#6b4824}
+*{box-sizing:border-box}html{background:var(--bg)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Georgia,"Times New Roman",serif;background:radial-gradient(circle at 50% -10%,rgba(120,22,16,.32),transparent 34rem),radial-gradient(circle at 8% 45%,rgba(175,126,48,.07),transparent 22rem),linear-gradient(180deg,#110907 0,#070403 52%,#030201 100%)}
+.page{width:min(100%,1040px);margin:auto;padding:0 12px 56px}
+.hero{position:relative;overflow:hidden;margin:0 auto 10px;width:min(100%,941px);aspect-ratio:941/460;background:#050302;border-left:1px solid #5e3d1d;border-right:1px solid #5e3d1d;box-shadow:0 20px 55px rgba(0,0,0,.58)}
+.hero img{position:absolute;inset:0;width:100%;height:auto;display:block;transform:translateY(-2%)}
+.hero:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 58%,rgba(5,3,2,.3) 72%,#060302 100%)}
+.book{position:relative;border:1px solid #9a6b2e;background:radial-gradient(circle at 50% 0,rgba(124,18,14,.22),transparent 28rem),linear-gradient(145deg,rgba(20,12,8,.98),rgba(6,4,3,.99));padding:24px 18px 26px;box-shadow:0 22px 58px rgba(0,0,0,.62),inset 0 0 0 5px rgba(6,4,3,.82),inset 0 0 0 6px rgba(201,150,58,.13)}
+.book:before{content:"";position:absolute;inset:8px;border:1px solid rgba(220,169,72,.18);pointer-events:none}
+.kicker{text-align:center;color:#caa252;letter-spacing:.21em;text-transform:uppercase;font-size:.72rem}
+h1{margin:5px 0 2px;text-align:center;color:var(--gold2);font-size:clamp(2.25rem,8vw,4.8rem);line-height:.95;text-transform:uppercase;text-shadow:0 3px 0 #4c210d,0 10px 30px #000}
+.subtitle{text-align:center;color:#d6bc85;font-style:italic;margin:10px auto 4px;max-width:690px}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:20px 0}
+.tabs{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:0 0 20px}
+.tab{min-width:105px;padding:11px 15px;border:1px solid #8f642a;background:linear-gradient(#20100b,#0d0604);color:#d9bc7a;font:700 .87rem Georgia,serif;letter-spacing:.07em;text-transform:uppercase;cursor:pointer}
+.tab.active{background:linear-gradient(#8a261f,#4c0d09);border-color:#d0a149;color:#ffe4a0;box-shadow:0 0 20px rgba(160,45,28,.22)}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:0 auto 18px;max-width:800px}
+.summary-card{border:1px solid #745027;background:#0d0806;padding:12px;text-align:center}
+.summary-card span{display:block;color:#aa9670;font-size:.76rem;text-transform:uppercase;letter-spacing:.08em}.summary-card b{display:block;color:#f0cf76;font-size:1.18rem;margin-top:3px}
+.toolbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 0 14px;flex-wrap:wrap}.meta{font-size:.8rem;color:#a99570}
+.refresh{border:1px solid #8e632b;background:#120b08;color:#d9bd7e;padding:8px 11px;font:700 .78rem Georgia,serif;text-transform:uppercase;letter-spacing:.05em;cursor:pointer}
+.list{display:grid;gap:12px}.entry{position:relative;display:grid;grid-template-columns:76px 1fr auto;gap:14px;align-items:center;padding:13px 15px;border:1px solid #704c25;background:linear-gradient(100deg,#110a07,#090504);box-shadow:0 10px 24px rgba(0,0,0,.34)}
+.entry.top1{border-color:#d2a347;background:linear-gradient(100deg,rgba(87,54,16,.88),#130907 70%)}.entry.top2{border-color:#9f956f}.entry.top3{border-color:#8e5e36}
+.medal{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;border:2px solid #d1a047;background:#100905;color:#f3d278;font-size:1.45rem;font-weight:bold;box-shadow:inset 0 0 18px #000,0 0 18px rgba(205,155,63,.15)}
+.teamline{min-width:0}.teamname{font-size:clamp(1.06rem,3.8vw,1.45rem);font-weight:bold;color:#f0dfb7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.details{margin-top:3px;color:#bca477;font-size:.8rem;display:flex;gap:8px;flex-wrap:wrap}
+.result{text-align:right;white-space:nowrap}.result .time{font-size:clamp(1.15rem,4.5vw,1.65rem);font-weight:bold;color:#f0cb67;font-variant-numeric:tabular-nums}.result .small{font-size:.74rem;color:#a99572;margin-top:3px}
+.faction-badge{width:34px;height:34px;object-fit:contain;vertical-align:middle;margin-right:6px;filter:sepia(1) saturate(.7) brightness(1.25) drop-shadow(0 3px 6px #000)}
+.empty,.error{padding:30px 14px;text-align:center;border:1px solid #65451f;background:#0c0705;color:#bca779}.error{color:#e7aaa3;border-color:#7e2923}
+.record{margin:0 auto 20px;max-width:800px;padding:13px 15px;border:1px solid #ad7931;background:linear-gradient(100deg,#36100c,#130805);text-align:center;color:#e5c87f}.record b{color:#ffe08a}
+.footer{text-align:center;margin-top:18px;color:#806f54;font-size:.76rem}
+@media(max-width:620px){.page{padding-left:0;padding-right:0}.book{border-left:0;border-right:0;padding:20px 10px 24px}.hero{border-left:0;border-right:0;aspect-ratio:941/500}.summary{grid-template-columns:1fr 1fr 1fr;gap:5px}.summary-card{padding:9px 5px}.entry{grid-template-columns:58px 1fr;gap:10px;padding:11px 10px}.result{grid-column:2;text-align:left;margin-top:-4px}.medal{width:48px;height:48px;font-size:1.15rem}.details{font-size:.75rem}.faction-badge{width:29px;height:29px}}
 </style>
 </head>
 <body>
-<main>
-<section class="frame">
-<div class="brand">Krvavý grimoár · Sedm pečetí</div>
-<h1>Pořadí družin</h1>
-<p class="subtitle">Kdo prošel městem nejrychleji — a komu Kutná Hora přičetla pár hříšných minut navíc.</p>
-<div class="rule"></div>
-<div class="toolbar">
-  <div class="controls">
-    <label for="day">Datum</label>
-    <input id="day" type="date">
-    <button id="refresh" type="button">Obnovit</button>
-  </div>
-  <div class="meta" id="meta">Načítám výsledky…</div>
+<div class="page">
+  <div class="hero" aria-hidden="true"><img src="assets/title.webp" alt=""></div>
+  <section class="book">
+    <div class="kicker">Krvavý grimoár · Sedm pečetí</div>
+    <h1>Tabula Honoris</h1>
+    <p class="subtitle">Pamětní kniha těch, kteří prošli sedmi pečetěmi.</p>
+    <div class="rule"></div>
+    <nav class="tabs" aria-label="Období výsledků"><button class="tab active" data-mode="today">Dnes</button><button class="tab" data-mode="week">Týden</button><button class="tab" data-mode="all">Celkem</button></nav>
+    <div id="record" class="record" hidden></div>
+    <div class="summary"><div class="summary-card"><span>Družin</span><b id="count">—</b></div><div class="summary-card"><span>Nejlepší čas</span><b id="best">—</b></div><div class="summary-card"><span>Období</span><b id="period">Dnes</b></div></div>
+    <div class="toolbar"><div id="meta" class="meta">Načítám výsledky…</div><button id="refresh" class="refresh" type="button">Obnovit</button></div>
+    <div id="list" class="list"><div class="empty">Načítám kroniku…</div></div>
+    <div class="footer">Pořadí se automaticky obnovuje každých 20 sekund.</div>
+  </section>
 </div>
-<div id="status" class="status" hidden></div>
-<div class="table-wrap">
-<table aria-label="Pořadí družin">
-<thead><tr><th style="text-align:center">#</th><th>Družina</th><th>Frakce</th><th>Čistý čas</th><th>Penalizace</th><th>Výsledný čas</th></tr></thead>
-<tbody id="rows"><tr><td colspan="6" class="empty">Načítám…</td></tr></tbody>
-</table>
-</div>
-<div class="footer">Výsledky se automaticky obnovují každých 20 sekund.</div>
-</section>
-</main>
 <script>
-(() => {
-'use strict';
+(()=>{'use strict';
 const SUPABASE_URL='https://vzycwoignmhqjsthkpdx.supabase.co';
 const SUPABASE_KEY='sb_publishable_8995XXqxGddPHWHu6KPe9g_ycR_0Jwz';
-const day=document.getElementById('day'),rows=document.getElementById('rows'),meta=document.getElementById('meta'),status=document.getElementById('status'),refresh=document.getElementById('refresh');
-let loading=false;
-function localISODate(d=new Date()){const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
-function formatSec(sec){sec=Math.max(0,Number(sec)||0);const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=Math.floor(sec%60);return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
-function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function showStatus(text,isError=false){status.textContent=text;status.classList.toggle('error',isError);status.hidden=!text}
-async function load(){
- if(loading)return; loading=true; refresh.disabled=true; showStatus('');
- try{
-   const response=await fetch(SUPABASE_URL+'/rest/v1/rpc/verejne_poradi',{method:'POST',headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_datum:day.value||null})});
-   if(!response.ok)throw new Error('HTTP '+response.status);
-   const data=await response.json();
-   if(!Array.isArray(data))throw new Error('Neočekávaná odpověď serveru');
-   if(!data.length){rows.innerHTML='<tr><td colspan="6" class="empty">Pro vybrané datum zatím nejsou žádné zveřejněné výsledky.</td></tr>'}
-   else{rows.innerHTML=data.map(r=>`<tr><td class="rank">${esc(r.poradi)}</td><td class="team">${esc(r.tym)}</td><td class="faction">${esc(r.frakce)}</td><td class="time">${formatSec(r.cisty_cas_sec)}</td><td class="time">+${esc(r.penalizace_min)} min</td><td class="time result">${formatSec(r.vysledny_cas_sec)}</td></tr>`).join('')}
-   meta.textContent=`Aktualizováno ${new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit',second:'2-digit'})} · ${data.length} ${data.length===1?'tým':(data.length>=2&&data.length<=4?'týmy':'týmů')}`;
- }catch(e){
-   rows.innerHTML='<tr><td colspan="6" class="empty">Výsledky se nepodařilo načíst.</td></tr>';
-   meta.textContent='Načtení se nezdařilo';
-   showStatus('Nepodařilo se načíst pořadí. Zkontrolujte připojení nebo nastavení Supabase.',true);
- }finally{loading=false;refresh.disabled=false}
-}
-day.value=localISODate(); day.addEventListener('change',load); refresh.addEventListener('click',load); load(); setInterval(load,20000);
+const list=document.getElementById('list'),meta=document.getElementById('meta'),count=document.getElementById('count'),best=document.getElementById('best'),period=document.getElementById('period'),record=document.getElementById('record'),refresh=document.getElementById('refresh'),tabs=[...document.querySelectorAll('.tab')];
+let mode='today',loading=false;
+const factionIcons={'Řádoví bratři':'assets/fr_radovi.webp','Zvoníci':'assets/fr_zvonici.webp','Havíři':'assets/fr_haviri.webp','Alchymisté':'assets/fr_alchymiste.webp','Konšelé':'assets/fr_konsele.webp','Mincmistři':'assets/fr_mincmistri.webp','Lapkové':'assets/fr_lapkove.webp'};
+function esc(v){return String(v??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]))}
+function fmt(sec){sec=Math.max(0,Number(sec)||0);const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=Math.floor(sec%60);return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+function prettyDate(v){if(!v)return '';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('cs-CZ',{day:'numeric',month:'numeric',year:'numeric'})}
+function label(m){return m==='today'?'Dnes':m==='week'?'7 dní':'Celkem'}
+async function load(){if(loading)return;loading=true;refresh.disabled=true;try{const res=await fetch(SUPABASE_URL+'/rest/v1/rpc/verejne_poradi_obdobi',{method:'POST',headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_obdobi:mode})});if(!res.ok)throw new Error('HTTP '+res.status);const data=await res.json();if(!Array.isArray(data))throw new Error('Neplatná odpověď');count.textContent=data.length;period.textContent=label(mode);best.textContent=data.length?fmt(data[0].vysledny_cas_sec):'—';if(mode==='all'&&data.length){record.hidden=false;record.innerHTML=`REKORD HRY · <b>${esc(data[0].tym)}</b> · <b>${fmt(data[0].vysledny_cas_sec)}</b>`}else record.hidden=true;if(!data.length){list.innerHTML='<div class="empty">V tomto období zatím není žádný zveřejněný výsledek.</div>'}else{list.innerHTML=data.map((r,i)=>{const icon=factionIcons[r.frakce]||'';const cls=i===0?' top1':i===1?' top2':i===2?' top3':'';const medal=i<3?['I','II','III'][i]:String(r.poradi);return `<article class="entry${cls}"><div class="medal">${medal}</div><div class="teamline"><div class="teamname">${esc(r.tym)}</div><div class="details"><span>${icon?`<img class="faction-badge" src="${icon}" alt="">`:''}${esc(r.frakce)}</span><span>${prettyDate(r.datum)}</span><span>čistý ${fmt(r.cisty_cas_sec)}</span><span>penalizace +${esc(r.penalizace_min)} min</span></div></div><div class="result"><div class="time">${fmt(r.vysledny_cas_sec)}</div><div class="small">výsledný čas</div></div></article>`}).join('')}meta.textContent=`Aktualizováno ${new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`}catch(e){list.innerHTML='<div class="error">Výsledky se nepodařilo načíst. Zkontrolujte připojení nebo nastavení Supabase.</div>';meta.textContent='Načtení se nezdařilo';count.textContent='—';best.textContent='—'}finally{loading=false;refresh.disabled=false}}
+tabs.forEach(t=>t.addEventListener('click',()=>{mode=t.dataset.mode;tabs.forEach(x=>x.classList.toggle('active',x===t));load()}));refresh.addEventListener('click',load);load();setInterval(load,20000);
 })();
 </script>
 </body>
