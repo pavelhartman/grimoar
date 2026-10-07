@@ -2,316 +2,86 @@
 <html lang="cs">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#130403">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0202">
 <title>Krvavý grimoár – Tabula Honoris</title>
 <style>
-  :root{
-    --gold:#f0d184;
-    --gold-strong:#ffd978;
-    --ink:#f8ebc9;
-    --blood:#9f1f18;
-    --shadow:rgba(0,0,0,.78);
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:#090202;color:var(--ink);font-family:Georgia,"Times New Roman",serif}
-  body{min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:0}
-
-  .screen{
-    width:min(100vw, 941px);
-    margin:0 auto;
-  }
-
-  .board{
-    position:relative;
-    width:100%;
-    aspect-ratio:941 / 1672;
-    background:url('assets/tabula_honoris_bg.png') center top / contain no-repeat;
-    overflow:hidden;
-    user-select:none;
-  }
-
-  .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-
-  .record{
-    position:absolute;
-    left:20.4%;
-    top:42.8%;
-    width:58.8%;
-    height:4.3%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:0 2.5%;
-    color:var(--gold-strong);
-    font-weight:700;
-    font-size:clamp(.85rem, 2.2vw, 1.55rem);
-    text-shadow:0 2px 8px var(--shadow);
-    letter-spacing:.02em;
-  }
-
-  .tabs{
-    position:absolute;
-    left:23.8%;
-    top:51.5%;
-    width:52.7%;
-    height:4.9%;
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:1.8%;
-  }
-  .tab{
-    appearance:none;
-    border:none;
-    background:transparent;
-    color:transparent;
-    cursor:pointer;
-  }
-  .tab.active{
-    outline:none;
-  }
-  .tab:focus-visible,
-  .refresh:focus-visible{
-    box-shadow:0 0 0 2px rgba(255,230,160,.7), 0 0 0 6px rgba(121,25,20,.65);
-    border-radius:10px;
-  }
-
-  .table{
-    position:absolute;
-    left:17.2%;
-    top:63.6%;
-    width:72.2%;
-    height:23.9%;
-    display:grid;
-    grid-template-rows:repeat(5,1fr);
-  }
-
-  .row{
-    display:grid;
-    grid-template-columns:42% 33% 25%;
-    align-items:center;
-    padding:0 3.2% 0 6.5%;
-    color:var(--ink);
-    text-shadow:0 2px 7px var(--shadow);
-    min-width:0;
-  }
-  .team,.faction,.time{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .team,.faction{
-    font-size:clamp(.8rem, 2vw, 1.28rem);
-    font-weight:700;
-  }
-  .time{
-    text-align:right;
-    color:var(--gold-strong);
-    font-size:clamp(.86rem, 2.15vw, 1.36rem);
-    font-weight:700;
-    padding-right:3%;
-    font-variant-numeric:tabular-nums;
-  }
-  .empty-row .team,
-  .empty-row .faction,
-  .empty-row .time{opacity:.35}
-
-  .meta{
-    position:absolute;
-    left:8%;
-    right:31%;
-    top:88.8%;
-    text-align:left;
-    font-size:clamp(.55rem,1.2vw,.82rem);
-    color:#d8c49d;
-    text-shadow:0 2px 5px var(--shadow);
-  }
-
-  .refresh{
-    position:absolute;
-    right:5.5%;
-    bottom:2.3%;
-    width:28.5%;
-    height:5.4%;
-    appearance:none;
-    border:none;
-    background:transparent;
-    color:transparent;
-    cursor:pointer;
-  }
-
-  .error, .loading {
-    position:absolute;
-    left:18%;
-    right:18%;
-    top:59.2%;
-    padding:.55rem .8rem;
-    text-align:center;
-    font-size:clamp(.7rem,1.7vw,1rem);
-    color:#ffe6be;
-    text-shadow:0 2px 6px var(--shadow);
-    background:rgba(20,5,4,.65);
-    border:1px solid rgba(232,178,81,.45);
-    border-radius:10px;
-  }
-  .hidden{display:none}
-
-  @media (max-width: 640px){
-    .record{font-size:clamp(.72rem,3vw,1rem)}
-    .row{padding-left:4.8%}
-    .team,.faction{font-size:clamp(.68rem,2.45vw,.98rem)}
-    .time{font-size:clamp(.72rem,2.5vw,1.02rem)}
-    .meta{font-size:clamp(.48rem,1.6vw,.7rem)}
-  }
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#080202;font-family:Georgia,"Times New Roman",serif}
+body{display:flex;justify-content:center;align-items:flex-start}
+.wrap{width:min(100vw,941px);margin:0 auto}
+.board{position:relative;width:100%;aspect-ratio:941/1672;background:url("assets/tabula_honoris_bg.png") center top/contain no-repeat;overflow:hidden}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.record-value{position:absolute;left:22%;top:43.45%;width:56%;height:3.5%;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 2%;color:#ffd978;font-weight:700;font-size:clamp(.78rem,2.15vw,1.48rem);line-height:1.05;text-shadow:0 2px 8px rgba(0,0,0,.9);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tabs{position:absolute;left:15.8%;top:49.75%;width:68.4%;height:4.5%;display:grid;grid-template-columns:repeat(3,1fr);gap:2.7%}
+.tab{appearance:none;border:1px solid rgba(207,158,64,.82);background:rgba(7,4,3,.64);color:transparent;cursor:pointer;border-radius:2px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.55)}
+.tab.active{background:rgba(128,22,17,.62);box-shadow:inset 0 0 0 2px rgba(41,4,3,.62),0 0 14px rgba(154,32,24,.28)}
+.tab:focus-visible,.refresh:focus-visible{outline:2px solid #f5d47d;outline-offset:2px}
+.results{position:absolute;left:17.1%;top:57.55%;width:72.3%;height:24%;display:grid;grid-template-rows:repeat(5,1fr)}
+.result-row{display:grid;grid-template-columns:42% 33% 25%;align-items:center;padding:0 3.2% 0 6.2%;min-width:0;color:#f6e7c4;text-shadow:0 2px 7px rgba(0,0,0,.9)}
+.team,.faction,.time{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.team,.faction{font-size:clamp(.72rem,1.95vw,1.23rem)}
+.time{text-align:right;padding-right:2%;color:#ffd978;font-size:clamp(.78rem,2.1vw,1.34rem);font-variant-numeric:tabular-nums}
+.refresh{position:absolute;right:4.9%;bottom:2.45%;width:29.6%;height:5%;appearance:none;border:none;background:transparent;color:transparent;cursor:pointer}
+.status{position:absolute;left:18%;right:18%;top:54.4%;padding:.42rem .65rem;text-align:center;color:#ffe6bd;background:rgba(18,4,3,.78);border:1px solid rgba(213,165,74,.48);border-radius:8px;font-size:clamp(.64rem,1.5vw,.92rem);text-shadow:0 2px 5px #000}
+.hidden{display:none!important}
+@media(max-width:640px){.record-value{font-size:clamp(.62rem,2.7vw,.92rem)}.result-row{padding-left:5.2%;padding-right:2.8%}.team,.faction{font-size:clamp(.58rem,2.35vw,.92rem)}.time{font-size:clamp(.62rem,2.45vw,.96rem)}}
 </style>
 </head>
 <body>
-  <main class="screen">
-    <section class="board" aria-labelledby="title">
-      <h1 id="title" class="sr-only">Krvavý grimoár – Tabula Honoris</h1>
-
-      <div id="record" class="record">Načítám rekord hry…</div>
-
-      <div class="tabs" role="tablist" aria-label="Výběr období výsledků">
-        <button class="tab active" data-mode="today" role="tab" aria-selected="true" aria-label="Dnes"></button>
-        <button class="tab" data-mode="week" role="tab" aria-selected="false" aria-label="Týden"></button>
-        <button class="tab" data-mode="all" role="tab" aria-selected="false" aria-label="Celkem"></button>
-      </div>
-
-      <div id="loading" class="loading">Načítám výsledky…</div>
-      <div id="error" class="error hidden">Výsledky se nepodařilo načíst.</div>
-
-      <div id="table" class="table" aria-live="polite"></div>
-      <div id="meta" class="meta">Připravuji kroniku…</div>
-
-      <button id="refresh" class="refresh" type="button" aria-label="Obnovit výsledky"></button>
-    </section>
-  </main>
-
+<main class="wrap">
+  <section class="board" aria-label="Krvavý grimoár – Tabula Honoris">
+    <h1 class="sr-only">Krvavý grimoár – Tabula Honoris</h1>
+    <div id="recordValue" class="record-value">Načítám rekord…</div>
+    <nav class="tabs" aria-label="Období výsledků">
+      <button class="tab active" type="button" data-mode="today" aria-label="Dnes" aria-pressed="true"></button>
+      <button class="tab" type="button" data-mode="week" aria-label="Týden" aria-pressed="false"></button>
+      <button class="tab" type="button" data-mode="all" aria-label="Celkem" aria-pressed="false"></button>
+    </nav>
+    <div id="status" class="status hidden" role="status"></div>
+    <div id="results" class="results" aria-live="polite"></div>
+    <button id="refresh" class="refresh" type="button" aria-label="Obnovit výsledky"></button>
+  </section>
+</main>
 <script>
 (() => {
   'use strict';
-
-  const SUPABASE_URL = 'https://vzycwoignmhqjsthkpdx.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_8995XXqxGddPHWHu6KPe9g_ycR_0Jwz';
-  const RPC_NAME = 'verejne_poradi_obdobi';
-
-  const table = document.getElementById('table');
-  const meta = document.getElementById('meta');
-  const record = document.getElementById('record');
-  const refresh = document.getElementById('refresh');
-  const loading = document.getElementById('loading');
-  const errorBox = document.getElementById('error');
-  const tabs = [...document.querySelectorAll('.tab')];
-
-  let mode = 'today';
-  let busy = false;
-
-  function esc(v){
-    return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const SUPABASE_URL='https://vzycwoignmhqjsthkpdx.supabase.co';
+  const SUPABASE_KEY='sb_publishable_8995XXqxGddPHWHu6KPe9g_ycR_0Jwz';
+  const RPC='verejne_poradi_obdobi';
+  const results=document.getElementById('results');
+  const recordValue=document.getElementById('recordValue');
+  const status=document.getElementById('status');
+  const refresh=document.getElementById('refresh');
+  const tabs=[...document.querySelectorAll('.tab')];
+  let mode='today',loading=false;
+  function esc(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+  function formatSeconds(value){const total=Math.max(0,Number(value)||0);const h=Math.floor(total/3600),m=Math.floor((total%3600)/60),s=Math.floor(total%60);return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+  async function fetchPeriod(period){
+    const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/${RPC}`,{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_obdobi:period})});
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const data=await response.json();
+    if(!Array.isArray(data))throw new Error('Neplatná odpověď serveru');
+    return data.filter(row=>!/test/i.test(String(row.tym||''))).sort((a,b)=>(Number(a.vysledny_cas_sec)||0)-(Number(b.vysledny_cas_sec)||0));
   }
-
-  function fmt(sec){
-    sec = Math.max(0, Number(sec) || 0);
-    const h = Math.floor(sec / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = Math.floor(sec % 60);
-    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  function renderRows(data){
+    results.innerHTML=data.slice(0,5).map(row=>`<div class="result-row"><div class="team">${esc(row.tym)}</div><div class="faction">${esc(row.frakce)}</div><div class="time">${formatSeconds(row.vysledny_cas_sec)}</div></div>`).join('');
   }
-
-  function labelMode(m){
-    if(m === 'today') return 'dnes';
-    if(m === 'week') return 'za posledních 7 dní';
-    return 'celkově';
-  }
-
-  function countWord(n){
-    if(n === 1) return 'tým';
-    if(n >= 2 && n <= 4) return 'týmy';
-    return 'týmů';
-  }
-
-  function renderRows(rows){
-    const filled = rows.slice(0,5);
-    while(filled.length < 5){
-      filled.push({tym:'—', frakce:'—', vysledny_cas_sec:'—', empty:true});
-    }
-
-    table.innerHTML = filled.map(row => {
-      const time = row.empty ? '—' : fmt(row.vysledny_cas_sec);
-      return `
-        <div class="row ${row.empty ? 'empty-row' : ''}">
-          <div class="team">${esc(row.tym)}</div>
-          <div class="faction">${esc(row.frakce)}</div>
-          <div class="time">${esc(time)}</div>
-        </div>`;
-    }).join('');
-  }
-
-  function setActiveTab(activeMode){
-    tabs.forEach(tab => {
-      const active = tab.dataset.mode === activeMode;
-      tab.classList.toggle('active', active);
-      tab.setAttribute('aria-selected', active ? 'true' : 'false');
-    });
-  }
-
+  function updateTabs(){tabs.forEach(tab=>{const active=tab.dataset.mode===mode;tab.classList.toggle('active',active);tab.setAttribute('aria-pressed',active?'true':'false')})}
   async function load(){
-    if(busy) return;
-    busy = true;
-    loading.classList.remove('hidden');
-    errorBox.classList.add('hidden');
-    refresh.disabled = true;
-
+    if(loading)return;loading=true;refresh.disabled=true;status.classList.add('hidden');
     try{
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${RPC_NAME}`, {
-        method: 'POST',
-        headers: {
-          apikey: SUPABASE_KEY,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ p_obdobi: mode })
-      });
-
-      if(!response.ok) throw new Error(`HTTP ${response.status}`);
-      let data = await response.json();
-      if(!Array.isArray(data)) throw new Error('Neplatná odpověď serveru');
-
-      data = data.filter(row => !/test/i.test(String(row.tym || '')));
-      data.sort((a,b) => (Number(a.vysledny_cas_sec)||0) - (Number(b.vysledny_cas_sec)||0));
-
-      renderRows(data);
-
-      if(data.length){
-        const best = data[0];
-        record.textContent = `${best.tym} · ${fmt(best.vysledny_cas_sec)}`;
-      } else {
-        record.textContent = 'Zatím bez zapsaného rekordu';
-      }
-
-      meta.textContent = `Zobrazeno ${labelMode(mode)} · ${data.length} ${countWord(data.length)} · aktualizováno ${new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'})}`;
-    } catch (err){
-      renderRows([]);
-      record.textContent = 'Rekord se nepodařilo načíst';
-      meta.textContent = 'Načtení se nezdařilo';
-      errorBox.classList.remove('hidden');
-      console.error(err);
-    } finally {
-      busy = false;
-      loading.classList.add('hidden');
-      refresh.disabled = false;
-    }
+      const [periodData,allData]=await Promise.all([fetchPeriod(mode),mode==='all'?Promise.resolve(null):fetchPeriod('all')]);
+      const overall=allData??periodData;
+      renderRows(periodData);
+      recordValue.textContent=overall.length?`${overall[0].tym} · ${formatSeconds(overall[0].vysledny_cas_sec)}`:'Zatím bez zapsaného rekordu';
+      if(!periodData.length){status.textContent='V tomto období zatím nejsou žádné výsledky.';status.classList.remove('hidden')}
+    }catch(err){results.innerHTML='';recordValue.textContent='Rekord se nepodařilo načíst';status.textContent='Výsledky se nepodařilo načíst. Zkuste stránku obnovit.';status.classList.remove('hidden');console.error(err)}
+    finally{loading=false;refresh.disabled=false}
   }
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      mode = tab.dataset.mode;
-      setActiveTab(mode);
-      load();
-    });
-  });
-
-  refresh.addEventListener('click', load);
-  setActiveTab(mode);
-  load();
-  setInterval(load, 20000);
+  tabs.forEach(tab=>tab.addEventListener('click',()=>{mode=tab.dataset.mode;updateTabs();load()}));
+  refresh.addEventListener('click',load);
+  updateTabs();load();setInterval(load,20000);
 })();
 </script>
 </body>
