@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090604">
+<title>Krvavý grimoár – pořadí družin</title>
+<style>
+:root{--bg:#070403;--gold:#d1a24b;--gold2:#f1d27b;--ink:#ead8aa;--muted:#bda87f}
+*{box-sizing:border-box} html{background:var(--bg)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Georgia,"Times New Roman",serif;background:
+radial-gradient(circle at 50% -8%,rgba(128,29,18,.28),transparent 32rem),
+linear-gradient(180deg,#120a07 0,#070403 58%,#030201 100%)}
+main{width:min(100%,980px);margin:auto;padding:28px 14px 56px}
+.frame{position:relative;border:1px solid #9c7131;background:linear-gradient(145deg,rgba(18,10,7,.97),rgba(6,4,3,.99));box-shadow:0 20px 56px rgba(0,0,0,.6),inset 0 0 0 5px rgba(7,4,3,.8),inset 0 0 0 6px rgba(202,151,58,.13);padding:24px 16px 22px}
+.frame:before{content:"";position:absolute;inset:8px;border:1px solid rgba(218,168,72,.18);pointer-events:none}
+.brand{text-align:center;color:#c89d52;font-size:.78rem;letter-spacing:.23em;text-transform:uppercase;margin-bottom:8px}
+h1{text-align:center;margin:0;color:var(--gold2);font-size:clamp(2rem,8vw,4rem);line-height:1;text-transform:uppercase;text-shadow:0 2px 0 #4c200d,0 10px 26px #000}
+.subtitle{text-align:center;color:var(--muted);font-style:italic;margin:11px auto 20px;max-width:650px}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px 0}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:16px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+label{font-size:.92rem;color:#d8bf8b}
+input[type=date]{background:#0b0705;color:#f2deb2;border:1px solid #8e652d;padding:9px 10px;font:inherit}
+button{border:1px solid #b27f34;background:linear-gradient(#8a261f,#4a0d09);color:#f7dda0;padding:10px 14px;font:700 .9rem Georgia,serif;letter-spacing:.04em;text-transform:uppercase;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+.meta{font-size:.82rem;color:#ab9977;text-align:right}
+.status{margin:12px 0;padding:11px 12px;border:1px solid #5d4224;background:#0e0906;color:#d7c198}
+.status.error{border-color:#7f2b24;color:#efb0a8}
+.table-wrap{overflow:auto;border:1px solid #7c5728;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+table{width:100%;border-collapse:collapse;min-width:690px;background:rgba(8,5,3,.88)}
+thead th{position:sticky;top:0;background:#1a0c08;color:#e9c56f;text-transform:uppercase;letter-spacing:.055em;font-size:.78rem;padding:12px 10px;border-bottom:1px solid #9d7131;text-align:left}
+tbody td{padding:12px 10px;border-bottom:1px solid rgba(108,76,39,.55);vertical-align:middle}
+tbody tr:nth-child(1){background:linear-gradient(90deg,rgba(174,127,42,.17),transparent)}
+tbody tr:nth-child(2){background:linear-gradient(90deg,rgba(170,170,170,.08),transparent)}
+tbody tr:nth-child(3){background:linear-gradient(90deg,rgba(128,77,37,.13),transparent)}
+.rank{font-size:1.25rem;font-weight:bold;color:#f0ce73;width:62px;text-align:center}
+.team{font-weight:bold;color:#f0dfb8}.faction{color:#cdb37e}.time{font-variant-numeric:tabular-nums;white-space:nowrap}.result{font-weight:bold;color:#f1cd68;font-size:1.06rem}
+.empty{text-align:center;padding:32px 12px;color:#bda987}.footer{text-align:center;margin-top:18px;color:#8e7c60;font-size:.8rem}
+@media(max-width:600px){main{padding:0 0 36px}.frame{border-left:0;border-right:0;padding:20px 10px 18px}.toolbar{align-items:flex-start}.meta{text-align:left;width:100%}}
+</style>
+</head>
+<body>
+<main>
+<section class="frame">
+<div class="brand">Krvavý grimoár · Sedm pečetí</div>
+<h1>Pořadí družin</h1>
+<p class="subtitle">Kdo prošel městem nejrychleji — a komu Kutná Hora přičetla pár hříšných minut navíc.</p>
+<div class="rule"></div>
+<div class="toolbar">
+  <div class="controls">
+    <label for="day">Datum</label>
+    <input id="day" type="date">
+    <button id="refresh" type="button">Obnovit</button>
+  </div>
+  <div class="meta" id="meta">Načítám výsledky…</div>
+</div>
+<div id="status" class="status" hidden></div>
+<div class="table-wrap">
+<table aria-label="Pořadí družin">
+<thead><tr><th style="text-align:center">#</th><th>Družina</th><th>Frakce</th><th>Čistý čas</th><th>Penalizace</th><th>Výsledný čas</th></tr></thead>
+<tbody id="rows"><tr><td colspan="6" class="empty">Načítám…</td></tr></tbody>
+</table>
+</div>
+<div class="footer">Výsledky se automaticky obnovují každých 20 sekund.</div>
+</section>
+</main>
+<script>
+(() => {
+'use strict';
+const SUPABASE_URL='https://vzycwoignmhqjsthkpdx.supabase.co';
+const SUPABASE_KEY='sb_publishable_8995XXqxGddPHWHu6KPe9g_ycR_0Jwz';
+const day=document.getElementById('day'),rows=document.getElementById('rows'),meta=document.getElementById('meta'),status=document.getElementById('status'),refresh=document.getElementById('refresh');
+let loading=false;
+function localISODate(d=new Date()){const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`}
+function formatSec(sec){sec=Math.max(0,Number(sec)||0);const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=Math.floor(sec%60);return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function showStatus(text,isError=false){status.textContent=text;status.classList.toggle('error',isError);status.hidden=!text}
+async function load(){
+ if(loading)return; loading=true; refresh.disabled=true; showStatus('');
+ try{
+   const response=await fetch(SUPABASE_URL+'/rest/v1/rpc/verejne_poradi',{method:'POST',headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_datum:day.value||null})});
+   if(!response.ok)throw new Error('HTTP '+response.status);
+   const data=await response.json();
+   if(!Array.isArray(data))throw new Error('Neočekávaná odpověď serveru');
+   if(!data.length){rows.innerHTML='<tr><td colspan="6" class="empty">Pro vybrané datum zatím nejsou žádné zveřejněné výsledky.</td></tr>'}
+   else{rows.innerHTML=data.map(r=>`<tr><td class="rank">${esc(r.poradi)}</td><td class="team">${esc(r.tym)}</td><td class="faction">${esc(r.frakce)}</td><td class="time">${formatSec(r.cisty_cas_sec)}</td><td class="time">+${esc(r.penalizace_min)} min</td><td class="time result">${formatSec(r.vysledny_cas_sec)}</td></tr>`).join('')}
+   meta.textContent=`Aktualizováno ${new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit',second:'2-digit'})} · ${data.length} ${data.length===1?'tým':(data.length>=2&&data.length<=4?'týmy':'týmů')}`;
+ }catch(e){
+   rows.innerHTML='<tr><td colspan="6" class="empty">Výsledky se nepodařilo načíst.</td></tr>';
+   meta.textContent='Načtení se nezdařilo';
+   showStatus('Nepodařilo se načíst pořadí. Zkontrolujte připojení nebo nastavení Supabase.',true);
+ }finally{loading=false;refresh.disabled=false}
+}
+day.value=localISODate(); day.addEventListener('change',load); refresh.addEventListener('click',load); load(); setInterval(load,20000);
+})();
+</script>
+</body>
+</html>
