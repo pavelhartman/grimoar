@@ -418,6 +418,45 @@ function checkGameClock(){const s=ensureGame();if(!s.startedAt||s.endedAt||s.gam
 function addPenalty(minutes,key){const s=ensureGame();s.penaltyFlags=s.penaltyFlags||{};if(key&&s.penaltyFlags[key])return false;if(key)s.penaltyFlags[key]=true;s.penaltyMinutes+=minutes;saveGame(s);checkGameClock();return true}
 
 
+// FIX 04: fullscreen + chytre prednacitani obrazku
+const PRELOADED_ASSETS=new Set();
+const LOCATION_ASSETS={
+  radovi:['loccard_radovi_home.webp','taskcard_radovi_home.webp','taskcard_radovi.webp','hint_radovi_v2.webp','wrong_radovi_v2.webp','correct_radovi_v2.webp','preseal_radovi_v2.webp','broken_radovi_v2.webp'],
+  zvonici:['loccard_zvonici_home.webp','zvonici_story.webp','zvonici_task.webp','zvonici_correct.webp','zvonici_literary.webp','zvonici_broken.webp'],
+  haviri:['loccard_haviri_home.webp','haviri_first_stop.webp','haviri_place_ok.webp','haviri_task.webp','haviri_correct.webp','haviri_broken.webp','haviri_znacky_badge.webp'],
+  alchymiste:['loccard_alchymiste_new.webp','alchymiste_first_stop.webp','alchymiste_story.webp','alchymiste_task.webp','alchymiste_hint.webp','alchymiste_stereogram_hd.jpg','alchymiste_wrong.webp','alchymiste_correct.webp','alchymiste_broken.webp','alch_advantage_badge.webp'],
+  konesele:['loccard_konesele_home.webp','konesele_story.webp','konesele_task.webp','konesele_hint.webp','konesele_wrong.webp','konesele_correct.webp','konesele_literary.webp','konesele_broken.webp','konsele_uplatek_badge.webp'],
+  mincmistri:['loccard_mincmistri_home.webp','mincmistri_first_stop.webp','mincmistri_story.webp','mincmistri_task.webp','mincmistri_correct.webp','mincmistri_literary.webp','mincmistri_broken.webp','mincmistri_advantage_badge.webp'],
+  lapkove:['loccard_lapkove_home.webp','lapkove_story_home.webp','lapkove_story_others.webp','lapkove_wrong.webp','lapkove_correct.webp','lapkove_villon.webp','lapkove_broken.webp']
+};
+function preloadAssets(list){
+  if(!Array.isArray(list)||!list.length)return;
+  const run=()=>list.forEach(name=>{
+    if(!name||PRELOADED_ASSETS.has(name))return;
+    PRELOADED_ASSETS.add(name);
+    const img=new Image();img.decoding='async';img.src=A+name;
+  });
+  if('requestIdleCallback' in window)requestIdleCallback(run,{timeout:1200});else setTimeout(run,80);
+}
+function preloadFactionStart(id){
+  const d=DATA[id];if(!d)return;
+  preloadAssets([d.profile,'legend_1_final.webp','legend_2_final.webp','legend_3_final.webp','how_to_play_final.webp',d.home,'hub_final.webp']);
+}
+function preloadLocation(id){preloadAssets(LOCATION_ASSETS[id]||[])}
+function preloadHub(){preloadAssets(['hub_final.webp','popup_parchment_bg.webp'])}
+function preloadFinale(){preloadAssets(['ultima_sigilla.webp','in_fovea_veritas.webp','grimoar_nalezen.webp','grimoar_je_vas.webp','finis_vysledek.webp'])}
+function requestGameFullscreen(){
+  try{
+    if(document.fullscreenElement||document.webkitFullscreenElement)return;
+    const el=document.documentElement;
+    const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen;
+    if(!fn)return;
+    const result=fn.call(el);
+    if(result&&typeof result.catch==='function')result.catch(()=>{});
+  }catch(_){ }
+}
+function enterGame(){requestGameFullscreen();show('faction')}
+
 const FINAL_SCREENS=new Set(['ultima','inFovea','foundGrimoar','grimoarYours','finis','timeExpired','gameClosed']);
 function resetViewport(target){try{document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}catch(_){ }try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(_){ }const root=document.scrollingElement||document.documentElement||document.body;root.scrollTop=0;document.documentElement.scrollTop=0;document.body.scrollTop=0;window.scrollTo(0,0);if(target)target.scrollTop=0;requestAnimationFrame(()=>{root.scrollTop=0;window.scrollTo(0,0);if(target)target.scrollTop=0;setTimeout(()=>{root.scrollTop=0;window.scrollTo(0,0);if(target)target.scrollTop=0},80)})}
 function show(id,opts={}){let gs=ensureGame();if(gs.gameClosed&&id!=='gameClosed'){id='gameClosed';opts={...opts,persist:false}}else if(gs.startedAt&&!gs.endedAt&&id!=='timeExpired'&&id!=='gameClosed'&&(gs.timedOut||officialElapsed(gs)>=GAME_LIMIT_MS)){if(!gs.timedOut){gs.timedOut=true;gs.timedOutAt=Date.now();gs.lastScreen='timeExpired';saveGame(gs)}id='timeExpired';opts={...opts,persist:false}}document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const target=document.getElementById(id);target?.classList.add('active');document.body.classList.toggle('final-mode',FINAL_SCREENS.has(id));if(opts.persist!==false){const st=ensureGame();if(st.startedAt&&!st.gameClosed&&!st.timedOut){st.lastScreen=id;st.locationEntryMode=locationEntryMode;if(id==='task')st.lastTaskHtml=document.getElementById('taskContent')?.innerHTML||'';if(id==='home'){const art=document.getElementById('homeArt');st.lastHomeFaction=art?.dataset?.faction||currentFaction();st.lastHomeClass=document.getElementById('home')?.className||'screen';}saveGame(st)}}resetViewport(target)}
@@ -444,7 +483,7 @@ function popup({icon='alert',tone='',title='',html='',actions=[{label:'ROZUMÍME
 }
 function closePopup(){const p=document.getElementById('popup');p.classList.remove('show');p.setAttribute('aria-hidden','true');p.onclick=null}
 function pickFaction(id){selected=id;const d=DATA[id];document.getElementById('confirmArt').src=A+d.confirm;document.getElementById('confirmArt').alt='Potvrzení frakce '+d.name;const i=document.getElementById('teamName');i.value='';i.placeholder=PLACEHOLDERS[id];show('confirm');setTimeout(()=>i.focus(),80)}
-function confirmFaction(){const team=document.getElementById('teamName').value.trim();if(!selected){show('faction');return}if(!team){popup({icon:'alert',title:'CHYBÍ NÁZEV DRUŽINY',html:'<p>Napište název družiny.</p>'});return}const s={faction:selected,team,startedAt:Date.now(),penaltyMinutes:0,hints:{},done:{},testGame:TEST,lastScreen:'profile',radoviOrder:['LEV','LEBKA','RÝČ','VĚŽ','VĚDRO S VODOU']};saveGame(s);const d=DATA[selected];document.getElementById('profileArt').src=A+d.profile;document.getElementById('profileArt').alt='Frakční karta '+d.name;show('profile')}
+function confirmFaction(){const team=document.getElementById('teamName').value.trim();if(!selected){show('faction');return}if(!team){popup({icon:'alert',title:'CHYBÍ NÁZEV DRUŽINY',html:'<p>Napište název družiny.</p>'});return}const s={faction:selected,team,startedAt:Date.now(),penaltyMinutes:0,hints:{},done:{},testGame:TEST,lastScreen:'profile',radoviOrder:['LEV','LEBKA','RÝČ','VĚŽ','VĚDRO S VODOU']};saveGame(s);const d=DATA[selected];preloadFactionStart(selected);document.getElementById('profileArt').src=A+d.profile;document.getElementById('profileArt').alt='Frakční karta '+d.name;show('profile')}
 function currentFaction(){try{return JSON.parse(localStorage.getItem('kg-clean-flow')||'{}').faction||selected}catch{return selected}}
 function hasKoneseleAdvantage(){const s=ensureGame();return currentFaction()==='konesele'&&!s.koneseleBribeUsed}
 function renderKoneseleAdvantage(target){if(!hasKoneseleAdvantage())return '';return `<button class="kon-advantage-badge" type="button" aria-label="Úplatek – jednorázová výhoda" onclick="useKoneseleAdvantage('${target}')"><img src="${A}konsele_uplatek_badge.webp" alt="ÚPLATEK – JEN 1×"></button>`}
@@ -471,7 +510,7 @@ const HAVIRI_ZNACKY_CLUES={
 function shouldShowHaviriZnacky(id){const s=ensureGame();return currentFaction()==='haviri'&&!s.haviriZnackyUsed&&id!=='haviri'&&id!=='lapkove'&&!!HAVIRI_ZNACKY_CLUES[id]}
 function updateHaviriZnackyBadge(id){const b=document.getElementById('haviriZnackyBadge');if(!b)return;b.hidden=!shouldShowHaviriZnacky(id)}
 function useHaviriZnacky(){const id=document.getElementById('homeArt').dataset.faction||currentFaction();if(!shouldShowHaviriZnacky(id))return;const s=ensureGame();s.haviriZnackyUsed=true;saveGame(s);updateHaviriZnackyBadge(id);popup({icon:'hammers',title:'HORNICKÉ ZNAČKY',html:`<p>${HAVIRI_ZNACKY_CLUES[id]}</p><p><small>Výhoda byla použita. Další značky už neuvidíte.</small></p>`,dismissible:false,actions:[{label:'ROZUMÍM'}]})}
-function renderLocationCard(id){const d=DATA[id];const home=document.getElementById('home'),img=document.getElementById('homeArt');img.src=A+d.home;img.alt=(locationEntryMode==='hub'?'Lokace':'Domovská lokace')+' – '+d.name;img.dataset.faction=id;home.classList.toggle('hub-mode',locationEntryMode==='hub');home.classList.toggle('alch-location',id==='alchymiste');home.classList.toggle('alch-home-mode',id==='alchymiste'&&locationEntryMode==='home');home.classList.toggle('haviri-location',id==='haviri');home.classList.toggle('konesele-location',id==='konesele');home.classList.toggle('mincmistri-location',id==='mincmistri');const clues=document.getElementById('homeClues'),skip=document.querySelector('.home-skip'),reread=document.querySelector('.home-reread');if(id==='lapkove'){clues.innerHTML='';clues.style.display='none';skip.style.display='none';reread.style.display=locationEntryMode==='home'?'block':'none'}else if(id==='alchymiste'||id==='haviri'||id==='konesele'||id==='mincmistri'){clues.innerHTML='';clues.style.display='none';skip.style.display='block';reread.style.display=locationEntryMode==='home'?'block':'none'}else{clues.style.display='grid';clues.innerHTML=(d.clues||[]).map(x=>`<span>${x}</span>`).join('');skip.style.display='block';reread.style.display=locationEntryMode==='home'?'block':'none'}updateHaviriZnackyBadge(id);show('home');window.scrollTo(0,0)}
+function renderLocationCard(id){preloadLocation(id);const d=DATA[id];const home=document.getElementById('home'),img=document.getElementById('homeArt');img.src=A+d.home;img.alt=(locationEntryMode==='hub'?'Lokace':'Domovská lokace')+' – '+d.name;img.dataset.faction=id;home.classList.toggle('hub-mode',locationEntryMode==='hub');home.classList.toggle('alch-location',id==='alchymiste');home.classList.toggle('alch-home-mode',id==='alchymiste'&&locationEntryMode==='home');home.classList.toggle('haviri-location',id==='haviri');home.classList.toggle('konesele-location',id==='konesele');home.classList.toggle('mincmistri-location',id==='mincmistri');const clues=document.getElementById('homeClues'),skip=document.querySelector('.home-skip'),reread=document.querySelector('.home-reread');if(id==='lapkove'){clues.innerHTML='';clues.style.display='none';skip.style.display='none';reread.style.display=locationEntryMode==='home'?'block':'none'}else if(id==='alchymiste'||id==='haviri'||id==='konesele'||id==='mincmistri'){clues.innerHTML='';clues.style.display='none';skip.style.display='block';reread.style.display=locationEntryMode==='home'?'block':'none'}else{clues.style.display='grid';clues.innerHTML=(d.clues||[]).map(x=>`<span>${x}</span>`).join('');skip.style.display='block';reread.style.display=locationEntryMode==='home'?'block':'none'}updateHaviriZnackyBadge(id);show('home');window.scrollTo(0,0)}
 
 let parchmentReturn='legend3';
 function normAnswer(v){return String(v||'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z]/g,'')}
@@ -665,7 +704,7 @@ function goMincmistriHub(){try{openHub()}catch(e){console.error('Mincmistri hub 
 function breakMincmistriSeal(){const st=ensureGame();st.done.mincmistri='A8';saveGame(st);document.getElementById('taskContent').innerHTML=`<div class="minc-card"><img src="${A}mincmistri_broken.webp" alt="Rozlomená pečeť Mincmistrů – A8"><button class="minc-hot" style="left:18%;top:81.2%;width:64%;height:6.8%;z-index:80" type="button" aria-label="Zpět na rozcestník" onclick="goMincmistriHub();return false;"></button></div>`;show('task');window.scrollTo(0,0)}
 
 function finaleReady(){const s=ensureGame();return Object.keys(s.done||{}).length>=7&&!!s.parchment}
-function openUltima(){show('ultima');window.scrollTo(0,0)}
+function openUltima(){preloadFinale();show('ultima');window.scrollTo(0,0)}
 function finalHintOne(){addPenalty(3,'final-hint-1');popup({icon:'lantern',title:'PRVNÍ NÁPOVĚDA',html:'<p><b>Čísla určují pořadí. Písmena ukazují cestu.</b></p><p><small>+3 MIN</small></p>',dismissible:false,actions:[{label:'ZPĚT',fn:openUltima}]})}
 function finalHintTwo(){addPenalty(10,'final-hint-2');popup({icon:'wrong',title:'POSLEDNÍ NÁPOVĚDA',html:'<p><b>U _ _ _ _ _ _ A</b> se scházela místní chátra od nepaměti.</p><p>Běžte rovnou <b>TAM</b>.</p><p><small>+10 MIN</small></p>',dismissible:false,actions:[{label:'ZPĚT',fn:openUltima}]})}
 const FINAL_GPS=[49.9487582,15.2727794];
@@ -680,8 +719,32 @@ function cloudResultPayload(){const s=ensureGame();if(!s.endedAt||!s.team||!s.fa
 function submitFinalResult(){const payload=cloudResultPayload();if(payload&&window.KGResults?.submit)window.KGResults.submit(payload)}
 function renderFinalResults(){const v=finalValues();document.getElementById('rvTeam').textContent=v.team;document.getElementById('rvFaction').textContent=v.faction;document.getElementById('rvDate').textContent=v.date;document.getElementById('rvClean').textContent=v.clean;document.getElementById('rvPenalty').textContent=v.penalty;document.getElementById('rvTotal').textContent=v.total;submitFinalResult()}
 function openFinis(){renderFinalResults();show('finis')}
-function saveMemorialCard(){const v=finalValues(),img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);const rows=[0.6675,0.6955,0.7235,0.7515,0.7795,0.8075],vals=[v.team,v.faction,v.date,v.clean,v.penalty,v.total];ctx.font='28px Georgia';ctx.textBaseline='middle';rows.forEach((r,i)=>{const y=r*c.height;ctx.fillStyle='#ead8aa';ctx.fillText(vals[i],c.width*.535,y)});c.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement('a');a.download='Krvavy_grimoar_'+String(v.team).replace(/[^A-Za-z0-9_-]+/g,'_')+'.png';a.href=url;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)},'image/png')};img.src=A+'finis_vysledek.webp'}
-function openHub(){if(finaleReady()){openUltima();return}const s=ensureGame(),team=s.team||'Družina';const doneCount=Object.keys(s.done||{}).length;document.getElementById('hubStatus').innerHTML=`<b>${team}</b><span>${doneCount}/7 pečetí</span>`;const radoviDone=document.getElementById('hubRadoviDone');radoviDone.hidden=!s.done.radovi;const radoviCode=radoviDone.querySelector('.code');if(radoviCode)radoviCode.hidden=!!(s.surrendered&&s.surrendered.radovi&&doneCount<7);const zvoniciDone=document.getElementById('hubZvoniciDone');zvoniciDone.hidden=!s.done.zvonici;const zvoniciCode=zvoniciDone.querySelector('.code');if(zvoniciCode)zvoniciCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.zvonici&&doneCount<7);document.getElementById('hubLapkoveDone').hidden=!s.done.lapkove;const alchymisteDone=document.getElementById('hubAlchymisteDone');alchymisteDone.hidden=!s.done.alchymiste;const alchymisteCode=alchymisteDone.querySelector('.code');if(alchymisteCode)alchymisteCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.alchymiste&&doneCount<7);const haviriDone=document.getElementById('hubHaviriDone');haviriDone.hidden=!s.done.haviri;const haviriCode=haviriDone.querySelector('.code');if(haviriCode)haviriCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.haviri&&doneCount<7);const koneseleDone=document.getElementById('hubKoneseleDone');koneseleDone.hidden=!s.done.konesele;const koneseleCode=koneseleDone.querySelector('.code');if(koneseleCode)koneseleCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.konesele&&doneCount<7);const mincmistriDone=document.getElementById('hubMincmistriDone');mincmistriDone.hidden=!s.done.mincmistri;const mincmistriCode=mincmistriDone.querySelector('.code');if(mincmistriCode)mincmistriCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.mincmistri&&doneCount<7);const radHot=document.getElementById('hubRadoviHotspot');if(radHot){radHot.disabled=!!s.done.radovi;radHot.style.pointerEvents=s.done.radovi?'none':'auto';radHot.onclick=openRadoviFromHub}const zvHot=document.getElementById('hubZvoniciHotspot');if(zvHot){zvHot.disabled=!!s.done.zvonici;zvHot.style.pointerEvents=s.done.zvonici?'none':'auto';zvHot.onclick=openZvoniciFromHub}const lapHot=document.getElementById('hubLapkoveHotspot');if(lapHot){lapHot.disabled=!!s.done.lapkove;lapHot.style.pointerEvents=s.done.lapkove?'none':'auto';lapHot.onclick=openLapkoveFromHub}const alHot=document.getElementById('hubAlchymisteHotspot');if(alHot){alHot.disabled=!!s.done.alchymiste;alHot.style.pointerEvents=s.done.alchymiste?'none':'auto';alHot.onclick=openAlchymisteFromHub}const havHot=document.getElementById('hubHaviriHotspot');if(havHot){havHot.disabled=!!s.done.haviri;havHot.style.pointerEvents=s.done.haviri?'none':'auto';havHot.onclick=openHaviriFromHub}const konHot=document.getElementById('hubKoneseleHotspot');if(konHot){konHot.disabled=!!s.done.konesele;konHot.style.pointerEvents=s.done.konesele?'none':'auto';konHot.onclick=openKoneseleFromHub}const minHot=document.getElementById('hubMincmistriHotspot');if(minHot){minHot.disabled=!!s.done.mincmistri;minHot.style.pointerEvents=s.done.mincmistri?'none':'auto';minHot.onclick=openMincmistriFromHub}updateParchmentHubStatus();show('hub');window.scrollTo(0,0)}
+function saveMemorialCard(){
+  const v=finalValues(),img=new Image();
+  img.onload=()=>{
+    const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+    const ctx=c.getContext('2d');ctx.drawImage(img,0,0);
+    // Stejna geometrie jako ziva karta .result-value:
+    // right 16.8 %, width 31.5 %, padding-left 1.2 % z sirky pole, vyska 2.45 %.
+    const tops=[0.6675,0.6955,0.7235,0.7515,0.7795,0.8075];
+    const vals=[v.team,v.faction,v.date,v.clean,v.penalty,v.total];
+    const x=c.width*(1-0.168-0.315+0.315*0.012);
+    const rowHeight=c.height*0.0245;
+    const fontPx=Math.round(c.width*(18.4/941));
+    ctx.font=`${fontPx}px Georgia, serif`;
+    ctx.textBaseline='middle';ctx.textAlign='left';ctx.fillStyle='#ead8aa';
+    tops.forEach((top,i)=>ctx.fillText(vals[i],x,top*c.height+rowHeight/2));
+    c.toBlob(blob=>{
+      if(!blob)return;
+      const url=URL.createObjectURL(blob),a=document.createElement('a');
+      a.download='Krvavy_grimoar_'+String(v.team).replace(/[^A-Za-z0-9_-]+/g,'_')+'.png';
+      a.href=url;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1500)
+    },'image/png')
+  };
+  img.src=A+'finis_vysledek.webp'
+}
+function openHub(){preloadHub();if(finaleReady()){preloadFinale();openUltima();return}const s=ensureGame(),team=s.team||'Družina';const doneCount=Object.keys(s.done||{}).length;document.getElementById('hubStatus').innerHTML=`<b>${team}</b><span>${doneCount}/7 pečetí</span>`;const radoviDone=document.getElementById('hubRadoviDone');radoviDone.hidden=!s.done.radovi;const radoviCode=radoviDone.querySelector('.code');if(radoviCode)radoviCode.hidden=!!(s.surrendered&&s.surrendered.radovi&&doneCount<7);const zvoniciDone=document.getElementById('hubZvoniciDone');zvoniciDone.hidden=!s.done.zvonici;const zvoniciCode=zvoniciDone.querySelector('.code');if(zvoniciCode)zvoniciCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.zvonici&&doneCount<7);document.getElementById('hubLapkoveDone').hidden=!s.done.lapkove;const alchymisteDone=document.getElementById('hubAlchymisteDone');alchymisteDone.hidden=!s.done.alchymiste;const alchymisteCode=alchymisteDone.querySelector('.code');if(alchymisteCode)alchymisteCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.alchymiste&&doneCount<7);const haviriDone=document.getElementById('hubHaviriDone');haviriDone.hidden=!s.done.haviri;const haviriCode=haviriDone.querySelector('.code');if(haviriCode)haviriCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.haviri&&doneCount<7);const koneseleDone=document.getElementById('hubKoneseleDone');koneseleDone.hidden=!s.done.konesele;const koneseleCode=koneseleDone.querySelector('.code');if(koneseleCode)koneseleCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.konesele&&doneCount<7);const mincmistriDone=document.getElementById('hubMincmistriDone');mincmistriDone.hidden=!s.done.mincmistri;const mincmistriCode=mincmistriDone.querySelector('.code');if(mincmistriCode)mincmistriCode.hidden=!!(s.surrendered&&typeof s.surrendered==='object'&&s.surrendered.mincmistri&&doneCount<7);const radHot=document.getElementById('hubRadoviHotspot');if(radHot){radHot.disabled=!!s.done.radovi;radHot.style.pointerEvents=s.done.radovi?'none':'auto';radHot.onclick=openRadoviFromHub}const zvHot=document.getElementById('hubZvoniciHotspot');if(zvHot){zvHot.disabled=!!s.done.zvonici;zvHot.style.pointerEvents=s.done.zvonici?'none':'auto';zvHot.onclick=openZvoniciFromHub}const lapHot=document.getElementById('hubLapkoveHotspot');if(lapHot){lapHot.disabled=!!s.done.lapkove;lapHot.style.pointerEvents=s.done.lapkove?'none':'auto';lapHot.onclick=openLapkoveFromHub}const alHot=document.getElementById('hubAlchymisteHotspot');if(alHot){alHot.disabled=!!s.done.alchymiste;alHot.style.pointerEvents=s.done.alchymiste?'none':'auto';alHot.onclick=openAlchymisteFromHub}const havHot=document.getElementById('hubHaviriHotspot');if(havHot){havHot.disabled=!!s.done.haviri;havHot.style.pointerEvents=s.done.haviri?'none':'auto';havHot.onclick=openHaviriFromHub}const konHot=document.getElementById('hubKoneseleHotspot');if(konHot){konHot.disabled=!!s.done.konesele;konHot.style.pointerEvents=s.done.konesele?'none':'auto';konHot.onclick=openKoneseleFromHub}const minHot=document.getElementById('hubMincmistriHotspot');if(minHot){minHot.disabled=!!s.done.mincmistri;minHot.style.pointerEvents=s.done.mincmistri?'none':'auto';minHot.onclick=openMincmistriFromHub}updateParchmentHubStatus();show('hub');window.scrollTo(0,0)}
 
 
 function normWord(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z]/g,'').toUpperCase()}
@@ -700,7 +763,7 @@ function restoreLastPosition(){const s=ensureGame();if(!s.startedAt)return false
 setInterval(()=>{checkGameClock()},1000);
 
 // Navigation
- document.querySelector('#title .hot-enter').onclick=()=>show('faction');
+ document.querySelector('#title .hot-enter').onclick=enterGame;
  document.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>show(x.dataset.go));
  document.querySelectorAll('[data-faction]').forEach(x=>x.onclick=()=>pickFaction(x.dataset.faction));
  document.querySelector('.confirm-back').onclick=()=>show('faction');
