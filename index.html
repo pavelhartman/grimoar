@@ -455,7 +455,7 @@ function requestGameFullscreen(){
     if(result&&typeof result.catch==='function')result.catch(()=>{});
   }catch(_){ }
 }
-function enterGame(){requestGameFullscreen();show('faction')}
+function enterGame(){show('faction')}
 
 const FINAL_SCREENS=new Set(['ultima','inFovea','foundGrimoar','grimoarYours','finis','timeExpired','gameClosed']);
 function resetViewport(target){try{document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}catch(_){ }try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(_){ }const root=document.scrollingElement||document.documentElement||document.body;root.scrollTop=0;document.documentElement.scrollTop=0;document.body.scrollTop=0;window.scrollTo(0,0);if(target)target.scrollTop=0;requestAnimationFrame(()=>{root.scrollTop=0;window.scrollTo(0,0);if(target)target.scrollTop=0;setTimeout(()=>{root.scrollTop=0;window.scrollTo(0,0);if(target)target.scrollTop=0},80)})}
